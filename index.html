@@ -3,107 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KAEL | Fine Fragrances</title>
+    <title>KAEL | Luxury Fragrances</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --bg: #ffffff; --text: #111111; --gold: #c5a059; }
-        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; background: var(--bg); color: var(--text); }
+        /* Premium Dark Theme */
+        :root { --bg: #0a0a0a; --surface: #171717; --text: #f5f5f5; --gold: #d4af37; --border: #333; }
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; background: var(--bg); color: var(--text); overflow-x: hidden; }
         
-        /* Minimalist Navigation */
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; position: absolute; width: 100%; box-sizing: border-box; z-index: 10;}
-        .logo img { height: 35px; } /* Fetched dynamically */
-        .nav-links a { text-decoration: none; color: white; margin-left: 30px; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;}
-        
-        /* Dynamic Hero Banner */
-        .hero { 
-            height: 100vh; background-size: cover; background-position: center; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            color: white; text-align: center; position: relative;
-        }
-        .hero::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.3); z-index: 1; }
-        .hero-content { z-index: 2; }
-        .hero h1 { font-size: 4rem; letter-spacing: 4px; margin-bottom: 10px; font-weight: 300; }
-        .hero p { font-size: 1.2rem; font-style: italic; color: var(--gold); }
+        /* Navigation */
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 5%; border-bottom: 1px solid var(--border); background: rgba(10,10,10,0.9); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px);}
+        .logo { font-size: 1.8rem; font-weight: 300; letter-spacing: 6px; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 15px;}
+        .logo img { height: 30px; display: none; } /* Hidden until loaded */
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a { color: #aaa; text-decoration: none; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; transition: color 0.3s; cursor: pointer;}
+        .nav-links a:hover { color: var(--gold); }
 
-        /* Delivery Checker Widget */
-        .delivery-checker { 
-            background: #f9f9f9; padding: 40px; text-align: center; border-bottom: 1px solid #eee;
-        }
-        .checker-box { max-width: 400px; margin: 0 auto; display: flex; gap: 10px; }
-        .checker-box input { flex: 1; padding: 12px; border: 1px solid #ccc; font-size: 1rem; }
-        .checker-box button { background: var(--text); color: white; border: none; padding: 0 20px; cursor: pointer; text-transform: uppercase;}
-        #pin-result { margin-top: 15px; font-weight: bold; font-size: 0.9rem; }
+        /* Hero Section */
+        .hero { height: 85vh; background: url('https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=2000') center/cover; display: flex; align-items: center; justify-content: center; text-align: center; position: relative;}
+        .hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.4), var(--bg)); }
+        .hero-content { z-index: 2; max-width: 600px; }
+        .hero h1 { font-size: 3.5rem; font-weight: 300; letter-spacing: 10px; margin-bottom: 20px; text-transform: uppercase;}
+        .hero p { font-size: 1.1rem; color: #ccc; letter-spacing: 1px; line-height: 1.6; margin-bottom: 40px;}
+        .btn-gold { background: transparent; color: var(--gold); border: 1px solid var(--gold); padding: 15px 40px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: 0.3s; }
+        .btn-gold:hover { background: var(--gold); color: var(--bg); }
+
+        /* Product Grid */
+        .section-title { text-align: center; margin: 80px 0 40px; font-size: 1.5rem; font-weight: 300; letter-spacing: 4px; text-transform: uppercase; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; padding: 0 5%; margin-bottom: 100px;}
+        .product-card { text-align: center; cursor: pointer; group;}
+        .product-img { width: 100%; height: 400px; background: var(--surface); object-fit: cover; transition: opacity 0.3s;}
+        .product-card:hover .product-img { opacity: 0.8; }
+        .product-info { padding: 20px 0; }
+        .product-title { font-size: 1.1rem; letter-spacing: 2px; margin: 0 0 10px 0; font-weight: 400;}
+        .product-price { color: var(--gold); font-size: 1rem; }
+
+        /* Checkout Modal */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 999; justify-content: center; align-items: center; backdrop-filter: blur(5px);}
+        .checkout-modal { background: var(--surface); padding: 40px; width: 100%; max-width: 450px; border: 1px solid var(--border); }
+        .checkout-modal h2 { margin-top: 0; font-weight: 300; letter-spacing: 2px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 20px;}
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; margin-bottom: 8px; color: #aaa; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;}
+        .input-group input { width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border); color: white; box-sizing: border-box; outline: none;}
+        .input-group input:focus { border-color: var(--gold); }
+        #pin-status { margin-top: 10px; font-size: 0.85rem; }
+        
+        footer { border-top: 1px solid var(--border); padding: 40px 5%; text-align: center; color: #666; font-size: 0.8rem; letter-spacing: 2px;}
     </style>
 </head>
 <body>
 
     <nav>
-        <div class="logo"><img id="dynamic-logo" src="" alt="KAEL Logo"></div>
-        <div class="nav-links"><a href="#">Shop</a><a href="#">About</a><a href="#">Cart</a></div>
+        <a href="#" class="logo">
+            <img id="store-logo" src="" alt="Logo">
+            <span id="store-name">KAEL</span>
+        </a>
+        <div class="nav-links">
+            <a onclick="scrollToShop()">The Collection</a>
+            <a href="#">Our Story</a>
+            <a onclick="openCheckout()">Cart (1)</a>
+        </div>
     </nav>
 
-    <header class="hero" id="dynamic-banner">
+    <header class="hero" id="hero-banner">
         <div class="hero-content">
-            <h1>KAEL</h1>
-            <p>The Essence of Elegance</p>
+            <h1>Midnight Aura</h1>
+            <p>Discover our latest signature blend featuring notes of deep agarwood, smoked vanilla, and rare black orchid.</p>
+            <button class="btn-gold" onclick="scrollToShop()">Explore Collection</button>
         </div>
     </header>
 
-    <section class="delivery-checker">
-        <h3>Check Delivery Availability</h3>
-        <div class="checker-box">
-            <input type="text" id="pin-input" placeholder="Enter PIN Code" maxlength="6">
-            <button onclick="checkPincode()">Verify</button>
+    <h2 class="section-title" id="shop">Signature Scents</h2>
+    <div class="grid" id="product-grid">
         </div>
-        <div id="pin-result"></div>
-    </section>
+
+    <div class="modal-overlay" id="checkout-modal">
+        <div class="checkout-modal">
+            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                <h2>Secure Checkout</h2>
+                <span style="cursor: pointer; color: #aaa;" onclick="closeCheckout()">✕</span>
+            </div>
+            
+            <div class="input-group" style="margin-top: 20px;">
+                <label>Delivery PIN Code</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="checkout-pin" placeholder="Enter 6-digit PIN" maxlength="6">
+                    <button class="btn-gold" style="padding: 12px 20px;" onclick="verifyCheckoutPin()">Verify</button>
+                </div>
+                <div id="pin-status"></div>
+            </div>
+
+            <button class="btn-gold" style="width: 100%; background: var(--gold); color: var(--bg); margin-top: 20px; font-weight: bold;">Proceed to Payment</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 KAEL FRAGRANCES. ALL RIGHTS RESERVED.</p>
+        <div id="social-links" style="margin-top: 15px; display: flex; justify-content: center; gap: 20px;"></div>
+    </footer>
 
     <script>
-        const supabase = window.supabase.createClient('YOUR_URL', 'YOUR_KEY');
-        let deliveryRules = null;
+        const supabase = window.supabase.createClient('https://ejjcjskseatjqdoxabhm.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqamNqc2tzZWF0anFkb3hhYmhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NjY0ODMsImV4cCI6MjA5NjQ0MjQ4M30.tCxYq9BWtU48m4mDI30Bf3-2temFzLW7qnpCG25nKBk');
+        let deliveryConfig = null;
 
-        async function initializeStore() {
-            // 1. Fetch Store Configuration from Admin Panel setup
-            const { data, error } = await supabase.from('store_settings').select('*').single();
-            if (data) {
-                // Apply dynamic assets
-                if (data.logo_url) document.getElementById('dynamic-logo').src = data.logo_url;
-                if (data.home_banner_url) document.getElementById('dynamic-banner').style.backgroundImage = `url('${data.home_banner_url}')`;
+        // Dummy Filler Data
+        const dummyProducts = [
+            { title: "Oud Wood & Amber", price: 14500, images: ["https://images.unsplash.com/photo-1595425970377-c9703bc48b2d?q=80&w=800"] },
+            { title: "Velvet Rose Absolute", price: 12000, images: ["https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?q=80&w=800"] },
+            { title: "Santal 33 Noir", price: 16500, images: ["https://images.unsplash.com/photo-1615634260167-c8cdede054de?q=80&w=800"] }
+        ];
+
+        async function initStore() {
+            // 1. Fetch settings
+            const { data: settings } = await supabase.from('store_settings').select('*').single();
+            if (settings) {
+                if (settings.logo_url) {
+                    document.getElementById('store-logo').src = settings.logo_url;
+                    document.getElementById('store-logo').style.display = 'block';
+                    document.getElementById('store-name').style.display = 'none';
+                }
+                if (settings.home_banner_url) {
+                    document.getElementById('hero-banner').style.backgroundImage = `url('${settings.home_banner_url}')`;
+                }
                 
-                // Store delivery rules for local verification
-                deliveryRules = {
-                    isPanIndia: data.pan_india_delivery,
-                    allowedPins: data.allowed_pincodes || []
-                };
+                deliveryConfig = { isPanIndia: settings.pan_india_delivery, pins: settings.allowed_pincodes || [] };
+
+                // Handle Social Links
+                if(settings.social_links) {
+                    const sl = document.getElementById('social-links');
+                    if(settings.social_links.instagram) sl.innerHTML += `<a href="${settings.social_links.instagram}" style="color:#aaa; text-decoration:none;">INSTAGRAM</a>`;
+                }
             }
+
+            // 2. Fetch Products (Fallback to dummy if empty)
+            const { data: products } = await supabase.from('products').select('*').eq('is_archived', false);
+            const grid = document.getElementById('product-grid');
+            const itemsToRender = (products && products.length > 0) ? products : dummyProducts;
+
+            grid.innerHTML = itemsToRender.map(p => `
+                <div class="product-card" onclick="openCheckout()">
+                    <img src="${p.images?.[0] || 'https://via.placeholder.com/400x500/171717/d4af37?text=KAEL'}" class="product-img" alt="${p.title}">
+                    <div class="product-info">
+                        <h3 class="product-title">${p.title}</h3>
+                        <div class="product-price">₹${p.price.toLocaleString()}</div>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        // 2. Client-side Pincode Validation
-        function checkPincode() {
-            const input = document.getElementById('pin-input').value.trim();
-            const resultBox = document.getElementById('pin-result');
+        // UI Interactions
+        function scrollToShop() { document.getElementById('shop').scrollIntoView({behavior: 'smooth'}); }
+        function openCheckout() { document.getElementById('checkout-modal').style.display = 'flex'; }
+        function closeCheckout() { document.getElementById('checkout-modal').style.display = 'none'; }
+
+        function verifyCheckoutPin() {
+            const pin = document.getElementById('checkout-pin').value.trim();
+            const status = document.getElementById('pin-status');
             
-            if(!deliveryRules) {
-                resultBox.innerText = "System loading, please wait.";
-                return;
-            }
+            if(!deliveryConfig) { status.innerText = "System loading..."; return; }
+            if(pin.length !== 6) { status.style.color = "#ef4444"; status.innerText = "Enter a valid 6-digit PIN."; return; }
 
-            if(deliveryRules.isPanIndia) {
-                resultBox.style.color = "green";
-                resultBox.innerText = `Great news! We deliver all across India.`;
-                return;
-            }
-
-            if(deliveryRules.allowedPins.includes(input)) {
-                resultBox.style.color = "green";
-                resultBox.innerText = `Yes! We deliver to ${input}.`;
+            if(deliveryConfig.isPanIndia || deliveryConfig.pins.includes(pin)) {
+                status.style.color = "#10b981"; // Emerald green
+                status.innerText = "✓ Delivery available to this location.";
             } else {
-                resultBox.style.color = "red";
-                resultBox.innerText = `We currently do not service ${input}.`;
+                status.style.color = "#ef4444";
+                status.innerText = "✕ We do not currently service this area.";
             }
         }
 
-        initializeStore();
+        initStore();
     </script>
 </body>
 </html>
