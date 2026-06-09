@@ -17,6 +17,7 @@
             background: rgba(5, 5, 5, 0.85); backdrop-filter: blur(10px); z-index: 1000;
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
+        .header-logo { display: flex; align-items: center; justify-content: center; }
         .header-logo img { height: 22px; max-width: 160px; object-fit: contain; display: block; }
         
         .nav-links { display: flex; gap: 30px; align-items: center; }
@@ -78,20 +79,20 @@
 
     <header>
         <div class="nav-links">
-            <button onclick="document.getElementById('shop-section').scrollIntoView()">Collections</button>
+            <button id="nav-collections-btn">Collections</button>
         </div>
         <a href="#" class="header-logo">
             <img src="https://ejjcjskseatjqdoxabhm.supabase.co/storage/v1/object/public/store-assets/KAEL-R-White.png" alt="KAEL">
         </a>
         <div class="nav-links">
-            <button onclick="document.getElementById('bag-modal').classList.add('active')">Bag (1)</button>
+            <button id="nav-bag-btn">Bag (1)</button>
         </div>
     </header>
 
     <section class="hero">
         <h1>L'Obscurité</h1>
         <p>A daring exploration of smoked woods, midnight amber, and raw elegance.</p>
-        <button onclick="document.getElementById('shop-section').scrollIntoView()" class="btn-gold">Discover Collection</button>
+        <button id="hero-discover-btn" class="btn-gold">Discover Collection</button>
     </section>
 
     <h2 class="section-title" id="shop-section">Signature Scents</h2>
@@ -101,7 +102,7 @@
         <div class="bag-panel">
             <div class="bag-header">
                 <h2>Your Bag</h2>
-                <button class="close-btn" onclick="document.getElementById('bag-modal').classList.remove('active')">✕</button>
+                <button class="close-btn" id="close-bag-btn">✕</button>
             </div>
             
             <div style="flex: 1;">
@@ -111,7 +112,7 @@
                     <label>Pincode Verification</label>
                     <div style="display: flex; gap: 10px;">
                         <input type="text" id="checkout-pin" placeholder="Enter 6-digit PIN" maxlength="6">
-                        <button class="btn-gold" style="padding: 0 20px;" onclick="verifyPin()">Verify</button>
+                        <button class="btn-gold" style="padding: 0 20px;" id="verify-pin-btn">Verify</button>
                     </div>
                     <div id="pin-status" style="margin-top: 10px; font-size: 0.8rem; font-weight: bold;"></div>
                 </div>
@@ -122,6 +123,8 @@
     </div>
 
     <script>
+        const SUPABASE_URL = 'https://ejjcjskseatjqdoxabhm.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqamNqc2tzZWF0anFkb3hhYmhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NjY0ODMsImV4cCI6MjA5NjQ0MjQ4M30.tCxYq9BWtU48m4mDI30Bf3-2temFzLW7qnpCG25nKBk';
         let supabase;
         let configCache = null;
 
@@ -131,9 +134,65 @@
             { title: "Suede Saffron", price: 18000, images: ["https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?q=80&w=800"] }
         ];
 
-        // Ensure visuals load instantly, then populate database
+        // --- STRICT DOM EVENT BINDING ---
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // Navigation Links
+            document.getElementById('nav-collections-btn').addEventListener('click', () => {
+                document.getElementById('shop-section').scrollIntoView({ behavior: 'smooth' });
+            });
+            document.getElementById('hero-discover-btn').addEventListener('click', () => {
+                document.getElementById('shop-section').scrollIntoView({ behavior: 'smooth' });
+            });
+
+            // Bag Modal Logic
+            document.getElementById('nav-bag-btn').addEventListener('click', () => {
+                document.getElementById('bag-modal').classList.add('active');
+            });
+            document.getElementById('close-bag-btn').addEventListener('click', () => {
+                document.getElementById('bag-modal').classList.remove('active');
+            });
+
+            // Pin Check
+            document.getElementById('verify-pin-btn').addEventListener('click', verifyPin);
+
+            // Initial UI Render
+            renderProducts(dummyProducts);
+            
+            // Safe Database Init
+            initDatabaseSecurely();
+        });
+
+        // --- LOGIC FUNCTIONS ---
+        function initDatabaseSecurely() {
+            if (window.supabase) {
+                connectAndFetch();
+            } else {
+                setTimeout(initDatabaseSecurely, 100);
+            }
+        }
+
+        async function connectAndFetch() {
+            try {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                
+                // Fetch Settings
+                const { data: settings } = await supabase.from('store_settings').select('*').single();
+                if (settings) configCache = settings;
+
+                // Fetch Real Products
+                const { data: products } = await supabase.from('products').select('*').eq('is_archived', false);
+                if (products && products.length > 0) {
+                    renderProducts(products); 
+                }
+            } catch (err) {
+                console.log("Database fetch bypassed. Using local cache.");
+            }
+        }
+
         function renderProducts(products) {
-            document.getElementById('product-grid').innerHTML = products.map(p => `
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = products.map(p => `
                 <div class="product-card" onclick="document.getElementById('bag-modal').classList.add('active')">
                     <img src="${p.images?.[0] || 'https://via.placeholder.com/400x400/111/fff?text=KAEL'}" class="product-img" alt="${p.title}">
                     <div class="product-info">
@@ -144,50 +203,25 @@
             `).join('');
         }
 
-        renderProducts(dummyProducts); // Render fallback immediately
-
-        document.addEventListener('DOMContentLoaded', () => {
-            if (window.supabase) {
-                initDatabase();
-            } else {
-                let interval = setInterval(() => {
-                    if (window.supabase) {
-                        clearInterval(interval);
-                        initDatabase();
-                    }
-                }, 200);
-            }
-        });
-
-        async function initDatabase() {
-            try {
-                supabase = window.supabase.createClient('https://ejjcjskseatjqdoxabhm.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqamNqc2tzZWF0anFkb3hhYmhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NjY0ODMsImV4cCI6MjA5NjQ0MjQ4M30.tCxYq9BWtU48m4mDI30Bf3-2temFzLW7qnpCG25nKBk');
-                
-                const { data: settings } = await supabase.from('store_settings').select('*').single();
-                if (settings) configCache = settings;
-
-                const { data: products } = await supabase.from('products').select('*').eq('is_archived', false);
-                if (products && products.length > 0) {
-                    renderProducts(products); // Overwrite fallback with real data
-                }
-            } catch (err) {
-                console.log("Using local data cache.");
-            }
-        }
-
         function verifyPin() {
             const pin = document.getElementById('checkout-pin').value.trim();
             const status = document.getElementById('pin-status');
             
-            if(pin.length !== 6) { status.style.color = "#ef4444"; status.innerText = "Enter valid 6-digit PIN"; return; }
+            if(pin.length !== 6) { 
+                status.style.color = "#ef4444"; 
+                status.innerText = "Enter valid 6-digit PIN"; 
+                return; 
+            }
 
             const isPanIndia = configCache ? configCache.pan_india_delivery : true;
             const validPins = configCache?.allowed_pincodes || [];
 
             if(isPanIndia || validPins.includes(pin)) {
-                status.style.color = "#10b981"; status.innerText = "✓ Delivery Available";
+                status.style.color = "#10b981"; 
+                status.innerText = "✓ Delivery Available";
             } else {
-                status.style.color = "#ef4444"; status.innerText = "✕ Location Not Serviceable";
+                status.style.color = "#ef4444"; 
+                status.innerText = "✕ Location Not Serviceable";
             }
         }
     </script>
