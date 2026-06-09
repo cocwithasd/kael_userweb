@@ -6,193 +6,184 @@
     <title>KAEL | Haute Parfumerie</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --bg: #070708; --surface: #0e0e10; --text: #ffffff; --muted: #71717a; --gold: #c5a059; --border: #1f1f23; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Times New Roman', Times, serif; }
-        body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+        :root { --bg: #050505; --surface: #111111; --text: #ffffff; --muted: #888888; --gold: #c5a059; --border: #222222; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Helvetica Neue', Arial, sans-serif; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden;}
         
-        /* Premium Floating Navigation Header */
-        header { border-bottom: 1px solid var(--border); padding: 25px 6%; display: flex; justify-content: space-between; align-items: center; background: rgba(7,7,8,0.95); position: sticky; top:0; z-index: 100; backdrop-filter: blur(12px); }
-        .branding-link { font-size: 1.8rem; font-weight: 300; letter-spacing: 8px; color: var(--text); text-decoration: none; text-transform: uppercase; }
-        .nav-links { display: flex; gap: 35px; font-family: -apple-system, sans-serif; }
-        .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; transition: color 0.3s; cursor: pointer; }
-        .nav-links a:hover, .nav-links a.active { color: var(--text); }
+        /* Premium Header */
+        header { 
+            position: fixed; top: 0; width: 100%; padding: 20px 5%; 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: rgba(5, 5, 5, 0.85); backdrop-filter: blur(10px); z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .header-logo img { height: 24px; object-fit: contain; } /* Adjusted White Logo */
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links button { 
+            background: none; border: none; color: var(--text); font-size: 0.75rem; 
+            text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: color 0.3s;
+        }
+        .nav-links button:hover { color: var(--gold); }
 
-        /* Dynamic Route Target Windows */
-        .app-view { display: none; padding: 60px 6%; flex: 1; }
-        .app-view.view-active { display: block; }
-
-        /* Premium Showcase Hero Section */
-        .curated-hero { height: 70vh; background: linear-gradient(to top, var(--bg), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?q=80&w=2000') center/cover; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; margin-bottom: 40px;}
-        .curated-hero h2 { font-size: 3rem; font-weight: 300; letter-spacing: 6px; text-transform: uppercase; margin-bottom: 15px;}
-        .curated-hero p { font-family: -apple-system, sans-serif; font-size: 0.9rem; color: var(--muted); max-width: 500px; line-height: 1.6; }
+        /* Full Screen Hero Section */
+        .hero { 
+            height: 100vh; width: 100vw;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2), var(--bg)), url('https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=2000') center/cover no-repeat;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+            padding-top: 60px;
+        }
+        .hero h1 { font-family: 'Times New Roman', serif; font-size: 4rem; font-weight: 300; letter-spacing: 8px; margin-bottom: 20px; text-transform: uppercase;}
+        .hero p { font-size: 1rem; color: var(--muted); letter-spacing: 2px; margin-bottom: 40px; max-width: 600px; line-height: 1.6;}
+        .btn-gold { 
+            background: transparent; color: var(--gold); border: 1px solid var(--gold); 
+            padding: 16px 40px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 3px; 
+            cursor: pointer; transition: 0.4s; text-decoration: none; display: inline-block;
+        }
+        .btn-gold:hover { background: var(--gold); color: #000; }
 
         /* Catalog Grid Matrix */
-        .catalog-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 50px; }
-        .product-luxury-card { border: 1px solid transparent; transition: border-color 0.4s; padding: 15px; text-align: center; cursor: pointer; }
-        .product-luxury-card:hover { border-color: var(--border); }
-        .luxury-img-frame { width: 100%; height: 420px; background: var(--surface); object-fit: cover; }
-        .luxury-metadata { margin-top: 20px; }
-        .luxury-title { font-size: 1.15rem; letter-spacing: 2px; font-weight: 400; margin-bottom: 8px; text-transform: uppercase; }
-        .luxury-cost { color: var(--gold); font-size: 1rem; font-family: -apple-system, sans-serif; }
+        .section-title { text-align: center; font-family: 'Times New Roman', serif; font-size: 2rem; font-weight: 300; letter-spacing: 4px; margin: 100px 0 50px; text-transform: uppercase;}
+        .catalog-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; padding: 0 5% 100px; max-width: 1400px; margin: 0 auto;}
+        .product-card { text-align: center; cursor: pointer; transition: transform 0.4s; }
+        .product-card:hover { transform: translateY(-5px); }
+        .product-img { width: 100%; height: 450px; background: var(--surface); object-fit: cover; }
+        .product-info { padding-top: 20px; }
+        .product-title { font-size: 1rem; letter-spacing: 2px; font-weight: 400; margin-bottom: 8px; text-transform: uppercase; }
+        .product-price { color: var(--gold); font-size: 0.9rem; }
 
-        /* Static and Dynamic Legal Frames */
-        .legal-wrapper { max-width: 800px; margin: 0 auto; font-family: -apple-system, sans-serif; line-height: 1.8; color: #d1d5db; }
-        .legal-wrapper h1 { font-family: 'Times New Roman', serif; color: white; letter-spacing: 3px; font-weight: 400; margin-bottom: 30px; text-transform: uppercase;}
-
-        /* Unified Premium Inputs and Modals */
-        .checkout-dialog { max-width: 500px; margin: 40px auto; background: var(--surface); border: 1px solid var(--border); padding: 40px; border-radius: 4px; font-family: -apple-system, sans-serif;}
-        .checkout-dialog h3 { font-family: 'Times New Roman', serif; font-size: 1.5rem; letter-spacing: 2px; margin-bottom: 25px; text-transform: uppercase; }
-        .input-block { margin-bottom: 20px; }
-        .input-block label { display: block; font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-        .input-block input { width: 100%; padding: 14px; background: var(--bg); border: 1px solid var(--border); color: white; outline: none; }
-        .input-block input:focus { border-color: var(--gold); }
+        /* Slide-out Bag / Checkout Modal */
+        .bag-overlay { 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; 
+            opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(5px);
+        }
+        .bag-overlay.active { opacity: 1; pointer-events: auto; }
+        .bag-panel { 
+            position: absolute; right: -500px; top: 0; bottom: 0; width: 100%; max-width: 450px; 
+            background: var(--surface); border-left: 1px solid var(--border); padding: 40px; 
+            transition: right 0.4s ease-out; display: flex; flex-direction: column;
+        }
+        .bag-overlay.active .bag-panel { right: 0; }
         
-        .gold-action-trigger { background: transparent; color: var(--gold); border: 1px solid var(--gold); padding: 14px; width: 100%; text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; cursor: pointer; transition: 0.3s; }
-        .gold-action-trigger:hover { background: var(--gold); color: #000; }
-
-        footer { border-top: 1px solid var(--border); padding: 40px 6%; display: flex; justify-content: space-between; align-items: center; font-family: -apple-system, sans-serif; font-size: 0.7rem; color: var(--muted); letter-spacing: 1px;}
-        .footer-legal-links a { color: var(--muted); text-decoration: none; margin-left: 20px; }
-        .footer-legal-links a:hover { color: white; }
+        .bag-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 30px;}
+        .bag-header h2 { font-family: 'Times New Roman', serif; font-size: 1.5rem; font-weight: 300; letter-spacing: 2px; text-transform: uppercase;}
+        .close-btn { background: none; border: none; color: var(--muted); font-size: 1.5rem; cursor: pointer; }
+        
+        .input-group { margin-bottom: 25px; }
+        .input-group label { display: block; font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        .input-group input { width: 100%; padding: 15px; background: var(--bg); border: 1px solid var(--border); color: white; outline: none; }
+        .input-group input:focus { border-color: var(--gold); }
     </style>
 </head>
 <body>
 
     <header>
-        <a href="#" onclick="switchView('showcase')" class="branding-link">K A E L</a>
         <div class="nav-links">
-            <a id="nav-showcase" class="active" onclick="switchView('showcase')">Collections</a>
-            <a id="nav-checkout" onclick="switchView('checkout')">Bag (1)</a>
+            <button onclick="document.getElementById('shop-section').scrollIntoView()">Collections</button>
+        </div>
+        <a href="#" class="header-logo">
+            <img src="https://ejjcjskseatjqdoxabhm.supabase.co/storage/v1/object/public/store-assets/KAEL-R-White.png" alt="KAEL">
+        </a>
+        <div class="nav-links">
+            <button id="open-bag-btn">Bag (1)</button>
         </div>
     </header>
 
-    <div id="view-showcase" class="app-view view-active">
-        <div class="curated-hero">
-            <h2>Maison De Parfum</h2>
-            <p>Olfactory masterpieces precision-crafted for modern discernment. Rare botanicals bound in black glass bottles.</p>
-        </div>
-        <div class="catalog-container" id="front-catalog-matrix"></div>
-    </div>
+    <section class="hero">
+        <h1>L'Obscurité</h1>
+        <p>A daring exploration of smoked woods, midnight amber, and raw elegance. Crafted in Paris, delivered globally.</p>
+        <a href="#shop-section" class="btn-gold">Discover Collection</a>
+    </section>
 
-    <div id="view-checkout" class="app-view">
-        <div class="checkout-dialog">
-            <h3>Review Selection</h3>
-            <p style="color: var(--muted); margin-bottom: 20px; font-size: 0.9rem;">Item: Signature Collection Blend Extrait (100ml)</p>
+    <h2 class="section-title" id="shop-section">Signature Scents</h2>
+    <div class="catalog-container" id="product-grid">
+        </div>
+
+    <div class="bag-overlay" id="bag-modal">
+        <div class="bag-panel">
+            <div class="bag-header">
+                <h2>Your Bag</h2>
+                <button class="close-btn" id="close-bag-btn">✕</button>
+            </div>
             
-            <div class="input-block">
-                <label>Destination PIN Verification</label>
-                <div style="display: flex; gap: 10px;">
-                    <input type="text" id="destination-pincode" placeholder="6 Digit Postal Index" maxlength="6">
-                    <button class="gold-action-trigger" style="width: auto; padding: 0 20px;" onclick="validateRoutingPincode()">Verify</button>
+            <div style="flex: 1;">
+                <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 30px;">Item: L'Obscurité Extrait De Parfum (100ml)</p>
+                
+                <div class="input-group">
+                    <label>Pincode Verification</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="checkout-pin" placeholder="Enter 6-digit PIN" maxlength="6">
+                        <button class="btn-gold" style="padding: 0 20px;" onclick="verifyPin()">Verify</button>
+                    </div>
+                    <div id="pin-status" style="margin-top: 10px; font-size: 0.8rem; font-weight: bold;"></div>
                 </div>
-                <div id="routing-pincode-status-msg" style="margin-top: 10px; font-size: 0.8rem; font-weight: 600;"></div>
             </div>
 
-            <button class="gold-action-trigger" id="final-checkout-trigger" style="opacity: 0.5; pointer-events: none;">Finalize Order & Pay</button>
+            <button class="btn-gold" style="width: 100%; background: var(--gold); color: black; font-weight: bold;">Proceed to Checkout</button>
         </div>
     </div>
-
-    <div id="view-privacy" class="app-view">
-        <div class="legal-wrapper">
-            <h1>Privacy Policy</h1>
-            <div id="content-privacy">Loading policy terms...</div>
-        </div>
-    </div>
-
-    <div id="view-terms" class="app-view">
-        <div class="legal-wrapper">
-            <h1>Terms & Conditions</h1>
-            <div id="content-terms">Loading operational terms...</div>
-        </div>
-    </div>
-
-    <div id="view-refund" class="app-view">
-        <div class="legal-wrapper">
-            <h1>Refund & Fulfillment Policy</h1>
-            <div id="content-refund">Loading fulfillment terms...</div>
-        </div>
-    </div>
-
-    <footer>
-        <div>&copy; 2026 KAEL CORPORATE HAUTE PARFUMERIE.</div>
-        <div class="footer-legal-links">
-            <a onclick="switchView('privacy')">Privacy</a>
-            <a onclick="switchView('terms')">Terms</a>
-            <a onclick="switchView('refund')">Refunds</a>
-        </div>
-    </footer>
 
     <script>
         const supabase = window.supabase.createClient('https://ejjcjskseatjqdoxabhm.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqamNqc2tzZWF0anFkb3hhYmhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NjY0ODMsImV4cCI6MjA5NjQ0MjQ4M30.tCxYq9BWtU48m4mDI30Bf3-2temFzLW7qnpCG25nKBk');
-        let configurationCache = null;
+        let configCache = null;
 
-        const catalogFallbacks = [
-            { title: "Kael I: L'Obscurité", price: 14500, images: ["https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=800"] },
-            { title: "Kael II: Blanc Intense", price: 12000, images: ["https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=800"] },
-            { title: "Kael III: Suede Saffron", price: 18000, images: ["https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?q=80&w=800"] }
+        const dummyProducts = [
+            { title: "L'Obscurité", price: 14500, images: ["https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=800"] },
+            { title: "Blanc Intense", price: 12000, images: ["https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=800"] },
+            { title: "Suede Saffron", price: 18000, images: ["https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?q=80&w=800"] },
+            { title: "Oud Noir", price: 16500, images: ["https://images.unsplash.com/photo-1615634260167-c8cdede054de?q=80&w=800"] }
         ];
 
-        function switchView(targetId) {
-            document.querySelectorAll('.app-view').forEach(v => v.classList.remove('view-active'));
-            document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-            
-            document.getElementById(`view-${targetId}`).classList.add('view-active');
-            const targetNav = document.getElementById(`nav-${targetId}`);
-            if(targetNav) targetNav.classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        // UI Listeners (Bulletproofed)
+        document.getElementById('open-bag-btn').addEventListener('click', () => {
+            document.getElementById('bag-modal').classList.add('active');
+        });
+        document.getElementById('close-bag-btn').addEventListener('click', () => {
+            document.getElementById('bag-modal').classList.remove('active');
+        });
 
-        async function initStorefrontEngine() {
-            const { data: config } = await supabase.from('store_settings').select('*').single();
-            if(config) {
-                configurationCache = config;
-                document.getElementById('content-privacy').innerText = config.privacy_policy || 'Standard platform protection terms apply.';
-                document.getElementById('content-terms').innerText = config.terms_conditions || 'Standard transactional conditions apply.';
-                document.getElementById('content-refund').innerText = config.refund_policy || 'Fulfillment logistics execution terms.';
-            }
+        async function initStore() {
+            try {
+                // Fetch settings
+                const { data: settings } = await supabase.from('store_settings').select('*').single();
+                if (settings) configCache = settings;
 
-            const { data: products } = await supabase.from('products').select('*').eq('is_archived', false);
-            const displayPool = (products && products.length > 0) ? products : catalogFallbacks;
-            const container = document.getElementById('front-catalog-matrix');
-            
-            container.innerHTML = displayPool.map(p => `
-                <div class="product-luxury-card" onclick="switchView('checkout')">
-                    <img src="${p.images?.[0] || 'https://via.placeholder.com/400x500/0e0e10/ffffff?text=KAEL+PARFUM'}" class="luxury-img-frame" alt="${p.title}">
-                    <div class="luxury-metadata">
-                        <h4 class="luxury-title">${p.title}</h4>
-                        <div class="luxury-cost">₹${p.price.toLocaleString('en-IN')}</div>
+                // Fetch Products
+                const { data: products } = await supabase.from('products').select('*').eq('is_archived', false);
+                const itemsToRender = (products && products.length > 0) ? products : dummyProducts;
+                
+                document.getElementById('product-grid').innerHTML = itemsToRender.map(p => `
+                    <div class="product-card" onclick="document.getElementById('bag-modal').classList.add('active')">
+                        <img src="${p.images?.[0] || 'https://via.placeholder.com/400x500/111/fff?text=KAEL'}" class="product-img" alt="${p.title}">
+                        <div class="product-info">
+                            <h3 class="product-title">${p.title}</h3>
+                            <div class="product-price">₹${p.price.toLocaleString('en-IN')}</div>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
+            } catch (err) {
+                console.error("Store loading gracefully fell back to defaults:", err);
+            }
         }
 
-        function validateRoutingPincode() {
-            const code = document.getElementById('destination-pincode').value.trim();
-            const status = document.getElementById('routing-pincode-status-msg');
-            const checkoutBtn = document.getElementById('final-checkout-trigger');
+        function verifyPin() {
+            const pin = document.getElementById('checkout-pin').value.trim();
+            const status = document.getElementById('pin-status');
+            
+            if(pin.length !== 6) { status.style.color = "#ef4444"; status.innerText = "Enter valid 6-digit PIN"; return; }
 
-            if(code.length !== 6) {
-                status.style.color = 'var(--danger)';
-                status.innerText = 'Malformed evaluation target. Use 6 digits.';
-                return;
-            }
+            const isPanIndia = configCache ? configCache.pan_india_delivery : true;
+            const validPins = configCache?.allowed_pincodes || [];
 
-            const isPanIndia = configurationCache ? configurationCache.pan_india_delivery : true;
-            const validPins = configurationCache?.allowed_pincodes || [];
-
-            if(isPanIndia || validPins.includes(code)) {
-                status.style.color = '#10b981';
-                status.innerText = '✓ Verification complete. Service vector confirmed.';
-                checkoutBtn.style.opacity = '1';
-                checkoutBtn.style.pointerEvents = 'auto';
+            if(isPanIndia || validPins.includes(pin)) {
+                status.style.color = "#10b981"; status.innerText = "✓ Delivery Available";
             } else {
-                status.style.color = 'var(--danger)';
-                status.innerText = '✕ Delivery operations are unmapped for this region.';
-                checkoutBtn.style.opacity = '0.5';
-                checkoutBtn.style.pointerEvents = 'none';
+                status.style.color = "#ef4444"; status.innerText = "✕ Location Not Serviceable";
             }
         }
 
-        initStorefrontEngine();
+        // Initialize safely
+        document.addEventListener('DOMContentLoaded', initStore);
     </script>
 </body>
 </html>
