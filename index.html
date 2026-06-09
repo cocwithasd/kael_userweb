@@ -11,27 +11,27 @@
         html { scroll-behavior: smooth; }
         body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden;}
         
-        /* Premium Header */
         header { 
             position: fixed; top: 0; width: 100%; padding: 20px 5%; 
             display: flex; justify-content: space-between; align-items: center; 
             background: rgba(5, 5, 5, 0.85); backdrop-filter: blur(10px); z-index: 1000;
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-        .header-logo img { height: 24px; object-fit: contain; } /* Adjusted White Logo */
-        .nav-links { display: flex; gap: 30px; }
+        .header-logo { display: flex; align-items: center; justify-content: center; }
+        .header-logo img { height: 22px; max-width: 160px; object-fit: contain; display: block; }
+        
+        .nav-links { display: flex; gap: 30px; align-items: center; }
         .nav-links button { 
             background: none; border: none; color: var(--text); font-size: 0.75rem; 
             text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: color 0.3s;
         }
         .nav-links button:hover { color: var(--gold); }
 
-        /* Full Screen Hero Section */
         .hero { 
             height: 100vh; width: 100vw;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.2), var(--bg)), url('https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=2000') center/cover no-repeat;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3), var(--bg)), url('https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=2000') center/cover no-repeat;
             display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
-            padding-top: 60px;
+            padding: 0 20px;
         }
         .hero h1 { font-family: 'Times New Roman', serif; font-size: 4rem; font-weight: 300; letter-spacing: 8px; margin-bottom: 20px; text-transform: uppercase;}
         .hero p { font-size: 1rem; color: var(--muted); letter-spacing: 2px; margin-bottom: 40px; max-width: 600px; line-height: 1.6;}
@@ -42,17 +42,15 @@
         }
         .btn-gold:hover { background: var(--gold); color: #000; }
 
-        /* Catalog Grid Matrix */
         .section-title { text-align: center; font-family: 'Times New Roman', serif; font-size: 2rem; font-weight: 300; letter-spacing: 4px; margin: 100px 0 50px; text-transform: uppercase;}
         .catalog-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; padding: 0 5% 100px; max-width: 1400px; margin: 0 auto;}
         .product-card { text-align: center; cursor: pointer; transition: transform 0.4s; }
         .product-card:hover { transform: translateY(-5px); }
-        .product-img { width: 100%; height: 450px; background: var(--surface); object-fit: cover; }
+        .product-img { width: 100%; height: 450px; background: var(--surface); object-fit: cover; border-radius: 4px; }
         .product-info { padding-top: 20px; }
         .product-title { font-size: 1rem; letter-spacing: 2px; font-weight: 400; margin-bottom: 8px; text-transform: uppercase; }
         .product-price { color: var(--gold); font-size: 0.9rem; }
 
-        /* Slide-out Bag / Checkout Modal */
         .bag-overlay { 
             position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; 
             opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(5px);
@@ -71,7 +69,7 @@
         
         .input-group { margin-bottom: 25px; }
         .input-group label { display: block; font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
-        .input-group input { width: 100%; padding: 15px; background: var(--bg); border: 1px solid var(--border); color: white; outline: none; }
+        .input-group input { width: 100%; padding: 15px; background: var(--bg); border: 1px solid var(--border); color: white; outline: none; border-radius: 4px; }
         .input-group input:focus { border-color: var(--gold); }
     </style>
 </head>
@@ -79,7 +77,7 @@
 
     <header>
         <div class="nav-links">
-            <button onclick="document.getElementById('shop-section').scrollIntoView()">Collections</button>
+            <button id="nav-collections-trigger">Collections</button>
         </div>
         <a href="#" class="header-logo">
             <img src="https://ejjcjskseatjqdoxabhm.supabase.co/storage/v1/object/public/store-assets/KAEL-R-White.png" alt="KAEL">
@@ -91,13 +89,12 @@
 
     <section class="hero">
         <h1>L'Obscurité</h1>
-        <p>A daring exploration of smoked woods, midnight amber, and raw elegance. Crafted in Paris, delivered globally.</p>
-        <a href="#shop-section" class="btn-gold">Discover Collection</a>
+        <p>A daring exploration of smoked woods, midnight amber, and raw elegance.</p>
+        <button id="hero-discover-btn" class="btn-gold">Discover Collection</button>
     </section>
 
     <h2 class="section-title" id="shop-section">Signature Scents</h2>
-    <div class="catalog-container" id="product-grid">
-        </div>
+    <div class="catalog-container" id="product-grid"></div>
 
     <div class="bag-overlay" id="bag-modal">
         <div class="bag-panel">
@@ -107,13 +104,13 @@
             </div>
             
             <div style="flex: 1;">
-                <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 30px;">Item: L'Obscurité Extrait De Parfum (100ml)</p>
+                <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 30px;">Item: Signature Extrait De Parfum (100ml)</p>
                 
                 <div class="input-group">
                     <label>Pincode Verification</label>
                     <div style="display: flex; gap: 10px;">
                         <input type="text" id="checkout-pin" placeholder="Enter 6-digit PIN" maxlength="6">
-                        <button class="btn-gold" style="padding: 0 20px;" onclick="verifyPin()">Verify</button>
+                        <button class="btn-gold" style="padding: 0 20px;" id="verify-pin-btn">Verify</button>
                     </div>
                     <div id="pin-status" style="margin-top: 10px; font-size: 0.8rem; font-weight: bold;"></div>
                 </div>
@@ -124,37 +121,57 @@
     </div>
 
     <script>
-        const supabase = window.supabase.createClient('https://ejjcjskseatjqdoxabhm.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqamNqc2tzZWF0anFkb3hhYmhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NjY0ODMsImV4cCI6MjA5NjQ0MjQ4M30.tCxYq9BWtU48m4mDI30Bf3-2temFzLW7qnpCG25nKBk');
+        let supabase;
         let configCache = null;
 
         const dummyProducts = [
             { title: "L'Obscurité", price: 14500, images: ["https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=800"] },
             { title: "Blanc Intense", price: 12000, images: ["https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=800"] },
-            { title: "Suede Saffron", price: 18000, images: ["https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?q=80&w=800"] },
-            { title: "Oud Noir", price: 16500, images: ["https://images.unsplash.com/photo-1615634260167-c8cdede054de?q=80&w=800"] }
+            { title: "Suede Saffron", price: 18000, images: ["https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?q=80&w=800"] }
         ];
 
-        // UI Listeners (Bulletproofed)
-        document.getElementById('open-bag-btn').addEventListener('click', () => {
-            document.getElementById('bag-modal').classList.add('active');
-        });
-        document.getElementById('close-bag-btn').addEventListener('click', () => {
-            document.getElementById('bag-modal').classList.remove('active');
+        document.addEventListener('DOMContentLoaded', () => {
+            // Setup static UI bindings immediately
+            document.getElementById('open-bag-btn').addEventListener('click', () => {
+                document.getElementById('bag-modal').classList.add('active');
+            });
+            document.getElementById('close-bag-btn').addEventListener('click', () => {
+                document.getElementById('bag-modal').classList.remove('active');
+            });
+            document.getElementById('nav-collections-trigger').addEventListener('click', () => {
+                document.getElementById('shop-section').scrollIntoView();
+            });
+            document.getElementById('hero-discover-btn').addEventListener('click', () => {
+                document.getElementById('shop-section').scrollIntoView();
+            });
+            document.getElementById('verify-pin-btn').addEventListener('click', verifyPin);
+
+            // Safe init check for Supabase
+            if (window.supabase) {
+                initStore();
+            } else {
+                let interval = setInterval(() => {
+                    if (window.supabase) {
+                        clearInterval(interval);
+                        initStore();
+                    }
+                }, 100);
+            }
         });
 
         async function initStore() {
             try {
-                // Fetch settings
+                supabase = window.supabase.createClient('https://ejjcjskseatjqdoxabhm.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqamNqc2tzZWF0anFkb3hhYmhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NjY0ODMsImV4cCI6MjA5NjQ0MjQ4M30.tCxYq9BWtU48m4mDI30Bf3-2temFzLW7qnpCG25nKBk');
+                
                 const { data: settings } = await supabase.from('store_settings').select('*').single();
                 if (settings) configCache = settings;
 
-                // Fetch Products
                 const { data: products } = await supabase.from('products').select('*').eq('is_archived', false);
                 const itemsToRender = (products && products.length > 0) ? products : dummyProducts;
                 
                 document.getElementById('product-grid').innerHTML = itemsToRender.map(p => `
                     <div class="product-card" onclick="document.getElementById('bag-modal').classList.add('active')">
-                        <img src="${p.images?.[0] || 'https://via.placeholder.com/400x500/111/fff?text=KAEL'}" class="product-img" alt="${p.title}">
+                        <img src="${p.images?.[0] || 'https://via.placeholder.com/400x400/111/fff?text=KAEL'}" class="product-img" alt="${p.title}">
                         <div class="product-info">
                             <h3 class="product-title">${p.title}</h3>
                             <div class="product-price">₹${p.price.toLocaleString('en-IN')}</div>
@@ -162,7 +179,7 @@
                     </div>
                 `).join('');
             } catch (err) {
-                console.error("Store loading gracefully fell back to defaults:", err);
+                console.error("Graceful fallback applied:", err);
             }
         }
 
@@ -181,9 +198,6 @@
                 status.style.color = "#ef4444"; status.innerText = "✕ Location Not Serviceable";
             }
         }
-
-        // Initialize safely
-        document.addEventListener('DOMContentLoaded', initStore);
     </script>
 </body>
 </html>
