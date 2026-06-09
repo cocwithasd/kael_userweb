@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAEL | Fine Fragrances</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root { --bg: #ffffff; --text: #111111; --gold: #c5a059; }
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; background: var(--bg); color: var(--text); }
+        
+        /* Minimalist Navigation */
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; position: absolute; width: 100%; box-sizing: border-box; z-index: 10;}
+        .logo img { height: 35px; } /* Fetched dynamically */
+        .nav-links a { text-decoration: none; color: white; margin-left: 30px; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;}
+        
+        /* Dynamic Hero Banner */
+        .hero { 
+            height: 100vh; background-size: cover; background-position: center; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: white; text-align: center; position: relative;
+        }
+        .hero::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.3); z-index: 1; }
+        .hero-content { z-index: 2; }
+        .hero h1 { font-size: 4rem; letter-spacing: 4px; margin-bottom: 10px; font-weight: 300; }
+        .hero p { font-size: 1.2rem; font-style: italic; color: var(--gold); }
+
+        /* Delivery Checker Widget */
+        .delivery-checker { 
+            background: #f9f9f9; padding: 40px; text-align: center; border-bottom: 1px solid #eee;
+        }
+        .checker-box { max-width: 400px; margin: 0 auto; display: flex; gap: 10px; }
+        .checker-box input { flex: 1; padding: 12px; border: 1px solid #ccc; font-size: 1rem; }
+        .checker-box button { background: var(--text); color: white; border: none; padding: 0 20px; cursor: pointer; text-transform: uppercase;}
+        #pin-result { margin-top: 15px; font-weight: bold; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo"><img id="dynamic-logo" src="" alt="KAEL Logo"></div>
+        <div class="nav-links"><a href="#">Shop</a><a href="#">About</a><a href="#">Cart</a></div>
+    </nav>
+
+    <header class="hero" id="dynamic-banner">
+        <div class="hero-content">
+            <h1>KAEL</h1>
+            <p>The Essence of Elegance</p>
+        </div>
+    </header>
+
+    <section class="delivery-checker">
+        <h3>Check Delivery Availability</h3>
+        <div class="checker-box">
+            <input type="text" id="pin-input" placeholder="Enter PIN Code" maxlength="6">
+            <button onclick="checkPincode()">Verify</button>
+        </div>
+        <div id="pin-result"></div>
+    </section>
+
+    <script>
+        const supabase = window.supabase.createClient('YOUR_URL', 'YOUR_KEY');
+        let deliveryRules = null;
+
+        async function initializeStore() {
+            // 1. Fetch Store Configuration from Admin Panel setup
+            const { data, error } = await supabase.from('store_settings').select('*').single();
+            if (data) {
+                // Apply dynamic assets
+                if (data.logo_url) document.getElementById('dynamic-logo').src = data.logo_url;
+                if (data.home_banner_url) document.getElementById('dynamic-banner').style.backgroundImage = `url('${data.home_banner_url}')`;
+                
+                // Store delivery rules for local verification
+                deliveryRules = {
+                    isPanIndia: data.pan_india_delivery,
+                    allowedPins: data.allowed_pincodes || []
+                };
+            }
+        }
+
+        // 2. Client-side Pincode Validation
+        function checkPincode() {
+            const input = document.getElementById('pin-input').value.trim();
+            const resultBox = document.getElementById('pin-result');
+            
+            if(!deliveryRules) {
+                resultBox.innerText = "System loading, please wait.";
+                return;
+            }
+
+            if(deliveryRules.isPanIndia) {
+                resultBox.style.color = "green";
+                resultBox.innerText = `Great news! We deliver all across India.`;
+                return;
+            }
+
+            if(deliveryRules.allowedPins.includes(input)) {
+                resultBox.style.color = "green";
+                resultBox.innerText = `Yes! We deliver to ${input}.`;
+            } else {
+                resultBox.style.color = "red";
+                resultBox.innerText = `We currently do not service ${input}.`;
+            }
+        }
+
+        initializeStore();
+    </script>
+</body>
+</html>
