@@ -17,7 +17,6 @@
             background: rgba(5, 5, 5, 0.85); backdrop-filter: blur(10px); z-index: 1000;
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-        .header-logo { display: flex; align-items: center; justify-content: center; }
         .header-logo img { height: 22px; max-width: 160px; object-fit: contain; display: block; }
         
         .nav-links { display: flex; gap: 30px; align-items: center; }
@@ -35,10 +34,11 @@
         }
         .hero h1 { font-family: 'Times New Roman', serif; font-size: 4rem; font-weight: 300; letter-spacing: 8px; margin-bottom: 20px; text-transform: uppercase;}
         .hero p { font-size: 1rem; color: var(--muted); letter-spacing: 2px; margin-bottom: 40px; max-width: 600px; line-height: 1.6;}
+        
         .btn-gold { 
             background: transparent; color: var(--gold); border: 1px solid var(--gold); 
             padding: 16px 40px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 3px; 
-            cursor: pointer; transition: 0.4s; text-decoration: none; display: inline-block;
+            cursor: pointer; transition: 0.4s;
         }
         .btn-gold:hover { background: var(--gold); color: #000; }
 
@@ -51,6 +51,7 @@
         .product-title { font-size: 1rem; letter-spacing: 2px; font-weight: 400; margin-bottom: 8px; text-transform: uppercase; }
         .product-price { color: var(--gold); font-size: 0.9rem; }
 
+        /* Slide-out Bag Modal */
         .bag-overlay { 
             position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; 
             opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(5px);
@@ -77,20 +78,20 @@
 
     <header>
         <div class="nav-links">
-            <button id="nav-collections-trigger">Collections</button>
+            <button onclick="document.getElementById('shop-section').scrollIntoView()">Collections</button>
         </div>
         <a href="#" class="header-logo">
             <img src="https://ejjcjskseatjqdoxabhm.supabase.co/storage/v1/object/public/store-assets/KAEL-R-White.png" alt="KAEL">
         </a>
         <div class="nav-links">
-            <button id="open-bag-btn">Bag (1)</button>
+            <button onclick="document.getElementById('bag-modal').classList.add('active')">Bag (1)</button>
         </div>
     </header>
 
     <section class="hero">
         <h1>L'Obscurité</h1>
         <p>A daring exploration of smoked woods, midnight amber, and raw elegance.</p>
-        <button id="hero-discover-btn" class="btn-gold">Discover Collection</button>
+        <button onclick="document.getElementById('shop-section').scrollIntoView()" class="btn-gold">Discover Collection</button>
     </section>
 
     <h2 class="section-title" id="shop-section">Signature Scents</h2>
@@ -100,7 +101,7 @@
         <div class="bag-panel">
             <div class="bag-header">
                 <h2>Your Bag</h2>
-                <button class="close-btn" id="close-bag-btn">✕</button>
+                <button class="close-btn" onclick="document.getElementById('bag-modal').classList.remove('active')">✕</button>
             </div>
             
             <div style="flex: 1;">
@@ -110,7 +111,7 @@
                     <label>Pincode Verification</label>
                     <div style="display: flex; gap: 10px;">
                         <input type="text" id="checkout-pin" placeholder="Enter 6-digit PIN" maxlength="6">
-                        <button class="btn-gold" style="padding: 0 20px;" id="verify-pin-btn">Verify</button>
+                        <button class="btn-gold" style="padding: 0 20px;" onclick="verifyPin()">Verify</button>
                     </div>
                     <div id="pin-status" style="margin-top: 10px; font-size: 0.8rem; font-weight: bold;"></div>
                 </div>
@@ -130,36 +131,35 @@
             { title: "Suede Saffron", price: 18000, images: ["https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?q=80&w=800"] }
         ];
 
-        document.addEventListener('DOMContentLoaded', () => {
-            // Setup static UI bindings immediately
-            document.getElementById('open-bag-btn').addEventListener('click', () => {
-                document.getElementById('bag-modal').classList.add('active');
-            });
-            document.getElementById('close-bag-btn').addEventListener('click', () => {
-                document.getElementById('bag-modal').classList.remove('active');
-            });
-            document.getElementById('nav-collections-trigger').addEventListener('click', () => {
-                document.getElementById('shop-section').scrollIntoView();
-            });
-            document.getElementById('hero-discover-btn').addEventListener('click', () => {
-                document.getElementById('shop-section').scrollIntoView();
-            });
-            document.getElementById('verify-pin-btn').addEventListener('click', verifyPin);
+        // Ensure visuals load instantly, then populate database
+        function renderProducts(products) {
+            document.getElementById('product-grid').innerHTML = products.map(p => `
+                <div class="product-card" onclick="document.getElementById('bag-modal').classList.add('active')">
+                    <img src="${p.images?.[0] || 'https://via.placeholder.com/400x400/111/fff?text=KAEL'}" class="product-img" alt="${p.title}">
+                    <div class="product-info">
+                        <h3 class="product-title">${p.title}</h3>
+                        <div class="product-price">₹${p.price.toLocaleString('en-IN')}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
 
-            // Safe init check for Supabase
+        renderProducts(dummyProducts); // Render fallback immediately
+
+        document.addEventListener('DOMContentLoaded', () => {
             if (window.supabase) {
-                initStore();
+                initDatabase();
             } else {
                 let interval = setInterval(() => {
                     if (window.supabase) {
                         clearInterval(interval);
-                        initStore();
+                        initDatabase();
                     }
-                }, 100);
+                }, 200);
             }
         });
 
-        async function initStore() {
+        async function initDatabase() {
             try {
                 supabase = window.supabase.createClient('https://ejjcjskseatjqdoxabhm.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqamNqc2tzZWF0anFkb3hhYmhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NjY0ODMsImV4cCI6MjA5NjQ0MjQ4M30.tCxYq9BWtU48m4mDI30Bf3-2temFzLW7qnpCG25nKBk');
                 
@@ -167,19 +167,11 @@
                 if (settings) configCache = settings;
 
                 const { data: products } = await supabase.from('products').select('*').eq('is_archived', false);
-                const itemsToRender = (products && products.length > 0) ? products : dummyProducts;
-                
-                document.getElementById('product-grid').innerHTML = itemsToRender.map(p => `
-                    <div class="product-card" onclick="document.getElementById('bag-modal').classList.add('active')">
-                        <img src="${p.images?.[0] || 'https://via.placeholder.com/400x400/111/fff?text=KAEL'}" class="product-img" alt="${p.title}">
-                        <div class="product-info">
-                            <h3 class="product-title">${p.title}</h3>
-                            <div class="product-price">₹${p.price.toLocaleString('en-IN')}</div>
-                        </div>
-                    </div>
-                `).join('');
+                if (products && products.length > 0) {
+                    renderProducts(products); // Overwrite fallback with real data
+                }
             } catch (err) {
-                console.error("Graceful fallback applied:", err);
+                console.log("Using local data cache.");
             }
         }
 
