@@ -3,219 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="meta-title">KAEL | Haute Parfumerie</title>
+    <title id="dynamic-title">KAEL | Haute Parfumerie</title>
+    <meta name="description" content="KAEL Signature Perfumes" id="dynamic-desc">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --bg: #050505; --surface: #111111; --text: #ffffff; --muted: #888888; --gold: #c5a059; --border: #222222; }
+        :root { --bg: #000; --surface: #111; --text: #fff; --gold: #c5a059; --muted: #888; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Helvetica Neue', Arial, sans-serif; }
         html { scroll-behavior: smooth; }
-        body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden;}
+        body { background: var(--bg); color: var(--text); overflow-x: hidden; }
         
-        /* Premium Header - Logo Left, Nav Right */
-        header { 
-            position: fixed; top: 0; width: 100%; padding: 20px 5%; 
-            display: flex; justify-content: space-between; align-items: center; 
-            background: rgba(5, 5, 5, 0.85); backdrop-filter: blur(10px); z-index: 1000;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        .header-logo img { height: 35px; object-fit: contain; display: block; }
-        
-        .nav-links { display: flex; gap: 30px; align-items: center; }
-        .nav-links button { background: none; border: none; color: var(--text); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: 0.3s; }
-        .nav-links button:hover { color: var(--gold); }
+        /* Nav */
+        header { position: fixed; top: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 20px 5%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 1000; border-bottom: 1px solid #222; }
+        .logo img { height: 24px; display: block; }
+        .nav-actions button { background: none; border: none; color: #fff; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; margin-left: 20px; }
+        .nav-actions button:hover { color: var(--gold); }
 
-        /* Cinematic Hero with CSS Animation */
-        @keyframes slowZoom { from { transform: scale(1); } to { transform: scale(1.08); } }
-        .hero-container { position: relative; height: 100vh; width: 100vw; overflow: hidden; }
-        .hero-bg {
-            position: absolute; inset: 0;
-            background: url('https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=2000') center/cover no-repeat;
-            animation: slowZoom 20s infinite alternate linear; z-index: 1;
-        }
-        .hero-overlay {
-            position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.4), var(--bg)); z-index: 2;
-            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 20px;
-        }
-        .hero-overlay h1 { font-family: 'Times New Roman', serif; font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 300; letter-spacing: 10px; margin-bottom: 20px; text-transform: uppercase;}
-        .hero-overlay p { font-size: clamp(0.8rem, 2vw, 1rem); color: #ccc; letter-spacing: 3px; margin-bottom: 40px; max-width: 600px; line-height: 1.8;}
-        
-        .btn-gold { background: transparent; color: var(--gold); border: 1px solid var(--gold); padding: 16px 40px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 3px; cursor: pointer; transition: 0.4s; }
-        .btn-gold:hover { background: var(--gold); color: #000; }
+        /* Cinematic Hero */
+        .hero { height: 100vh; background: linear-gradient(to bottom, rgba(0,0,0,0.3), #000), url('https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=2000') center/cover; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 20px; }
+        .hero h1 { font-family: 'Times New Roman', serif; font-size: clamp(3rem, 8vw, 6rem); letter-spacing: 12px; margin-bottom: 20px; text-transform: uppercase; font-weight: 300;}
+        .hero p { color: var(--muted); letter-spacing: 3px; margin-bottom: 40px; max-width: 600px; line-height: 1.6; }
+        .btn-outline { border: 1px solid var(--gold); color: var(--gold); background: transparent; padding: 15px 40px; text-transform: uppercase; letter-spacing: 3px; cursor: pointer; font-size: 0.75rem; transition: 0.3s;}
+        .btn-outline:hover { background: var(--gold); color: #000; }
 
-        /* Catalog Grid - Mobile Optimized */
-        .section-title { text-align: center; font-family: 'Times New Roman', serif; font-size: 2rem; font-weight: 300; letter-spacing: 4px; margin: 100px 0 50px; text-transform: uppercase;}
-        .catalog-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; padding: 0 5% 100px; max-width: 1400px; margin: 0 auto;}
-        .product-card { text-align: center; cursor: pointer; transition: transform 0.4s; }
-        .product-card:hover { transform: translateY(-5px); }
-        .product-img { width: 100%; aspect-ratio: 4/5; background: var(--surface); object-fit: cover; }
-        .product-info { padding-top: 20px; }
-        .product-title { font-size: 0.95rem; letter-spacing: 2px; font-weight: 400; margin-bottom: 8px; text-transform: uppercase; }
-        .product-price { color: var(--gold); font-size: 0.85rem; margin-bottom: 15px;}
-        .add-to-cart-btn { background: var(--surface); color: white; border: 1px solid var(--border); padding: 10px 20px; width: 100%; text-transform: uppercase; letter-spacing: 1px; font-size: 0.75rem; cursor: pointer;}
-        .add-to-cart-btn:hover { background: white; color: black; }
+        /* Grid */
+        .section-title { text-align: center; font-family: 'Times New Roman', serif; font-size: 2rem; letter-spacing: 4px; margin: 100px 0 50px; text-transform: uppercase; font-weight: 300;}
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; padding: 0 5% 100px; max-width: 1400px; margin: 0 auto; }
+        .card { text-align: center; }
+        .card img { width: 100%; aspect-ratio: 4/5; object-fit: cover; background: var(--surface); margin-bottom: 20px; }
+        .card h3 { font-size: 1rem; letter-spacing: 2px; font-weight: 400; text-transform: uppercase; margin-bottom: 10px; }
+        .card p { color: var(--gold); margin-bottom: 15px; font-size: 0.9rem; }
+        .add-btn { width: 100%; padding: 12px; background: #222; color: #fff; border: none; text-transform: uppercase; letter-spacing: 2px; font-size: 0.7rem; cursor: pointer; }
+        .add-btn:hover { background: #fff; color: #000; }
 
-        /* Real Cart System Modal */
-        .bag-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; opacity: 0; pointer-events: none; transition: 0.3s; backdrop-filter: blur(5px); }
-        .bag-overlay.active { opacity: 1; pointer-events: auto; }
-        .bag-panel { position: absolute; right: -100%; top: 0; bottom: 0; width: 100%; max-width: 450px; background: var(--surface); padding: 40px 30px; transition: right 0.4s ease-out; display: flex; flex-direction: column; }
-        .bag-overlay.active .bag-panel { right: 0; }
-        .bag-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 20px;}
-        .bag-header h2 { font-family: 'Times New Roman', serif; font-size: 1.5rem; font-weight: 300; letter-spacing: 2px; text-transform: uppercase;}
-        .close-btn { background: none; border: none; color: var(--muted); font-size: 1.5rem; cursor: pointer; }
+        /* Cart Modal */
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .overlay.active { opacity: 1; pointer-events: auto; }
+        .cart-panel { position: absolute; right: -100%; top: 0; bottom: 0; width: 100%; max-width: 400px; background: var(--surface); padding: 40px 30px; transition: 0.4s; display: flex; flex-direction: column; border-left: 1px solid #222;}
+        .overlay.active .cart-panel { right: 0; }
         
-        #cart-items { flex: 1; overflow-y: auto; margin-bottom: 20px; }
-        .cart-item { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.85rem; border-bottom: 1px solid #222; padding-bottom: 15px;}
+        .cart-header { display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding-bottom: 20px; margin-bottom: 20px; }
+        .cart-header h2 { font-family: 'Times New Roman', serif; font-weight: 300; letter-spacing: 2px; text-transform: uppercase; }
+        .cart-items { flex: 1; overflow-y: auto; }
+        .cart-item { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.85rem; border-bottom: 1px solid #222; padding-bottom: 15px; }
         
-        .input-group { margin-bottom: 20px; }
-        .input-group input { width: 100%; padding: 15px; background: var(--bg); border: 1px solid var(--border); color: white; outline: none; margin-bottom: 10px;}
-        
-        @media (max-width: 768px) {
-            header { flex-direction: column; gap: 15px; padding: 15px; }
-            .bag-panel { padding: 20px; }
-        }
+        .checkout-zone { border-top: 1px solid #333; padding-top: 20px; }
+        .pin-check { display: flex; gap: 10px; margin-bottom: 20px; }
+        .pin-check input { flex: 1; padding: 12px; background: #000; border: 1px solid #333; color: white; outline: none; }
+        .btn-fill { background: var(--gold); color: #000; border: none; padding: 15px; width: 100%; font-weight: bold; text-transform: uppercase; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="header-logo">
+        <div class="logo">
             <img src="https://ejjcjskseatjqdoxabhm.supabase.co/storage/v1/object/public/store-assets/KAEL-R-White.png" alt="KAEL">
         </div>
-        <div class="nav-links">
-            <button onclick="document.getElementById('shop-section').scrollIntoView()">Collections</button>
-            <button onclick="document.getElementById('bag-modal').classList.add('active')" id="cart-count-btn">Bag (0)</button>
+        <div class="nav-actions">
+            <button onclick="document.getElementById('shop').scrollIntoView()">Shop</button>
+            <button onclick="toggleCart()" id="cart-counter">Bag (0)</button>
         </div>
     </header>
 
-    <div class="hero-container">
-        <div class="hero-bg"></div>
-        <div class="hero-overlay">
-            <h1>Midnight Aura</h1>
-            <p>A cinematic exploration of rare botanicals and smoked woods.</p>
-            <button onclick="document.getElementById('shop-section').scrollIntoView()" class="btn-gold">Explore Collection</button>
-        </div>
+    <div class="hero">
+        <h1>L'Obscurité</h1>
+        <p>A cinematic exploration of rare botanicals and smoked woods.</p>
+        <button class="btn-outline" onclick="document.getElementById('shop').scrollIntoView()">Explore</button>
     </div>
 
-    <h2 class="section-title" id="shop-section">The Collection</h2>
-    <div class="catalog-container" id="product-grid"></div>
+    <h2 class="section-title" id="shop">The Collection</h2>
+    <div class="grid" id="product-grid"></div>
 
-    <div class="bag-overlay" id="bag-modal">
-        <div class="bag-panel">
-            <div class="bag-header">
+    <div class="overlay" id="cart-modal">
+        <div class="cart-panel">
+            <div class="cart-header">
                 <h2>Your Bag</h2>
-                <button class="close-btn" onclick="document.getElementById('bag-modal').classList.remove('active')">✕</button>
+                <button style="background:none; border:none; color:#888; font-size:1.5rem; cursor:pointer;" onclick="toggleCart()">✕</button>
             </div>
             
-            <div id="cart-items">
-                <p style="color:var(--muted); font-size: 0.8rem;">Your bag is empty.</p>
+            <div class="cart-items" id="cart-list">
+                <p style="color:var(--muted); font-size:0.8rem;">Your bag is empty.</p>
             </div>
             
-            <div style="border-top: 1px solid var(--border); padding-top: 20px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold;">
-                    <span>Subtotal</span>
-                    <span id="cart-total">₹0</span>
+            <div class="checkout-zone">
+                <div style="display:flex; justify-content:space-between; margin-bottom:20px; font-weight:bold;">
+                    <span>Subtotal</span><span id="cart-total">₹0</span>
                 </div>
                 
-                <div class="input-group">
-                    <div style="display: flex; gap: 10px;">
-                        <input type="text" id="checkout-pin" placeholder="ENTER DELIVERY PIN" maxlength="6">
-                        <button class="btn-gold" style="padding: 0 20px;" onclick="verifyPin()">Verify</button>
-                    </div>
-                    <div id="pin-status" style="font-size: 0.75rem; font-weight: bold;"></div>
+                <div class="pin-check">
+                    <input type="text" id="check-pin" placeholder="ENTER DELIVERY PIN" maxlength="6">
+                    <button class="btn-outline" style="padding: 0 15px;" onclick="verifyPin()">Verify</button>
                 </div>
+                <div id="pin-msg" style="font-size:0.75rem; font-weight:bold; margin-bottom: 20px;"></div>
 
-                <button class="btn-gold" style="width: 100%; background: var(--gold); color: black; font-weight: bold; border: none;">Proceed to Payment</button>
+                <button class="btn-fill">Proceed to Payment</button>
             </div>
         </div>
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://ejjcjskseatjqdoxabhm.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqamNqc2tzZWF0anFkb3hhYmhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NjY0ODMsImV4cCI6MjA5NjQ0MjQ4M30.tCxYq9BWtU48m4mDI30Bf3-2temFzLW7qnpCG25nKBk';
+        const DB_URL = 'https://ejjcjskseatjqdoxabhm.supabase.co';
+        const DB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqamNqc2tzZWF0anFkb3hhYmhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NjY0ODMsImV4cCI6MjA5NjQ0MjQ4M30.tCxYq9BWtU48m4mDI30Bf3-2temFzLW7qnpCG25nKBk';
         let supabase;
-        let configCache = null;
-        let cart = [];
+        let sysConfig = null;
+        let cartData = [];
 
         document.addEventListener('DOMContentLoaded', () => {
-            if (window.supabase) { initDatabase(); } 
-            else { setInterval(() => { if (window.supabase) initDatabase(); }, 100); }
+            if(window.supabase) init(); else setTimeout(init, 100);
         });
 
-        async function initDatabase() {
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        async function init() {
+            supabase = window.supabase.createClient(DB_URL, DB_KEY);
             
-            const { data: settings } = await supabase.from('store_settings').select('*').single();
-            if (settings) {
-                configCache = settings;
-                if(settings.seo_title) document.getElementById('meta-title').innerText = settings.seo_title;
+            // Apply SEO and Config
+            const { data: cfg } = await supabase.from('store_settings').select('*').single();
+            if(cfg) {
+                sysConfig = cfg;
+                if(cfg.seo_title) document.getElementById('dynamic-title').innerText = cfg.seo_title;
+                if(cfg.seo_description) document.getElementById('dynamic-desc').content = cfg.seo_description;
             }
 
-            const { data: products } = await supabase.from('products').select('*').eq('is_archived', false);
-            if (products) {
-                document.getElementById('product-grid').innerHTML = products.map(p => `
-                    <div class="product-card">
-                        <img src="${p.images?.[0] || 'https://via.placeholder.com/400x500/111/fff?text=KAEL'}" class="product-img" alt="${p.title}">
-                        <div class="product-info">
-                            <h3 class="product-title">${p.title}</h3>
-                            <div class="product-price">₹${p.price.toLocaleString('en-IN')}</div>
-                            <button class="add-to-cart-btn" onclick="addToCart('${p.title}', ${p.price})">Add to Bag</button>
-                        </div>
+            // Render Products
+            const { data: prods } = await supabase.from('products').select('*').eq('is_archived', false);
+            if(prods) {
+                document.getElementById('product-grid').innerHTML = prods.map(p => `
+                    <div class="card">
+                        <img src="${p.images?.[0] || 'https://via.placeholder.com/400x500/111/fff?text=KAEL'}" alt="${p.title}">
+                        <h3>${p.title}</h3>
+                        <p>₹${p.price.toLocaleString('en-IN')}</p>
+                        <button class="add-btn" onclick="addToBag('${p.title}', ${p.price})">Add to Bag</button>
                     </div>
                 `).join('');
             }
         }
 
-        // Cart Logic
-        window.addToCart = function(title, price) {
-            cart.push({ title, price });
-            updateCartUI();
-            document.getElementById('bag-modal').classList.add('active');
+        function toggleCart() {
+            const el = document.getElementById('cart-modal');
+            el.classList.toggle('active');
         }
 
-        function updateCartUI() {
-            document.getElementById('cart-count-btn').innerText = `Bag (${cart.length})`;
-            const cartContainer = document.getElementById('cart-items');
+        window.addToBag = function(title, price) {
+            cartData.push({title, price});
+            renderCart();
+            toggleCart();
+        }
+
+        window.removeBagItem = function(idx) {
+            cartData.splice(idx, 1);
+            renderCart();
+        }
+
+        function renderCart() {
+            document.getElementById('cart-counter').innerText = `Bag (${cartData.length})`;
+            const list = document.getElementById('cart-list');
             
-            if(cart.length === 0) {
-                cartContainer.innerHTML = '<p style="color:var(--muted); font-size: 0.8rem;">Your bag is empty.</p>';
+            if(cartData.length === 0) {
+                list.innerHTML = '<p style="color:var(--muted); font-size:0.8rem;">Your bag is empty.</p>';
                 document.getElementById('cart-total').innerText = '₹0';
                 return;
             }
 
             let total = 0;
-            cartContainer.innerHTML = cart.map((item, index) => {
+            list.innerHTML = cartData.map((item, idx) => {
                 total += item.price;
                 return `
                 <div class="cart-item">
                     <span>${item.title}</span>
-                    <div>
-                        <span style="color:var(--gold); margin-right:15px;">₹${item.price.toLocaleString('en-IN')}</span>
-                        <span style="color:red; cursor:pointer;" onclick="removeFromCart(${index})">✕</span>
-                    </div>
+                    <div><span style="color:var(--gold); margin-right:15px;">₹${item.price.toLocaleString('en-IN')}</span>
+                    <span style="color:red; cursor:pointer;" onclick="removeBagItem(${idx})">✕</span></div>
                 </div>`;
             }).join('');
-            
             document.getElementById('cart-total').innerText = `₹${total.toLocaleString('en-IN')}`;
         }
 
-        window.removeFromCart = function(index) {
-            cart.splice(index, 1);
-            updateCartUI();
-        }
-
         window.verifyPin = function() {
-            const pin = document.getElementById('checkout-pin').value.trim();
-            const status = document.getElementById('pin-status');
-            
-            if(pin.length !== 6) { status.style.color = "#ef4444"; status.innerText = "Enter valid 6-digit PIN"; return; }
+            const pin = document.getElementById('check-pin').value.trim();
+            const msg = document.getElementById('pin-msg');
+            if(pin.length !== 6) { msg.style.color = "#ef4444"; msg.innerText = "Enter valid 6-digit PIN"; return; }
 
-            const isPanIndia = configCache ? configCache.pan_india_delivery : true;
-            const validPins = configCache?.allowed_pincodes || [];
+            const panIndia = sysConfig ? sysConfig.pan_india_delivery : true;
+            const pins = sysConfig?.allowed_pincodes || [];
 
-            if(isPanIndia || validPins.includes(pin)) {
-                status.style.color = "#10b981"; status.innerText = "✓ Delivery Available";
+            if(panIndia || pins.includes(pin)) {
+                msg.style.color = "#10b981"; msg.innerText = "✓ Delivery Available";
             } else {
-                status.style.color = "#ef4444"; status.innerText = "✕ Location Not Serviceable";
+                msg.style.color = "#ef4444"; msg.innerText = "✕ Not Serviceable";
             }
         }
     </script>
