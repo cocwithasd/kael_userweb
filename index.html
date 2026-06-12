@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KAEL | Haute Parfumerie</title>
+    <!-- Tailwind CSS for rapid modern layout structure -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Supabase JS Client library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap');
@@ -29,29 +31,34 @@
 </head>
 <body class="overflow-x-hidden">
 
+    <!-- NAVIGATION HEADER -->
     <header id="main-header" class="fixed top-0 left-0 w-full z-50 transition-all duration-300 px-6 py-6 flex justify-between items-center bg-transparent">
-        <a href="#" onclick="navigateTo('home')" class="flex items-center">
+        <a href="#" onclick="navigateTo('home'); return false;" class="flex items-center">
             <img src="https://ejjcjskseatjqdoxabhm.supabase.co/storage/v1/object/public/store-assets/kael_weblogo.png" alt="KAEL Logo" class="h-8 md:h-10 object-contain transition-all duration-300" id="header-logo">
         </a>
         
+        <!-- Desktop Nav Links -->
         <nav class="hidden md:flex space-x-8 text-sm uppercase tracking-widest font-medium">
-            <a href="#" onclick="navigateTo('home')" class="hover:text-amber-400 transition-colors">Collection</a>
-            <a href="#" onclick="navigateTo('about')" class="hover:text-amber-400 transition-colors">About</a>
-            <a href="#" onclick="navigateTo('contact')" class="hover:text-amber-400 transition-colors">Contact</a>
+            <a href="#" onclick="navigateTo('home'); return false;" class="hover:text-amber-400 transition-colors">Collection</a>
+            <a href="#" onclick="navigateTo('about'); return false;" class="hover:text-amber-400 transition-colors">About</a>
+            <a href="#" onclick="navigateTo('contact'); return false;" class="hover:text-amber-400 transition-colors">Contact</a>
         </nav>
 
+        <!-- Right System Controls -->
         <div class="flex items-center space-x-6">
             <button id="auth-btn" onclick="openAuthModal()" class="text-sm tracking-wider uppercase border border-white/20 px-4 py-1.5 rounded hover:bg-white hover:text-black transition-all">Sign In</button>
             <button onclick="toggleCart()" class="relative p-1">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                 <span id="cart-count" class="absolute -top-1 -right-2 bg-amber-500 text-black text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center hidden">0</span>
             </button>
+            <!-- Mobile Menu Toggle Button -->
             <button class="md:hidden p-1 focus:outline-none" onclick="toggleMobileMenu()">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
         </div>
     </header>
 
+    <!-- MOBILE BREADCRUMB OVERLAY NAV -->
     <div id="mobile-menu" class="fixed inset-0 bg-black/95 z-50 transform translate-x-full transition-transform duration-300 p-8 flex flex-col justify-between hidden">
         <div>
             <div class="flex justify-between items-center mb-12">
@@ -60,23 +67,27 @@
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
+            <!-- Dynamic Mobile Navigation Context Map -->
             <div class="text-xs uppercase tracking-widest text-gray-500 mb-6 flex items-center space-x-2" id="mobile-breadcrumb">
                 <span>KAEL</span> <span>/</span> <span class="text-white" id="current-crumb">Home</span>
             </div>
             <nav class="flex flex-col space-y-6 text-2xl uppercase tracking-wider font-light">
-                <a href="#" onclick="navigateTo('home'); toggleMobileMenu()" class="hover:text-amber-400 transition-colors">The Collection</a>
-                <a href="#" onclick="navigateTo('about'); toggleMobileMenu()" class="hover:text-amber-400 transition-colors">Our Story</a>
-                <a href="#" onclick="navigateTo('contact'); toggleMobileMenu()" class="hover:text-amber-400 transition-colors">Contact Client Services</a>
-                <a href="#" onclick="navigateTo('policy-privacy'); toggleMobileMenu()" class="text-sm text-gray-400 hover:text-white">Privacy Policy</a>
-                <a href="#" onclick="navigateTo('policy-return'); toggleMobileMenu()" class="text-sm text-gray-400 hover:text-white">Returns & Replacements</a>
+                <a href="#" onclick="navigateTo('home'); toggleMobileMenu(); return false;" class="hover:text-amber-400 transition-colors">The Collection</a>
+                <a href="#" onclick="navigateTo('about'); toggleMobileMenu(); return false;" class="hover:text-amber-400 transition-colors">Our Story</a>
+                <a href="#" onclick="navigateTo('contact'); toggleMobileMenu(); return false;" class="hover:text-amber-400 transition-colors">Contact Client Services</a>
+                <a href="#" onclick="navigateTo('policy-privacy'); toggleMobileMenu(); return false;" class="text-sm text-gray-400 hover:text-white">Privacy Policy</a>
+                <a href="#" onclick="navigateTo('policy-return'); toggleMobileMenu(); return false;" class="text-sm text-gray-400 hover:text-white">Returns & Replacements</a>
             </nav>
         </div>
         <div id="mobile-auth-footer"></div>
     </div>
 
+    <!-- MAIN VIEW CONTAINER -->
     <main id="view-content" class="pt-24 min-h-screen">
-        </main>
+        <!-- Views dynamic content lands here -->
+    </main>
 
+    <!-- FOOTER ARCHITECTURE -->
     <footer class="border-t border-white/10 bg-[#050505] py-12 px-6 text-sm text-gray-400 mt-20">
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
@@ -86,16 +97,16 @@
             <div>
                 <h3 class="text-white uppercase tracking-widest font-semibold mb-4 text-xs">Client Care</h3>
                 <ul class="space-y-2 text-xs">
-                    <li><a href="#" onclick="navigateTo('contact')" class="hover:text-white">Contact Us</a></li>
-                    <li><a href="#" onclick="navigateTo('about')" class="hover:text-white">About Brand</a></li>
+                    <li><a href="#" onclick="navigateTo('contact'); return false;" class="hover:text-white">Contact Us</a></li>
+                    <li><a href="#" onclick="navigateTo('about'); return false;" class="hover:text-white">About Brand</a></li>
                 </ul>
             </div>
             <div>
                 <h3 class="text-white uppercase tracking-widest font-semibold mb-4 text-xs">Legal Structure</h3>
                 <ul class="space-y-2 text-xs">
-                    <li><a href="#" onclick="navigateTo('policy-privacy')" class="hover:text-white">Privacy Policy</a></li>
-                    <li><a href="#" onclick="navigateTo('policy-return')" class="hover:text-white">Returns & Replacements</a></li>
-                    <li><a href="#" onclick="navigateTo('policy-cancellation')" class="hover:text-white">Cancellations & Refunds</a></li>
+                    <li><a href="#" onclick="navigateTo('policy-privacy'); return false;" class="hover:text-white">Privacy Policy</a></li>
+                    <li><a href="#" onclick="navigateTo('policy-return'); return false;" class="hover:text-white">Returns & Replacements</a></li>
+                    <li><a href="#" onclick="navigateTo('policy-cancellation'); return false;" class="hover:text-white">Cancellations & Refunds</a></li>
                 </ul>
             </div>
             <div>
@@ -109,6 +120,7 @@
         </div>
     </footer>
 
+    <!-- INTERACTIVE CART OVERLAY DRAW -->
     <div id="cart-drawer" class="fixed inset-y-0 right-0 w-full max-w-md bg-[#0F0F0F] border-l border-white/10 z-50 transform translate-x-full transition-transform duration-300 p-6 flex flex-col justify-between hidden">
         <div>
             <div class="flex justify-between items-center mb-6">
@@ -116,7 +128,8 @@
                 <button onclick="toggleCart()" class="p-1"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
             <div id="cart-items" class="space-y-4 max-h-[60vh] overflow-y-auto">
-                </div>
+                <!-- Items built runtime -->
+            </div>
         </div>
         <div class="border-t border-white/10 pt-4">
             <div class="flex justify-between mb-4 text-sm font-medium">
@@ -127,6 +140,7 @@
         </div>
     </div>
 
+    <!-- AUTHENTICATION DIALOG / MODAL -->
     <div id="auth-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-[#121212] border border-white/10 max-w-sm w-full p-6 rounded relative">
             <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
@@ -153,6 +167,7 @@
         </div>
     </div>
 
+    <!-- CORE LOGIC & RUNTIME PLATFORM -->
     <script>
         // Supabase Initialization Config
         const SUPABASE_URL = "https://ejjcjskseatjqdoxabhm.supabase.co";
@@ -177,19 +192,26 @@
 
         // App Initializer
         async function initApp() {
-            await checkSession();
-            await fetchProducts();
-            // Default load view check based on URL parameters or load state
+            try {
+                await checkSession();
+                await fetchProducts();
+            } catch(e) {
+                console.error("Initialization warning:", e);
+            }
             navigateTo('home');
         }
 
         async function checkSession() {
-            const { data: { session } } = await supabase.auth.getSession();
-            updateAuthUI(session?.user || null);
-            
-            supabase.auth.onAuthStateChange((_event, session) => {
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
                 updateAuthUI(session?.user || null);
-            });
+                
+                supabase.auth.onAuthStateChange((_event, session) => {
+                    updateAuthUI(session?.user || null);
+                });
+            } catch (e) {
+                console.error("Session fetch failed", e);
+            }
         }
 
         function updateAuthUI(user) {
@@ -205,8 +227,12 @@
         }
 
         async function fetchProducts() {
-            const { data, error } = await supabase.from('products').select('*');
-            if (!error && data) globalProducts = data;
+            try {
+                const { data, error } = await supabase.from('products').select('*');
+                if (!error && data) globalProducts = data;
+            } catch(e) {
+                console.error("Product catalog connection error:", e);
+            }
         }
 
         // Structural Single Page Router
@@ -234,43 +260,48 @@
 
         // VIEW BUILDER: Home Grid View
         function renderHome(target) {
-            if(globalProducts.length === 0) {
-                target.innerHTML = `<div class="text-center py-20 text-gray-500 font-mono">Restructuring Collection Grid System...</div>`;
-                return;
-            }
-
             let html = `
-                <section class="relative min-h-[60vh] flex flex-col justify-center items-center text-center px-6 mb-16">
-                    <div class="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-[#0A0A0A] z-10"></div>
+                <!-- HERO TEASER DISPLAY -->
+                <section class="relative min-h-[50vh] flex flex-col justify-center items-center text-center px-6 mb-16">
+                    <div class="absolute inset-0 bg-gradient-to-b from-black/10 via-black/30 to-[#0A0A0A] z-10"></div>
                     <h1 class="serif-title text-5xl md:text-7xl tracking-widest uppercase mb-4 z-20 text-white">KAEL PARFUMS</h1>
                     <p class="text-xs md:text-sm tracking-[0.4em] uppercase text-amber-400 font-light z-20">Dynamic Fragrance Synthetics & Absolute Materials</p>
                 </section>
 
                 <section class="max-w-7xl mx-auto px-6">
                     <h2 class="serif-title text-2xl tracking-widest uppercase mb-8 text-gray-400">Current Iterations</h2>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             `;
 
-            globalProducts.forEach(prod => {
+            if(globalProducts.length === 0) {
                 html += `
-                    <div class="group bg-[#111] border border-white/5 hover:border-white/20 transition-all p-6 flex flex-col justify-between cursor-pointer" onclick="navigateTo('product', '${prod.slug}')">
-                        <div class="aspect-square bg-[#1A1A1A] mb-6 overflow-hidden relative flex items-center justify-center p-4">
-                            <img src="${prod.image_url}" alt="${prod.name}" class="max-h-full max-w-full object-contain transform group-hover:scale-105 transition-transform duration-700">
-                        </div>
-                        <div>
-                            <span class="text-[10px] tracking-widest text-amber-400 uppercase font-mono">In Stock</span>
-                            <h3 class="serif-title text-xl text-white mt-1 group-hover:text-amber-300 transition-colors">${prod.name}</h3>
-                            <p class="text-xs text-gray-400 mt-1 line-clamp-2">${prod.tagline || ''}</p>
-                            <div class="flex justify-between items-center mt-4 pt-4 border-t border-white/5">
-                                <span class="font-mono text-sm tracking-wide">$${Number(prod.price).toFixed(2)}</span>
-                                <span class="text-xs uppercase tracking-widest text-white/60 group-hover:text-white">Explore Matrix →</span>
-                            </div>
-                        </div>
+                    <div class="text-center py-20 bg-[#111] border border-white/5 text-gray-500 font-mono text-xs rounded-sm">
+                        Synchronizing live database elements... If this message persists, ensure that seed data is pushed into your Supabase "products" table.
                     </div>
                 `;
-            });
+            } else {
+                html += `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">`;
+                globalProducts.forEach(prod => {
+                    html += `
+                        <div class="group bg-[#111] border border-white/5 hover:border-white/20 transition-all p-6 flex flex-col justify-between cursor-pointer" onclick="navigateTo('product', '${prod.slug}')">
+                            <div class="aspect-square bg-[#1A1A1A] mb-6 overflow-hidden relative flex items-center justify-center p-4">
+                                <img src="${prod.image_url}" alt="${prod.name}" class="max-h-full max-w-full object-contain transform group-hover:scale-105 transition-transform duration-700">
+                            </div>
+                            <div>
+                                <span class="text-[10px] tracking-widest text-amber-400 uppercase font-mono">In Stock</span>
+                                <h3 class="serif-title text-xl text-white mt-1 group-hover:text-amber-300 transition-colors">${prod.name}</h3>
+                                <p class="text-xs text-gray-400 mt-1 line-clamp-2">${prod.tagline || ''}</p>
+                                <div class="flex justify-between items-center mt-4 pt-4 border-t border-white/5">
+                                    <span class="font-mono text-sm tracking-wide">$${Number(prod.price).toFixed(2)}</span>
+                                    <span class="text-xs uppercase tracking-widest text-white/60 group-hover:text-white">Explore Matrix →</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
 
-            html += `</div></section>`;
+            html += `</section>`;
             target.innerHTML = html;
         }
 
@@ -293,10 +324,12 @@
                     </button>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                        <!-- Product Structural Visual Render -->
                         <div class="bg-[#111] p-8 border border-white/5 flex items-center justify-center aspect-square rounded-sm">
                             <img src="${product.image_url}" alt="${product.name}" class="max-h-full object-contain">
                         </div>
                         
+                        <!-- Analytical Information Stack -->
                         <div class="flex flex-col justify-between">
                             <div>
                                 <span class="text-xs uppercase tracking-widest text-amber-400 font-mono">Eau De Parfum Extreme</span>
@@ -332,26 +365,30 @@
         async function renderPolicyPage(target, policyId) {
             target.innerHTML = `<div class="text-center py-20 text-gray-500 font-mono">Syncing system policy documentation from Supabase...</div>`;
             
-            const { data, error } = await supabase
-                .from('legal_pages')
-                .select('*')
-                .eq('id', policyId)
-                .single();
+            try {
+                const { data, error } = await supabase
+                    .from('legal_pages')
+                    .select('*')
+                    .eq('id', policyId)
+                    .single();
 
-            if (error || !data) {
-                target.innerHTML = `<div class="max-w-2xl mx-auto px-6 py-12 text-center text-gray-400 font-mono">Error locating policy definition schema for payload ID: ${policyId}</div>`;
-                return;
-            }
+                if (error || !data) {
+                    target.innerHTML = `<div class="max-w-2xl mx-auto px-6 py-12 text-center text-gray-400 font-mono">Error locating policy definition schema for payload ID: ${policyId}</div>`;
+                    return;
+                }
 
-            target.innerHTML = `
-                <div class="max-w-3xl mx-auto px-6 py-12">
-                    <h1 class="serif-title text-3xl md:text-4xl mb-2 text-amber-400">${data.title}</h1>
-                    <p class="text-[11px] font-mono text-gray-500 mb-8">System Timestamp Verified: ${new Date(data.updated_at).toLocaleDateString()}</p>
-                    <div class="text-gray-300 leading-relaxed text-sm space-y-4 whitespace-pre-line border-t border-white/10 pt-6">
-                        ${data.content}
+                target.innerHTML = `
+                    <div class="max-w-3xl mx-auto px-6 py-12">
+                        <h1 class="serif-title text-3xl md:text-4xl mb-2 text-amber-400">${data.title}</h1>
+                        <p class="text-[11px] font-mono text-gray-500 mb-8">System Timestamp Verified: ${new Date(data.updated_at).toLocaleDateString()}</p>
+                        <div class="text-gray-300 leading-relaxed text-sm space-y-4 whitespace-pre-line border-t border-white/10 pt-6">
+                            ${data.content}
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+            } catch(e) {
+                target.innerHTML = `<div class="text-center py-20 text-red-400 font-mono">Failed to fetch system policies from datastore.</div>`;
+            }
         }
 
         // VIEW BUILDER: Profile / Order History Dashboard
@@ -363,55 +400,61 @@
 
             target.innerHTML = `<div class="text-center py-20 text-gray-500 font-mono">Fetching profile and secure order ledgers...</div>`;
 
-            const { data: profile } = await supabase.from('profiles').select('*').eq('id', currentUser.id).single();
-            const { data: orders } = await supabase.from('orders').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+            try {
+                const { data: profile } = await supabase.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
+                const { data: orders } = await supabase.from('orders').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
 
-            let html = `
-                <div class="max-w-5xl mx-auto px-6 py-8">
-                    <div class="flex justify-between items-center border-b border-white/10 pb-6 mb-8">
-                        <div>
-                            <h1 class="serif-title text-3xl text-white">Client Portal</h1>
-                            <p class="text-xs font-mono text-gray-400">${currentUser.email}</p>
-                        </div>
-                        <button onclick="handleSignOut()" class="text-xs border border-red-500/30 text-red-400 px-3 py-1 rounded hover:bg-red-500 hover:text-white transition-all">Revoke Session</button>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div class="bg-[#111] p-6 border border-white/5 rounded-sm h-fit">
-                            <h2 class="uppercase tracking-widest text-xs font-semibold text-amber-400 mb-4">Default Profile Settings</h2>
-                            <div class="space-y-3 text-xs">
-                                <div><span class="text-gray-500 block">Full Name:</span> <span class="text-white">${profile?.full_name || 'Not Configured'}</span></div>
-                                <div><span class="text-gray-500 block">Shipping Location Vector:</span> <span class="text-white">${profile?.shipping_address || 'Not Configured'}</span></div>
-                                <div><span class="text-gray-500 block">Phone Vector:</span> <span class="text-white">${profile?.phone || 'Not Configured'}</span></div>
-                            </div>
-                        </div>
-
-                        <div class="md:col-span-2">
-                            <h2 class="uppercase tracking-widest text-xs font-semibold text-gray-400 mb-4">Historical Orders Ledger</h2>
-            `;
-
-            if(!orders || orders.length === 0) {
-                html += `<div class="bg-[#111] p-6 border border-white/5 text-center text-xs text-gray-500 font-mono">No transactional history found for this identifier key.</div>`;
-            } else {
-                orders.forEach(order => {
-                    html += `
-                        <div class="bg-[#111] border border-white/5 p-4 rounded-sm mb-3 font-mono text-xs flex justify-between items-center">
+                let html = `
+                    <div class="max-w-5xl mx-auto px-6 py-8">
+                        <div class="flex justify-between items-center border-b border-white/10 pb-6 mb-8">
                             <div>
-                                <div class="text-white font-semibold">ID: ${order.id.substring(0,8)}...</div>
-                                <div class="text-gray-500 text-[10px]">${new Date(order.created_at).toLocaleDateString()}</div>
-                                <div class="text-gray-400 mt-1">Payment Strategy: ${order.payment_method}</div>
+                                <h1 class="serif-title text-3xl text-white">Client Portal</h1>
+                                <p class="text-xs font-mono text-gray-400">${currentUser.email}</p>
                             </div>
-                            <div class="text-right">
-                                <div class="text-amber-400 font-bold">$${Number(order.total_amount).toFixed(2)}</div>
-                                <span class="inline-block mt-1 px-2 py-0.5 rounded text-[10px] bg-white/10 text-white font-sans uppercase tracking-wider">${order.order_status}</span>
-                            </div>
+                            <button onclick="handleSignOut()" class="text-xs border border-red-500/30 text-red-400 px-3 py-1 rounded hover:bg-red-500 hover:text-white transition-all">Revoke Session</button>
                         </div>
-                    `;
-                });
-            }
 
-            html += `</div></div></div>`;
-            target.innerHTML = html;
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <!-- Profile/Shipping Config Info -->
+                            <div class="bg-[#111] p-6 border border-white/5 rounded-sm h-fit">
+                                <h2 class="uppercase tracking-widest text-xs font-semibold text-amber-400 mb-4">Default Profile Settings</h2>
+                                <div class="space-y-3 text-xs">
+                                    <div><span class="text-gray-500 block">Full Name:</span> <span class="text-white">${profile?.full_name || 'Not Configured'}</span></div>
+                                    <div><span class="text-gray-500 block">Shipping Location Vector:</span> <span class="text-white">${profile?.shipping_address || 'Not Configured'}</span></div>
+                                    <div><span class="text-gray-500 block">Phone Vector:</span> <span class="text-white">${profile?.phone || 'Not Configured'}</span></div>
+                                </div>
+                            </div>
+
+                            <!-- Historical Orders Ledger -->
+                            <div class="md:col-span-2">
+                                <h2 class="uppercase tracking-widest text-xs font-semibold text-gray-400 mb-4">Historical Orders Ledger</h2>
+                `;
+
+                if(!orders || orders.length === 0) {
+                    html += `<div class="bg-[#111] p-6 border border-white/5 text-center text-xs text-gray-500 font-mono">No transactional history found for this identifier key.</div>`;
+                } else {
+                    orders.forEach(order => {
+                        html += `
+                            <div class="bg-[#111] border border-white/5 p-4 rounded-sm mb-3 font-mono text-xs flex justify-between items-center">
+                                <div>
+                                    <div class="text-white font-semibold">ID: ${order.id.substring(0,8)}...</div>
+                                    <div class="text-gray-500 text-[10px]">${new Date(order.created_at).toLocaleDateString()}</div>
+                                    <div class="text-gray-400 mt-1">Payment Strategy: ${order.payment_method}</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-amber-400 font-bold">$${Number(order.total_amount).toFixed(2)}</div>
+                                    <span class="inline-block mt-1 px-2 py-0.5 rounded text-[10px] bg-white/10 text-white font-sans uppercase tracking-wider">${order.order_status}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                html += `</div></div></div>`;
+                target.innerHTML = html;
+            } catch(e) {
+                target.innerHTML = `<div class="text-center py-20 text-gray-400 font-mono">Error rendering account data matrices.</div>`;
+            }
         }
 
         // SHOPPING CART SUB-ENGINE
@@ -492,7 +535,6 @@
 
         // MODAL AUTH SYSTEM LOGIC
         function openAuthModal() { document.getElementById('auth-modal').classList.remove('hidden'); }
-         Buch closeAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
         function closeAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
 
         function toggleAuthMode() {
@@ -509,20 +551,24 @@
 
             if(!email || !password) { alert("Credentials parameters incomplete"); return; }
 
-            if(isSignUpMode) {
-                const { data, error } = await supabase.auth.signUp({ email, password });
-                if(error) alert(error.message);
-                else {
-                    alert("Account configuration verification linked to mail matrix.");
-                    closeAuthModal();
+            try {
+                if(isSignUpMode) {
+                    const { data, error } = await supabase.auth.signUp({ email, password });
+                    if(error) alert(error.message);
+                    else {
+                        alert("Account configuration verification linked to mail matrix.");
+                        closeAuthModal();
+                    }
+                } else {
+                    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                    if(error) alert(error.message);
+                    else {
+                        closeAuthModal();
+                        navigateTo('account');
+                    }
                 }
-            } else {
-                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-                if(error) alert(error.message);
-                else {
-                    closeAuthModal();
-                    navigateTo('account');
-                }
+            } catch(e) {
+                alert("Authentication operation exception.");
             }
         }
 
@@ -584,55 +630,59 @@
             const phone = document.getElementById('ship-phone').value;
             const total_amount = shoppingCart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 
-            // Commit order record array
-            const { data: order, error: orderErr } = await supabase
-                .from('orders')
-                .insert([{
-                    user_id: currentUser ? currentUser.id : null,
-                    customer_name,
-                    customer_email,
-                    shipping_address,
-                    phone,
-                    total_amount,
-                    payment_method: 'COD',
-                    order_status: 'Pending'
-                }])
-                .select()
-                .single();
+            try {
+                // Commit order record array
+                const { data: order, error: orderErr } = await supabase
+                    .from('orders')
+                    .insert([{
+                        user_id: currentUser ? currentUser.id : null,
+                        customer_name,
+                        customer_email,
+                        shipping_address,
+                        phone,
+                        total_amount,
+                        payment_method: 'COD',
+                        order_status: 'Pending'
+                    }])
+                    .select()
+                    .single();
 
-            if (orderErr || !order) {
-                alert("Database initialization pipeline failure while routing order configuration payload.");
-                return;
+                if (orderErr || !order) {
+                    alert("Database initialization pipeline failure while routing order configuration payload.");
+                    return;
+                }
+
+                // Prep processing item vectors
+                const itemsPayload = shoppingCart.map(item => ({
+                    order_id: order.id,
+                    product_id: item.id,
+                    quantity: item.quantity,
+                    price_at_purchase: item.price
+                }));
+
+                const { error: itemsErr } = await supabase.from('order_items').insert(itemsPayload);
+                
+                if(itemsErr) {
+                    alert("Critical mapping schema failure handling secondary transaction layers.");
+                    return;
+                }
+
+                // Flush application data vectors upon success
+                shoppingCart = [];
+                updateCartCount();
+                
+                document.getElementById('view-content').innerHTML = `
+                    <div class="max-w-md mx-auto text-center py-20 px-6">
+                        <div class="text-amber-400 text-5xl mb-4">✓</div>
+                        <h1 class="serif-title text-3xl text-white mb-2">Order Authenticated</h1>
+                        <p class="text-xs font-mono text-gray-400 mb-6">Manifest Registry Index: ${order.id.substring(0,12)}...</p>
+                        <p class="text-sm text-gray-300 mb-8">Your procurement layout has successfully locked into production pipelines. Distribution agents will confirm payload parameters on delivery.</p>
+                        <button onclick="navigateTo('home')" class="border border-white/20 text-white px-6 py-2 text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-all">Return to Core Deck</button>
+                    </div>
+                `;
+            } catch(err) {
+                alert("Order pipeline tracking execution error.");
             }
-
-            // Prep processing item vectors
-            const itemsPayload = shoppingCart.map(item => ({
-                order_id: order.id,
-                product_id: item.id,
-                quantity: item.quantity,
-                price_at_purchase: item.price
-            }));
-
-            const { error: itemsErr } = await supabase.from('order_items').insert(itemsPayload);
-            
-            if(itemsErr) {
-                alert("Critical mapping schema failure handling secondary transaction layers.");
-                return;
-            }
-
-            // Flush application data vectors upon success
-            shoppingCart = [];
-            updateCartCount();
-            
-            document.getElementById('view-content').innerHTML = `
-                <div class="max-w-md mx-auto text-center py-20 px-6">
-                    <div class="text-amber-400 text-5xl mb-4">✓</div>
-                    <h1 class="serif-title text-3xl text-white mb-2">Order Authenticated</h1>
-                    <p class="text-xs font-mono text-gray-400 mb-6">Manifest Registry Index: ${order.id.substring(0,12)}...</p>
-                    <p class="text-sm text-gray-300 mb-8">Your procurement layout has successfully locked into production pipelines. Distribution agents will confirm payload parameters on delivery.</p>
-                    <button onclick="navigateTo('home')" class="border border-white/20 text-white px-6 py-2 text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-all">Return to Core Deck</button>
-                </div>
-            `;
         }
 
         // Initialize Application System Layout Instance on Window Load
