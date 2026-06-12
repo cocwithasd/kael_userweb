@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KAEL | Haute Parfumerie</title>
-    <!-- Tailwind CSS (Stable v3 for maximum compatibility) -->
+    <!-- Tailwind CSS (Stable v3) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Supabase JS Client library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -13,19 +13,19 @@
         
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #0A0A0A;
+            background-color: #050505; /* Deepened dark theme */
             color: #F5F5F5;
         }
         .serif-title {
             font-family: 'Cormorant Garamond', serif;
         }
-        /* Sticky Header Transitions */
+        /* Sticky Header Transitions - Sleeker Glassmorphism */
         header.compact {
-            padding-top: 0.5rem;
-            padding-bottom: 0.5rem;
-            background-color: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+            background-color: rgba(5, 5, 5, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
         .line-clamp-2 {
             display: -webkit-box;
@@ -33,18 +33,20 @@
             -webkit-box-orient: vertical;  
             overflow: hidden;
         }
+        /* Slider Fades */
+        .hero-slide { transition: opacity 1.5s ease-in-out; }
     </style>
 </head>
 <body class="overflow-x-hidden">
 
     <!-- NAVIGATION HEADER -->
-    <header id="main-header" class="fixed top-0 left-0 w-full z-50 transition-all duration-300 px-6 py-6 flex justify-between items-center bg-transparent">
+    <header id="main-header" class="fixed top-0 left-0 w-full z-50 transition-all duration-500 px-6 py-6 flex justify-between items-center bg-transparent">
         <a href="#" onclick="navigateTo('home'); return false;" class="flex items-center">
             <img src="https://ejjcjskseatjqdoxabhm.supabase.co/storage/v1/object/public/store-assets/kael_weblogo.png" alt="KAEL Logo" class="h-8 md:h-10 object-contain transition-all duration-300">
         </a>
         
         <!-- Desktop Nav Links -->
-        <nav class="hidden md:flex space-x-8 text-sm uppercase tracking-widest font-medium">
+        <nav class="hidden md:flex space-x-10 text-[13px] uppercase tracking-widest font-medium text-gray-300">
             <a href="#" onclick="navigateTo('home'); return false;" class="hover:text-amber-400 transition-colors">Collection</a>
             <a href="#" onclick="navigateTo('about'); return false;" class="hover:text-amber-400 transition-colors">About</a>
             <a href="#" onclick="navigateTo('contact'); return false;" class="hover:text-amber-400 transition-colors">Contact</a>
@@ -52,120 +54,120 @@
 
         <!-- Right System Controls -->
         <div class="flex items-center space-x-6">
-            <button id="auth-btn" onclick="openAuthModal()" class="text-sm tracking-wider uppercase border border-white/20 px-4 py-1.5 rounded hover:bg-white hover:text-black transition-all">Sign In</button>
-            <button onclick="toggleCart()" class="relative p-1">
+            <button id="auth-btn" onclick="openAuthModal()" class="text-[11px] font-bold tracking-widest uppercase border border-white/20 px-5 py-2 rounded hover:bg-white hover:text-black transition-all">Sign In</button>
+            <button onclick="toggleCart()" class="relative p-1 text-gray-300 hover:text-amber-400 transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                <span id="cart-count" class="absolute -top-1 -right-2 bg-amber-500 text-black text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center hidden">0</span>
+                <span id="cart-count" class="absolute -top-1 -right-2 bg-amber-500 text-black text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center hidden">0</span>
             </button>
-            <!-- Mobile Menu Toggle Button -->
+            <!-- Mobile Menu Toggle -->
             <button class="md:hidden p-1 focus:outline-none hover:text-amber-400" onclick="toggleMobileMenu()">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
         </div>
     </header>
 
-    <!-- MOBILE BREADCRUMB OVERLAY NAV -->
-    <div id="mobile-menu" class="fixed inset-0 bg-black/95 z-50 transform translate-x-full transition-transform duration-300 p-8 flex flex-col justify-between hidden">
+    <!-- MOBILE BREADCRUMB MENU -->
+    <div id="mobile-menu" class="fixed inset-0 bg-[#050505]/95 backdrop-blur-md z-50 transform translate-x-full transition-transform duration-300 p-8 flex flex-col justify-between hidden">
         <div>
             <div class="flex justify-between items-center mb-12">
-                <span class="serif-title text-2xl tracking-widest text-amber-400">KAEL</span>
-                <button onclick="toggleMobileMenu()" class="text-white hover:text-amber-400">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                <img src="https://ejjcjskseatjqdoxabhm.supabase.co/storage/v1/object/public/store-assets/kael_weblogo.png" alt="KAEL" class="h-6 object-contain">
+                <button onclick="toggleMobileMenu()" class="text-white hover:text-amber-400 transition-colors">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            <!-- Dynamic Mobile Navigation Context Map -->
-            <div class="text-xs uppercase tracking-widest text-gray-500 mb-6 flex items-center space-x-2">
+            <div class="text-[10px] uppercase tracking-widest text-gray-500 mb-8 flex items-center space-x-2">
                 <span>KAEL</span> <span>/</span> <span class="text-white" id="current-crumb">HOME</span>
             </div>
             <nav class="flex flex-col space-y-6 text-2xl uppercase tracking-wider font-light">
                 <a href="#" onclick="navigateTo('home'); toggleMobileMenu(); return false;" class="hover:text-amber-400 transition-colors">The Collection</a>
                 <a href="#" onclick="navigateTo('about'); toggleMobileMenu(); return false;" class="hover:text-amber-400 transition-colors">Our Story</a>
                 <a href="#" onclick="navigateTo('contact'); toggleMobileMenu(); return false;" class="hover:text-amber-400 transition-colors">Client Services</a>
-                <a href="#" onclick="navigateTo('policy-privacy'); toggleMobileMenu(); return false;" class="text-sm text-gray-400 hover:text-white mt-8">Privacy Policy</a>
-                <a href="#" onclick="navigateTo('policy-return'); toggleMobileMenu(); return false;" class="text-sm text-gray-400 hover:text-white">Returns & Replacements</a>
+                <div class="pt-8 space-y-4">
+                    <a href="#" onclick="navigateTo('policy-privacy'); toggleMobileMenu(); return false;" class="block text-xs text-gray-500 hover:text-white uppercase tracking-widest">Privacy Policy</a>
+                    <a href="#" onclick="navigateTo('policy-return'); toggleMobileMenu(); return false;" class="block text-xs text-gray-500 hover:text-white uppercase tracking-widest">Returns & Replacements</a>
+                </div>
             </nav>
         </div>
     </div>
 
     <!-- MAIN VIEW CONTAINER -->
-    <main id="view-content" class="pt-24 min-h-screen">
+    <main id="view-content" class="min-h-screen pb-12">
         <!-- Content injects here immediately on load -->
     </main>
 
-    <!-- FOOTER ARCHITECTURE -->
-    <footer class="border-t border-white/10 bg-[#050505] py-12 px-6 text-sm text-gray-400 mt-20">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+    <!-- FOOTER -->
+    <footer class="border-t border-white/5 bg-[#030303] py-16 px-6 text-sm text-gray-400">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
             <div>
-                <h3 class="text-white uppercase tracking-widest font-semibold mb-4 text-xs">KAEL</h3>
-                <p class="text-xs leading-relaxed">Curating olfactory narratives through modern chemistry and luxury dark-aesthetic storytelling structures.</p>
+                <h3 class="text-white uppercase tracking-widest font-semibold mb-6 text-[11px]">KAEL</h3>
+                <p class="text-xs leading-relaxed text-gray-500">Curating olfactory narratives through modern chemistry and luxury dark-aesthetic storytelling structures.</p>
             </div>
             <div>
-                <h3 class="text-white uppercase tracking-widest font-semibold mb-4 text-xs">Client Care</h3>
-                <ul class="space-y-2 text-xs">
-                    <li><a href="#" onclick="navigateTo('contact'); return false;" class="hover:text-white">Contact Us</a></li>
-                    <li><a href="#" onclick="navigateTo('about'); return false;" class="hover:text-white">About Brand</a></li>
+                <h3 class="text-white uppercase tracking-widest font-semibold mb-6 text-[11px]">Client Care</h3>
+                <ul class="space-y-3 text-xs text-gray-500">
+                    <li><a href="#" onclick="navigateTo('contact'); return false;" class="hover:text-amber-400 transition-colors">Contact Us</a></li>
+                    <li><a href="#" onclick="navigateTo('about'); return false;" class="hover:text-amber-400 transition-colors">About Brand</a></li>
                 </ul>
             </div>
             <div>
-                <h3 class="text-white uppercase tracking-widest font-semibold mb-4 text-xs">Legal Structure</h3>
-                <ul class="space-y-2 text-xs">
-                    <li><a href="#" onclick="navigateTo('policy-privacy'); return false;" class="hover:text-white">Privacy Policy</a></li>
-                    <li><a href="#" onclick="navigateTo('policy-return'); return false;" class="hover:text-white">Returns & Replacements</a></li>
-                    <li><a href="#" onclick="navigateTo('policy-cancellation'); return false;" class="hover:text-white">Cancellations & Refunds</a></li>
+                <h3 class="text-white uppercase tracking-widest font-semibold mb-6 text-[11px]">Legal Structure</h3>
+                <ul class="space-y-3 text-xs text-gray-500">
+                    <li><a href="#" onclick="navigateTo('policy-privacy'); return false;" class="hover:text-amber-400 transition-colors">Privacy Policy</a></li>
+                    <li><a href="#" onclick="navigateTo('policy-return'); return false;" class="hover:text-amber-400 transition-colors">Returns & Replacements</a></li>
+                    <li><a href="#" onclick="navigateTo('policy-cancellation'); return false;" class="hover:text-amber-400 transition-colors">Cancellations & Refunds</a></li>
                 </ul>
             </div>
             <div>
-                <h3 class="text-white uppercase tracking-widest font-semibold mb-4 text-xs">Secure Systems</h3>
-                <p class="text-xs mb-2">Accepting Cash on Delivery (COD) tracking validation.</p>
-                <div class="text-amber-400 font-mono text-xs">● Connected to Enterprise Datastore</div>
+                <h3 class="text-white uppercase tracking-widest font-semibold mb-6 text-[11px]">Secure Systems</h3>
+                <p class="text-xs mb-3 text-gray-500">Accepting Cash on Delivery (COD) tracking validation globally.</p>
             </div>
         </div>
-        <div class="max-w-7xl mx-auto text-center border-t border-white/5 mt-12 pt-6 text-xs tracking-wider">
+        <div class="max-w-7xl mx-auto text-center border-t border-white/5 mt-16 pt-8 text-[10px] uppercase text-gray-600 tracking-widest">
             &copy; 2026 KAEL Parfums. All premium rights reserved.
         </div>
     </footer>
 
     <!-- INTERACTIVE CART OVERLAY DRAW -->
-    <div id="cart-drawer" class="fixed inset-y-0 right-0 w-full max-w-md bg-[#0F0F0F] border-l border-white/10 z-50 transform translate-x-full transition-transform duration-300 p-6 flex flex-col justify-between hidden">
+    <div id="cart-drawer" class="fixed inset-y-0 right-0 w-full max-w-md bg-[#080808] border-l border-white/5 z-50 transform translate-x-full transition-transform duration-300 p-6 flex flex-col justify-between hidden shadow-2xl">
         <div>
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="uppercase tracking-widest text-sm font-semibold">Your Selection</h2>
-                <button onclick="toggleCart()" class="p-1 hover:text-amber-400"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            <div class="flex justify-between items-center mb-8 pb-4 border-b border-white/5">
+                <h2 class="uppercase tracking-widest text-[11px] text-gray-400 font-semibold">Your Selection</h2>
+                <button onclick="toggleCart()" class="p-1 text-gray-400 hover:text-white transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
-            <div id="cart-items" class="space-y-4 max-h-[60vh] overflow-y-auto">
+            <div id="cart-items" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
                 <!-- Items built runtime -->
             </div>
         </div>
-        <div class="border-t border-white/10 pt-4">
-            <div class="flex justify-between mb-4 text-sm font-medium">
-                <span>Estimated Value</span>
-                <span id="cart-total">$0.00</span>
+        <div class="border-t border-white/5 pt-6">
+            <div class="flex justify-between mb-6 text-sm font-medium">
+                <span class="text-gray-400 text-xs uppercase tracking-widest">Total Value</span>
+                <span id="cart-total" class="font-mono text-white tracking-wide">₹0</span>
             </div>
-            <button onclick="openCheckout()" class="w-full bg-white text-black py-3 uppercase text-xs font-bold tracking-widest hover:bg-amber-400 transition-colors">Proceed to Checkout</button>
+            <button onclick="openCheckout()" class="w-full bg-white text-black py-4 uppercase text-[11px] font-bold tracking-widest hover:bg-amber-400 transition-colors">Proceed to Checkout</button>
         </div>
     </div>
 
-    <!-- AUTHENTICATION DIALOG / MODAL -->
-    <div id="auth-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-[#121212] border border-white/10 max-w-sm w-full p-6 rounded relative">
-            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    <!-- AUTHENTICATION DIALOG -->
+    <div id="auth-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-[#0A0A0A] border border-white/10 max-w-sm w-full p-8 rounded-sm relative shadow-2xl">
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
             <div id="auth-form-content">
-                <h3 class="text-lg uppercase tracking-wider mb-4 font-semibold text-center" id="auth-title">Access Account</h3>
-                <div class="space-y-4">
+                <h3 class="text-sm uppercase tracking-widest mb-6 font-semibold text-center text-white" id="auth-title">Access Account</h3>
+                <div class="space-y-5">
                     <div>
-                        <label class="block text-xs uppercase text-gray-400 mb-1">Email Address</label>
-                        <input type="email" id="auth-email" class="w-full bg-[#1A1A1A] border border-white/10 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-400">
+                        <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Email Address</label>
+                        <input type="email" id="auth-email" class="w-full bg-[#111] border border-white/10 rounded-sm px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400 transition-colors">
                     </div>
                     <div>
-                        <label class="block text-xs uppercase text-gray-400 mb-1">Password</label>
-                        <input type="password" id="auth-password" class="w-full bg-[#1A1A1A] border border-white/10 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-400">
+                        <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Password</label>
+                        <input type="password" id="auth-password" class="w-full bg-[#111] border border-white/10 rounded-sm px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400 transition-colors">
                     </div>
-                    <button onclick="handleAuthAction()" id="submit-auth-btn" class="w-full bg-white text-black py-2 rounded text-xs font-bold uppercase tracking-widest hover:bg-amber-400 transition-colors">Sign In</button>
-                    <div class="text-center text-xs text-gray-400 mt-4">
+                    <button onclick="handleAuthAction()" id="submit-auth-btn" class="w-full bg-white text-black py-3 rounded-sm text-[11px] font-bold uppercase tracking-widest hover:bg-amber-400 transition-colors mt-2">Sign In</button>
+                    <div class="text-center text-[11px] text-gray-500 pt-4 border-t border-white/5">
                         <span id="auth-switch-text">New to the house?</span>
-                        <button onclick="toggleAuthMode()" id="auth-switch-btn" class="text-amber-400 underline ml-1">Create Account</button>
+                        <button onclick="toggleAuthMode()" id="auth-switch-btn" class="text-white hover:text-amber-400 ml-2 transition-colors uppercase tracking-wider font-semibold">Create Account</button>
                     </div>
                 </div>
             </div>
@@ -174,52 +176,48 @@
 
     <!-- CORE LOGIC & RUNTIME PLATFORM -->
     <script>
-        // Use a distinct variable name (supabaseClient) to avoid crashing against the global window.supabase
         const SUPABASE_URL = "https://ejjcjskseatjqdoxabhm.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqamNqc2tzZWF0anFkb3hhYmhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NjY0ODMsImV4cCI6MjA5NjQ0MjQ4M30.tCxYq9BWtU48m4mDI30Bf3-2temFzLW7qnpCG25nKBk";
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // App States
         let globalProducts = [];
+        let heroSlidesData = [];
         let shoppingCart = [];
         let currentUser = null;
         let isSignUpMode = false;
+        let sliderInterval = null;
 
         // Sticky Header Automation
         window.addEventListener('scroll', () => {
             const header = document.getElementById('main-header');
-            if (window.scrollY > 40) {
-                header.classList.add('compact');
-            } else {
-                header.classList.remove('compact');
-            }
+            if (window.scrollY > 50) header.classList.add('compact');
+            else header.classList.remove('compact');
         });
+
+        // Formatter for Indian Rupees
+        const formatINR = (amount) => {
+            return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
+        };
 
         // App Initializer
         async function initApp() {
-            console.log("KAEL Engine Starting...");
-            // Render the home layout immediately so the screen isn't blank while fetching
             navigateTo('home'); 
-            
             try {
                 await checkSession();
-                await fetchProducts();
-                // Re-render home once products are loaded
+                await Promise.all([fetchProducts(), fetchHeroSlides()]);
+                
+                // Re-render home with data if still on home view
                 if(document.getElementById('current-crumb').innerText === 'HOME') {
                     renderHome(document.getElementById('view-content'));
                 }
-            } catch(e) {
-                console.error("Initialization failed:", e);
-            }
+            } catch(e) { console.error("Initialization failed:", e); }
         }
 
         async function checkSession() {
             const { data: { session } } = await supabaseClient.auth.getSession();
             updateAuthUI(session?.user || null);
-            
-            supabaseClient.auth.onAuthStateChange((_event, session) => {
-                updateAuthUI(session?.user || null);
-            });
+            supabaseClient.auth.onAuthStateChange((_event, session) => updateAuthUI(session?.user || null));
         }
 
         function updateAuthUI(user) {
@@ -236,234 +234,230 @@
 
         async function fetchProducts() {
             const { data, error } = await supabaseClient.from('products').select('*');
-            if (error) {
-                console.error("Error fetching products:", error);
-            } else if (data) {
-                globalProducts = data;
-            }
+            if (!error && data) globalProducts = data;
+        }
+
+        async function fetchHeroSlides() {
+            const { data, error } = await supabaseClient.from('hero_slides').select('*').eq('active', true).order('order_index', { ascending: true });
+            if (!error && data) heroSlidesData = data;
         }
 
         // Structural Single Page Router
         function navigateTo(view, param = null) {
+            clearInterval(sliderInterval); // Clear slider loop when leaving home
             const container = document.getElementById('view-content');
             document.getElementById('current-crumb').innerText = view.toUpperCase();
             window.scrollTo({top: 0, behavior: 'smooth'});
 
-            if (view === 'home') {
-                renderHome(container);
-            } else if (view === 'product') {
-                renderProductPage(container, param);
-            } else if (view.startsWith('policy-')) {
-                const policyKey = view.replace('policy-', '');
-                renderPolicyPage(container, policyKey);
-            } else if (view === 'about') {
-                container.innerHTML = `<div class="max-w-3xl mx-auto px-6 py-12"><h1 class="serif-title text-4xl mb-6 text-amber-400">Our Story</h1><p class="text-gray-300 leading-relaxed text-lg">KAEL designs structural olfactive memories. Established under architectural design principles, we prioritize rare components, minimalist concrete visual designs, and dynamic olfactory profiles.</p></div>`;
-            } else if (view === 'contact') {
-                container.innerHTML = `<div class="max-w-xl mx-auto px-6 py-12"><h1 class="serif-title text-4xl mb-6 text-amber-400">Client Services</h1><div class="space-y-4"><p class="text-gray-400">For inquiries regarding formulation extraction, batch distributions, or shipping configurations:</p><div class="bg-[#111] p-4 border border-white/5 font-mono text-sm"><p>Email: concierge@kaelparfums.com</p><p>Hours: Mon - Fri, 10:00 - 18:00 IST</p></div></div></div>`;
-            } else if (view === 'account') {
-                renderAccountPage(container);
-            }
+            if (view === 'home') renderHome(container);
+            else if (view === 'product') renderProductPage(container, param);
+            else if (view.startsWith('policy-')) renderPolicyPage(container, view.replace('policy-', ''));
+            else if (view === 'about') renderStatic(container, 'Our Story', 'KAEL designs structural olfactive memories. Established under architectural design principles, we prioritize rare components, minimalist concrete visual designs, and dynamic olfactory profiles.');
+            else if (view === 'contact') renderStatic(container, 'Client Services', 'For inquiries regarding formulation extraction, batch distributions, or shipping configurations:<br><br><div class="bg-[#111] p-6 border border-white/5 font-mono text-sm text-gray-400"><p>Email: concierge@kaelparfums.com</p><p>Hours: Mon - Fri, 10:00 - 18:00 IST</p></div>');
+            else if (view === 'account') renderAccountPage(container);
+        }
+
+        function renderStatic(target, title, content) {
+            target.innerHTML = `<div class="max-w-3xl mx-auto px-6 py-32"><h1 class="serif-title text-5xl mb-8 text-white">${title}</h1><p class="text-gray-400 leading-relaxed text-lg">${content}</p></div>`;
         }
 
         // VIEW BUILDER: Home Grid View
         function renderHome(target) {
-            let html = `
-                <!-- HERO TEASER DISPLAY -->
-                <section class="relative min-h-[50vh] flex flex-col justify-center items-center text-center px-6 mb-16 border-b border-white/5 pb-16">
-                    <h1 class="serif-title text-5xl md:text-7xl tracking-widest uppercase mb-4 z-20 text-white">KAEL PARFUMS</h1>
-                    <p class="text-xs md:text-sm tracking-[0.4em] uppercase text-amber-400 font-light z-20">Dynamic Fragrance Synthetics & Absolute Materials</p>
-                </section>
+            let heroHTML = '';
+            
+            // Build Cinematic Slider
+            if(heroSlidesData.length > 0) {
+                let slidesHTML = heroSlidesData.map((slide, index) => `
+                    <div class="hero-slide absolute inset-0 ${index === 0 ? 'opacity-100' : 'opacity-0'} z-0">
+                        <div class="absolute inset-0 bg-black/40 z-10"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-black/20 to-transparent z-10"></div>
+                        <img src="${slide.image_url}" class="w-full h-full object-cover" alt="Hero">
+                        <div class="absolute inset-0 flex flex-col justify-center items-center text-center px-6 z-20">
+                            <h1 class="serif-title text-5xl md:text-7xl tracking-widest uppercase mb-4 text-white drop-shadow-2xl">${slide.title || ''}</h1>
+                            <p class="text-[10px] md:text-xs tracking-[0.4em] uppercase text-amber-400 font-semibold drop-shadow-md">${slide.subtitle || ''}</p>
+                        </div>
+                    </div>
+                `).join('');
+                
+                heroHTML = `<section class="relative w-full h-[85vh] overflow-hidden mb-20 border-b border-white/5">${slidesHTML}</section>`;
+            } else {
+                // Fallback static hero if database table is empty
+                heroHTML = `
+                    <section class="relative min-h-[70vh] flex flex-col justify-center items-center text-center px-6 mb-20 border-b border-white/5 bg-[#0A0A0A]">
+                        <h1 class="serif-title text-5xl md:text-7xl tracking-widest uppercase mb-4 text-white">KAEL PARFUMS</h1>
+                        <p class="text-xs md:text-sm tracking-[0.4em] uppercase text-amber-400 font-light">Dynamic Fragrance Synthetics</p>
+                    </section>
+                `;
+            }
 
-                <section class="max-w-7xl mx-auto px-6">
-                    <h2 class="serif-title text-2xl tracking-widest uppercase mb-8 text-gray-400">Current Iterations</h2>
-            `;
+            let gridHTML = `<section class="max-w-7xl mx-auto px-6"><h2 class="serif-title text-3xl tracking-widest uppercase mb-12 text-white text-center">The Collection</h2>`;
 
             if(globalProducts.length === 0) {
-                html += `
-                    <div class="text-center py-20 bg-[#111] border border-white/5 text-gray-500 font-mono text-xs rounded-sm">
-                        Fetching collection data... If empty, please ensure seed data is inserted into the "products" table.
-                    </div>
-                `;
+                gridHTML += `<div class="text-center py-20 text-gray-600 font-mono text-xs">Synchronizing database...</div>`;
             } else {
-                html += `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">`;
+                gridHTML += `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">`;
                 globalProducts.forEach(prod => {
-                    html += `
-                        <div class="group bg-[#111] border border-white/5 hover:border-white/20 transition-all p-6 flex flex-col justify-between cursor-pointer" onclick="navigateTo('product', '${prod.slug}')">
-                            <div class="aspect-square bg-[#1A1A1A] mb-6 overflow-hidden relative flex items-center justify-center p-4">
-                                <img src="${prod.image_url}" alt="${prod.name}" class="max-h-full max-w-full object-contain transform group-hover:scale-105 transition-transform duration-700">
+                    const offerPrice = formatINR(prod.price);
+                    const originalPrice = prod.original_price ? formatINR(prod.original_price) : '';
+                    const priceHtml = prod.original_price 
+                        ? `<span class="text-[11px] text-gray-500 line-through mr-3">${originalPrice}</span><span class="font-mono text-sm tracking-wider text-white">${offerPrice}</span>` 
+                        : `<span class="font-mono text-sm tracking-wider text-white">${offerPrice}</span>`;
+
+                    gridHTML += `
+                        <div class="group bg-[#0A0A0A] border border-white/5 hover:border-white/20 transition-all p-8 flex flex-col justify-between cursor-pointer shadow-lg" onclick="navigateTo('product', '${prod.slug}')">
+                            <div class="aspect-[4/5] bg-[#111] mb-8 overflow-hidden relative flex items-center justify-center p-6">
+                                <img src="${prod.image_url}" alt="${prod.name}" class="max-h-full max-w-full object-contain transform group-hover:scale-105 transition-transform duration-700 ease-out">
                             </div>
                             <div>
-                                <span class="text-[10px] tracking-widest text-amber-400 uppercase font-mono">In Stock</span>
-                                <h3 class="serif-title text-xl text-white mt-1 group-hover:text-amber-300 transition-colors">${prod.name}</h3>
-                                <p class="text-xs text-gray-400 mt-2 line-clamp-2 leading-relaxed">${prod.tagline || ''}</p>
-                                <div class="flex justify-between items-center mt-6 pt-4 border-t border-white/5">
-                                    <span class="font-mono text-sm tracking-wide text-white">$${Number(prod.price).toFixed(2)}</span>
-                                    <span class="text-xs uppercase tracking-widest text-white/60 group-hover:text-white">Explore Matrix →</span>
+                                <h3 class="serif-title text-2xl text-white group-hover:text-amber-400 transition-colors">${prod.name}</h3>
+                                <p class="text-xs text-gray-500 mt-3 line-clamp-2 leading-relaxed">${prod.tagline || ''}</p>
+                                <div class="flex justify-between items-center mt-8 pt-5 border-t border-white/5">
+                                    <div>${priceHtml}</div>
+                                    <span class="text-[10px] font-bold uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors">View Product →</span>
                                 </div>
                             </div>
                         </div>
                     `;
                 });
-                html += `</div>`;
+                gridHTML += `</div>`;
             }
 
-            html += `</section>`;
-            target.innerHTML = html;
+            target.innerHTML = heroHTML + gridHTML + `</section>`;
+
+            // Init Slider Logic
+            if(heroSlidesData.length > 1) {
+                let currentSlide = 0;
+                const slides = document.querySelectorAll('.hero-slide');
+                sliderInterval = setInterval(() => {
+                    slides[currentSlide].classList.remove('opacity-100');
+                    slides[currentSlide].classList.add('opacity-0');
+                    currentSlide = (currentSlide + 1) % slides.length;
+                    slides[currentSlide].classList.remove('opacity-0');
+                    slides[currentSlide].classList.add('opacity-100');
+                }, 6000);
+            }
         }
 
         // VIEW BUILDER: Dynamic Single Product Page Layout
         function renderProductPage(target, slug) {
             const product = globalProducts.find(p => p.slug === slug);
-            if (!product) {
-                target.innerHTML = `<div class="text-center py-20 text-gray-400 font-mono">Product footprint not found in architecture.</div>`;
-                return;
-            }
+            if (!product) return;
 
-            const topNotes = product.top_notes ? product.top_notes.join(', ') : 'N/A';
-            const heart_notes = product.heart_notes ? product.heart_notes.join(', ') : 'N/A';
-            const base_notes = product.base_notes ? product.base_notes.join(', ') : 'N/A';
+            const offerPrice = formatINR(product.price);
+            const originalPrice = product.original_price ? formatINR(product.original_price) : '';
+            const priceHtml = product.original_price 
+                ? `<span class="text-lg text-gray-500 line-through mr-4">${originalPrice}</span><span class="text-3xl font-mono tracking-wide text-white">${offerPrice}</span>` 
+                : `<span class="text-3xl font-mono tracking-wide text-white">${offerPrice}</span>`;
 
             target.innerHTML = `
-                <div class="max-w-6xl mx-auto px-6 py-8">
-                    <button onclick="navigateTo('home')" class="text-xs uppercase tracking-wider text-gray-400 hover:text-white mb-8 flex items-center space-x-2">
-                        <span>← Return to Database Grid</span>
+                <div class="max-w-7xl mx-auto px-6 py-28">
+                    <button onclick="navigateTo('home')" class="text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-white mb-12 flex items-center transition-colors">
+                        ← Back to Collection
                     </button>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-                        <!-- Product Structural Visual Render -->
-                        <div class="bg-[#111] p-8 border border-white/5 flex items-center justify-center aspect-square rounded-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 lg:gap-24">
+                        <div class="bg-[#0A0A0A] p-12 border border-white/5 flex items-center justify-center aspect-square shadow-2xl">
                             <img src="${product.image_url}" alt="${product.name}" class="max-h-full object-contain">
                         </div>
                         
-                        <!-- Analytical Information Stack -->
-                        <div class="flex flex-col justify-between">
-                            <div>
-                                <span class="text-xs uppercase tracking-widest text-amber-400 font-mono">Eau De Parfum Extreme</span>
-                                <h1 class="serif-title text-4xl md:text-5xl text-white mt-2 mb-3">${product.name}</h1>
-                                <p class="text-sm italic text-gray-400 mb-6 font-light">${product.tagline || ''}</p>
-                                <div class="text-2xl font-mono tracking-wide text-white mb-6">$${Number(product.price).toFixed(2)}</div>
-                                
-                                <div class="border-t border-b border-white/10 py-6 mb-6">
-                                    <h3 class="text-xs uppercase tracking-widest text-gray-400 mb-3 font-semibold">Olfactory Layer Array</h3>
-                                    <ul class="space-y-2 text-sm font-mono text-gray-300">
-                                        <li><span class="text-amber-400">Top Elements:</span> ${topNotes}</li>
-                                        <li><span class="text-amber-400">Heart Core:</span> ${heart_notes}</li>
-                                        <li><span class="text-amber-400">Base Base:</span> ${base_notes}</li>
-                                    </ul>
+                        <div class="flex flex-col justify-center">
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-amber-500 mb-4">Extrait de Parfum</span>
+                            <h1 class="serif-title text-4xl md:text-6xl text-white mb-4 leading-tight">${product.name}</h1>
+                            <p class="text-sm italic text-gray-400 mb-8 font-light">${product.tagline || ''}</p>
+                            <div class="mb-10 flex items-end">${priceHtml}</div>
+                            
+                            <p class="text-sm text-gray-400 leading-loose mb-10">${product.description}</p>
+
+                            <div class="border-t border-b border-white/5 py-8 mb-10">
+                                <h3 class="text-[11px] uppercase tracking-widest text-white mb-5 font-semibold">Olfactory Matrix</h3>
+                                <div class="grid grid-cols-3 gap-4 text-xs font-mono text-gray-400">
+                                    <div><span class="text-amber-500 block mb-1">TOP</span> ${product.top_notes?.join(', ') || 'N/A'}</div>
+                                    <div><span class="text-amber-500 block mb-1">HEART</span> ${product.heart_notes?.join(', ') || 'N/A'}</div>
+                                    <div><span class="text-amber-500 block mb-1">BASE</span> ${product.base_notes?.join(', ') || 'N/A'}</div>
                                 </div>
-                                
-                                <p class="text-sm text-gray-300 leading-relaxed mb-8">${product.description}</p>
                             </div>
 
-                            <div>
-                                <button onclick="addToCart('${product.id}')" class="w-full bg-white text-black py-4 uppercase text-xs font-bold tracking-widest hover:bg-amber-400 transition-colors">
-                                    Acquire and Add to Selection
-                                </button>
-                                <p class="text-[10px] text-gray-500 font-mono text-center mt-3">Packaged in protective concrete presentation cases. Complimentary standard distribution applies.</p>
-                            </div>
+                            <button onclick="addToCart('${product.id}')" class="w-full bg-white text-black py-4 uppercase text-[11px] font-bold tracking-widest hover:bg-amber-400 transition-all shadow-lg">
+                                Add to Cart
+                            </button>
+                            <p class="text-[10px] text-gray-600 font-mono text-center mt-4">Complimentary express shipping across India.</p>
                         </div>
                     </div>
                 </div>
             `;
         }
 
-        // VIEW BUILDER: Completely Dynamic Policy Engine
+        // VIEW BUILDER: Policy Pages
         async function renderPolicyPage(target, policyId) {
-            target.innerHTML = `<div class="text-center py-20 text-gray-500 font-mono">Syncing system policy documentation from Supabase...</div>`;
-            
+            target.innerHTML = `<div class="text-center py-40 text-gray-500 font-mono text-xs">Syncing system policy documentation...</div>`;
             try {
-                const { data, error } = await supabaseClient
-                    .from('legal_pages')
-                    .select('*')
-                    .eq('id', policyId)
-                    .single();
-
-                if (error || !data) {
-                    target.innerHTML = `<div class="max-w-2xl mx-auto px-6 py-12 text-center text-gray-400 font-mono">Error locating policy definition schema for payload ID: ${policyId}</div>`;
-                    return;
-                }
-
+                const { data, error } = await supabaseClient.from('legal_pages').select('*').eq('id', policyId).single();
+                if (error || !data) throw error;
                 target.innerHTML = `
-                    <div class="max-w-3xl mx-auto px-6 py-12">
-                        <h1 class="serif-title text-3xl md:text-4xl mb-2 text-amber-400">${data.title}</h1>
-                        <p class="text-[11px] font-mono text-gray-500 mb-8">System Timestamp Verified: ${new Date(data.updated_at).toLocaleDateString()}</p>
-                        <div class="text-gray-300 leading-relaxed text-sm space-y-4 whitespace-pre-line border-t border-white/10 pt-6">
+                    <div class="max-w-3xl mx-auto px-6 py-32">
+                        <h1 class="serif-title text-4xl mb-4 text-white">${data.title}</h1>
+                        <p class="text-[10px] uppercase tracking-widest font-mono text-gray-600 mb-12">Updated: ${new Date(data.updated_at).toLocaleDateString()}</p>
+                        <div class="text-gray-400 leading-relaxed text-sm space-y-6 whitespace-pre-line border-t border-white/5 pt-10">
                             ${data.content}
                         </div>
                     </div>
                 `;
-            } catch(e) {
-                target.innerHTML = `<div class="text-center py-20 text-red-400 font-mono">Failed to fetch system policies from datastore.</div>`;
-            }
+            } catch(e) { target.innerHTML = `<div class="text-center py-40 text-red-500 font-mono text-xs">Policy document unavailable.</div>`; }
         }
 
-        // VIEW BUILDER: Profile / Order History Dashboard
+        // VIEW BUILDER: User Account
         async function renderAccountPage(target) {
-            if (!currentUser) {
-                target.innerHTML = `<div class="text-center py-20 text-gray-400 font-mono">Authentication token invalid or expired. Please sign in.</div>`;
-                return;
-            }
-
-            target.innerHTML = `<div class="text-center py-20 text-gray-500 font-mono">Fetching profile and secure order ledgers...</div>`;
-
+            if (!currentUser) return target.innerHTML = `<div class="text-center py-40 text-gray-500 font-mono text-xs">Authentication token invalid.</div>`;
+            target.innerHTML = `<div class="text-center py-40 text-gray-600 font-mono text-xs">Fetching client ledger...</div>`;
             try {
                 const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
                 const { data: orders } = await supabaseClient.from('orders').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
 
                 let html = `
-                    <div class="max-w-5xl mx-auto px-6 py-8">
-                        <div class="flex justify-between items-center border-b border-white/10 pb-6 mb-8">
+                    <div class="max-w-6xl mx-auto px-6 py-28">
+                        <div class="flex justify-between items-end border-b border-white/5 pb-8 mb-12">
                             <div>
-                                <h1 class="serif-title text-3xl text-white">Client Portal</h1>
-                                <p class="text-xs font-mono text-gray-400">${currentUser.email}</p>
+                                <h1 class="serif-title text-4xl text-white mb-2">Client Portal</h1>
+                                <p class="text-xs font-mono text-gray-500">${currentUser.email}</p>
                             </div>
-                            <button onclick="handleSignOut()" class="text-xs border border-red-500/30 text-red-400 px-4 py-2 rounded hover:bg-red-500 hover:text-white transition-all uppercase tracking-wider">Revoke Session</button>
+                            <button onclick="handleSignOut()" class="text-[10px] uppercase font-bold tracking-widest border border-white/10 text-gray-400 px-5 py-2 hover:bg-white hover:text-black transition-all">Sign Out</button>
                         </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            <!-- Profile/Shipping Config Info -->
-                            <div class="bg-[#111] p-6 border border-white/5 rounded-sm h-fit">
-                                <h2 class="uppercase tracking-widest text-xs font-semibold text-amber-400 mb-4">Default Profile Settings</h2>
-                                <div class="space-y-4 text-sm font-mono">
-                                    <div><span class="text-gray-500 block text-xs">Full Name:</span> <span class="text-white">${profile?.full_name || 'Not Configured'}</span></div>
-                                    <div><span class="text-gray-500 block text-xs">Shipping Vector:</span> <span class="text-white">${profile?.shipping_address || 'Not Configured'}</span></div>
-                                    <div><span class="text-gray-500 block text-xs">Phone Matrix:</span> <span class="text-white">${profile?.phone || 'Not Configured'}</span></div>
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                            <div class="bg-[#0A0A0A] p-8 border border-white/5 h-fit">
+                                <h2 class="uppercase tracking-widest text-[11px] font-semibold text-white mb-6">Profile Details</h2>
+                                <div class="space-y-5 text-sm font-mono text-gray-400">
+                                    <div><span class="block text-[10px] text-gray-600 uppercase mb-1">Name</span> <span class="text-white">${profile?.full_name || '-'}</span></div>
+                                    <div><span class="block text-[10px] text-gray-600 uppercase mb-1">Shipping</span> <span class="text-white">${profile?.shipping_address || '-'}</span></div>
+                                    <div><span class="block text-[10px] text-gray-600 uppercase mb-1">Phone</span> <span class="text-white">${profile?.phone || '-'}</span></div>
                                 </div>
                             </div>
-
-                            <!-- Historical Orders Ledger -->
-                            <div class="md:col-span-2">
-                                <h2 class="uppercase tracking-widest text-xs font-semibold text-gray-400 mb-4">Historical Orders Ledger</h2>
+                            <div class="lg:col-span-2">
+                                <h2 class="uppercase tracking-widest text-[11px] font-semibold text-white mb-6">Order History</h2>
                 `;
-
                 if(!orders || orders.length === 0) {
-                    html += `<div class="bg-[#111] p-6 border border-white/5 text-center text-xs text-gray-500 font-mono">No transactional history found for this identifier key.</div>`;
+                    html += `<div class="bg-[#0A0A0A] p-8 border border-white/5 text-center text-xs text-gray-600 font-mono">No transactions found.</div>`;
                 } else {
                     orders.forEach(order => {
                         html += `
-                            <div class="bg-[#111] border border-white/5 p-4 rounded-sm mb-3 font-mono flex justify-between items-center">
+                            <div class="bg-[#0A0A0A] border border-white/5 p-6 mb-4 flex justify-between items-center hover:border-white/10 transition-colors">
                                 <div>
-                                    <div class="text-white text-sm font-semibold">ID: ${order.id.substring(0,8)}...</div>
-                                    <div class="text-gray-500 text-xs mt-1">${new Date(order.created_at).toLocaleDateString()}</div>
-                                    <div class="text-gray-400 text-xs mt-1">Method: ${order.payment_method}</div>
+                                    <div class="text-white text-sm font-mono mb-2">#${order.id.substring(0,8)}</div>
+                                    <div class="text-gray-500 text-[11px] uppercase tracking-wider">${new Date(order.created_at).toLocaleDateString()} • ${order.payment_method}</div>
                                 </div>
                                 <div class="text-right">
-                                    <div class="text-amber-400 text-lg font-bold">$${Number(order.total_amount).toFixed(2)}</div>
-                                    <span class="inline-block mt-2 px-2 py-1 rounded text-[10px] bg-white/10 text-white font-sans uppercase tracking-wider">${order.order_status}</span>
+                                    <div class="text-white text-lg font-mono mb-2">${formatINR(order.total_amount)}</div>
+                                    <span class="inline-block px-3 py-1 text-[9px] bg-white/5 text-gray-300 font-bold uppercase tracking-widest">${order.order_status}</span>
                                 </div>
                             </div>
                         `;
                     });
                 }
-
                 html += `</div></div></div>`;
                 target.innerHTML = html;
-            } catch(e) {
-                target.innerHTML = `<div class="text-center py-20 text-gray-400 font-mono">Error rendering account data matrices.</div>`;
-            }
+            } catch(e) { target.innerHTML = `<div class="text-center py-40 text-red-500 font-mono text-xs">Error rendering data.</div>`; }
         }
 
-        // SHOPPING CART SUB-ENGINE
+        // CART LOGIC
         function toggleCart() {
             const el = document.getElementById('cart-drawer');
             el.classList.toggle('hidden');
@@ -480,13 +474,10 @@
         function addToCart(productId) {
             const product = globalProducts.find(p => p.id === productId);
             if (!product) return;
-
             const baseItem = shoppingCart.find(item => item.id === productId);
-            if(baseItem) {
-                baseItem.quantity += 1;
-            } else {
-                shoppingCart.push({ ...product, quantity: 1 });
-            }
+            if(baseItem) baseItem.quantity += 1;
+            else shoppingCart.push({ ...product, quantity: 1 });
+            
             updateCartCount();
             toggleCart();
         }
@@ -497,18 +488,15 @@
             if(cnt > 0) {
                 badge.innerText = cnt;
                 badge.classList.remove('hidden');
-            } else {
-                badge.classList.add('hidden');
-            }
+            } else badge.classList.add('hidden');
         }
 
         function renderCartItems() {
             const container = document.getElementById('cart-items');
             const totalEl = document.getElementById('cart-total');
-            
             if(shoppingCart.length === 0) {
-                container.innerHTML = `<div class="text-center py-12 text-xs text-gray-500 font-mono">Your selection matrix is empty.</div>`;
-                totalEl.innerText = "$0.00";
+                container.innerHTML = `<div class="text-center py-16 text-[11px] uppercase tracking-widest text-gray-600">Your cart is empty.</div>`;
+                totalEl.innerText = "₹0";
                 return;
             }
 
@@ -517,20 +505,20 @@
             shoppingCart.forEach(item => {
                 total += item.price * item.quantity;
                 html += `
-                    <div class="flex items-center justify-between border-b border-white/5 pb-4 pt-2">
+                    <div class="flex items-center justify-between border-b border-white/5 pb-5 pt-3">
                         <div class="flex items-center space-x-4">
-                            <div class="w-14 h-14 bg-[#1A1A1A] p-2 flex items-center justify-center"><img src="${item.image_url}" class="max-h-full"></div>
+                            <div class="w-16 h-16 bg-[#111] p-2 flex items-center justify-center"><img src="${item.image_url}" class="max-h-full"></div>
                             <div>
                                 <h4 class="text-sm text-white font-medium">${item.name}</h4>
-                                <span class="text-xs text-amber-400 font-mono block mt-1">$${Number(item.price).toFixed(2)} x ${item.quantity}</span>
+                                <span class="text-xs text-gray-500 font-mono block mt-1">${formatINR(item.price)} x ${item.quantity}</span>
                             </div>
                         </div>
-                        <button onclick="removeFromCart('${item.id}')" class="text-xs text-red-400 hover:text-red-300 font-mono uppercase tracking-wider">Remove</button>
+                        <button onclick="removeFromCart('${item.id}')" class="text-[10px] text-gray-500 hover:text-white font-bold uppercase tracking-widest transition-colors">Remove</button>
                     </div>
                 `;
             });
             container.innerHTML = html;
-            totalEl.innerText = `$${total.toFixed(2)}`;
+            totalEl.innerText = formatINR(total);
         }
 
         function removeFromCart(id) {
@@ -539,88 +527,73 @@
             renderCartItems();
         }
 
-        // MODAL AUTH SYSTEM LOGIC
+        // AUTH MODAL LOGIC
         function openAuthModal() { document.getElementById('auth-modal').classList.remove('hidden'); }
         function closeAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
-
         function toggleAuthMode() {
             isSignUpMode = !isSignUpMode;
-            document.getElementById('auth-title').innerText = isSignUpMode ? "Create Architectural Key" : "Access Account";
-            document.getElementById('submit-auth-btn').innerText = isSignUpMode ? "Register Profile" : "Sign In";
+            document.getElementById('auth-title').innerText = isSignUpMode ? "Create Account" : "Access Account";
+            document.getElementById('submit-auth-btn').innerText = isSignUpMode ? "Register" : "Sign In";
             document.getElementById('auth-switch-text').innerText = isSignUpMode ? "Already verified?" : "New to the house?";
-            document.getElementById('auth-switch-btn').innerText = isSignUpMode ? "Login Instead" : "Create Account";
+            document.getElementById('auth-switch-btn').innerText = isSignUpMode ? "Sign In" : "Create Account";
         }
 
         async function handleAuthAction() {
             const email = document.getElementById('auth-email').value;
             const password = document.getElementById('auth-password').value;
-
-            if(!email || !password) { alert("Credentials parameters incomplete"); return; }
+            if(!email || !password) return alert("Credentials missing");
 
             try {
                 if(isSignUpMode) {
-                    const { data, error } = await supabaseClient.auth.signUp({ email, password });
+                    const { error } = await supabaseClient.auth.signUp({ email, password });
                     if(error) alert(error.message);
-                    else {
-                        alert("Account configuration verification linked to mail matrix.");
-                        closeAuthModal();
-                    }
+                    else { alert("Check your email to verify account."); closeAuthModal(); }
                 } else {
-                    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+                    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
                     if(error) alert(error.message);
-                    else {
-                        closeAuthModal();
-                        navigateTo('account');
-                    }
+                    else { closeAuthModal(); navigateTo('account'); }
                 }
-            } catch(e) {
-                alert("Authentication operation exception.");
-            }
+            } catch(e) { alert("Auth error"); }
         }
+        async function handleSignOut() { await supabaseClient.auth.signOut(); navigateTo('home'); }
 
-        async function handleSignOut() {
-            await supabaseClient.auth.signOut();
-            navigateTo('home');
-        }
-
-        // CHECKOUT STRUCTURAL FLOW
+        // CHECKOUT FLOW
         function openCheckout() {
-            if(shoppingCart.length === 0) { alert("Selection matrix is empty."); return; }
+            if(shoppingCart.length === 0) return;
             toggleCart(); 
-            
             const container = document.getElementById('view-content');
             let total = shoppingCart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
             
             container.innerHTML = `
-                <div class="max-w-xl mx-auto px-6 py-8">
-                    <h1 class="serif-title text-3xl mb-6 text-white border-b border-white/10 pb-4">Secure Distribution Setup</h1>
-                    <form id="checkout-form" onsubmit="processOrder(event)" class="space-y-5">
+                <div class="max-w-xl mx-auto px-6 py-24">
+                    <h1 class="serif-title text-4xl mb-8 text-white border-b border-white/5 pb-6">Secure Checkout</h1>
+                    <form onsubmit="processOrder(event)" class="space-y-6">
                         <div>
-                            <label class="block text-xs uppercase tracking-wider text-gray-400 mb-2">Recipient Complete Name</label>
-                            <input type="text" id="ship-name" required class="w-full bg-[#111] border border-white/10 rounded px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400 transition-colors">
-                        </div>
-                        <div>
-                            <label class="block text-xs uppercase tracking-wider text-gray-400 mb-2">Email Pipeline Anchor</label>
-                            <input type="email" id="ship-email" value="${currentUser?.email || ''}" required class="w-full bg-[#111] border border-white/10 rounded px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400 transition-colors">
+                            <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Full Name</label>
+                            <input type="text" id="ship-name" required class="w-full bg-[#0A0A0A] border border-white/10 rounded-sm px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400">
                         </div>
                         <div>
-                            <label class="block text-xs uppercase tracking-wider text-gray-400 mb-2">Secure Delivery Address</label>
-                            <textarea id="ship-address" required rows="3" class="w-full bg-[#111] border border-white/10 rounded px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400 transition-colors"></textarea>
+                            <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Email Address</label>
+                            <input type="email" id="ship-email" value="${currentUser?.email || ''}" required class="w-full bg-[#0A0A0A] border border-white/10 rounded-sm px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400">
                         </div>
                         <div>
-                            <label class="block text-xs uppercase tracking-wider text-gray-400 mb-2">Verification Phone Matrix</label>
-                            <input type="text" id="ship-phone" required class="w-full bg-[#111] border border-white/10 rounded px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400 transition-colors">
+                            <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Delivery Address</label>
+                            <textarea id="ship-address" required rows="3" class="w-full bg-[#0A0A0A] border border-white/10 rounded-sm px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400"></textarea>
                         </div>
-                        <div class="bg-[#151515] p-5 border border-white/5 rounded-sm">
-                            <span class="block text-xs uppercase tracking-wider text-gray-400 mb-2">Payment Strategy Vector</span>
-                            <span class="text-sm font-mono text-amber-400 font-semibold">✔ Cash On Delivery (COD) Verified Only</span>
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Phone Number</label>
+                            <input type="text" id="ship-phone" required class="w-full bg-[#0A0A0A] border border-white/10 rounded-sm px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400">
                         </div>
-                        <div class="pt-6 border-t border-white/10 flex justify-between items-center">
+                        <div class="bg-[#0A0A0A] p-5 border border-white/5 rounded-sm">
+                            <span class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Payment Method</span>
+                            <span class="text-xs font-mono text-white">✔ Cash On Delivery (COD)</span>
+                        </div>
+                        <div class="pt-8 border-t border-white/5 flex justify-between items-center">
                             <div>
-                                <span class="text-xs tracking-wider uppercase text-gray-400 block mb-1">Total Value</span>
-                                <span class="text-2xl font-mono text-white font-bold">$${total.toFixed(2)}</span>
+                                <span class="text-[10px] tracking-widest uppercase text-gray-500 block mb-1">Total to Pay</span>
+                                <span class="text-2xl font-mono text-white">${formatINR(total)}</span>
                             </div>
-                            <button type="submit" class="bg-white text-black px-8 py-4 uppercase text-xs font-bold tracking-widest hover:bg-amber-400 transition-colors">Authorize Dispatch</button>
+                            <button type="submit" class="bg-white text-black px-8 py-4 uppercase text-[11px] font-bold tracking-widest hover:bg-amber-400 transition-colors shadow-lg">Confirm Order</button>
                         </div>
                     </form>
                 </div>
@@ -629,69 +602,41 @@
 
         async function processOrder(e) {
             e.preventDefault();
-            
-            const customer_name = document.getElementById('ship-name').value;
-            const customer_email = document.getElementById('ship-email').value;
-            const shipping_address = document.getElementById('ship-address').value;
-            const phone = document.getElementById('ship-phone').value;
             const total_amount = shoppingCart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 
             try {
-                // Commit order record array
-                const { data: order, error: orderErr } = await supabaseClient
-                    .from('orders')
-                    .insert([{
-                        user_id: currentUser ? currentUser.id : null,
-                        customer_name,
-                        customer_email,
-                        shipping_address,
-                        phone,
-                        total_amount,
-                        payment_method: 'COD',
-                        order_status: 'Pending'
-                    }])
-                    .select()
-                    .single();
+                const { data: order, error: orderErr } = await supabaseClient.from('orders').insert([{
+                    user_id: currentUser ? currentUser.id : null,
+                    customer_name: document.getElementById('ship-name').value,
+                    customer_email: document.getElementById('ship-email').value,
+                    shipping_address: document.getElementById('ship-address').value,
+                    phone: document.getElementById('ship-phone').value,
+                    total_amount,
+                    payment_method: 'COD',
+                    order_status: 'Pending'
+                }]).select().single();
 
-                if (orderErr || !order) {
-                    alert("Database initialization pipeline failure while routing order configuration payload.");
-                    return;
-                }
+                if (orderErr) throw orderErr;
 
-                // Prep processing item vectors
                 const itemsPayload = shoppingCart.map(item => ({
-                    order_id: order.id,
-                    product_id: item.id,
-                    quantity: item.quantity,
-                    price_at_purchase: item.price
+                    order_id: order.id, product_id: item.id, quantity: item.quantity, price_at_purchase: item.price
                 }));
+                await supabaseClient.from('order_items').insert(itemsPayload);
 
-                const { error: itemsErr } = await supabaseClient.from('order_items').insert(itemsPayload);
-                
-                if(itemsErr) {
-                    alert("Critical mapping schema failure handling secondary transaction layers.");
-                    return;
-                }
-
-                // Flush application data vectors upon success
-                shoppingCart = [];
-                updateCartCount();
+                shoppingCart = []; updateCartCount();
                 
                 document.getElementById('view-content').innerHTML = `
-                    <div class="max-w-md mx-auto text-center py-20 px-6">
-                        <div class="text-amber-400 text-6xl mb-6">✓</div>
-                        <h1 class="serif-title text-4xl text-white mb-3">Order Authenticated</h1>
-                        <p class="text-xs font-mono text-gray-400 mb-6 border-b border-white/10 pb-6">Manifest Registry Index: ${order.id.substring(0,12)}...</p>
-                        <p class="text-sm text-gray-300 mb-8 leading-relaxed">Your procurement layout has successfully locked into production pipelines. Distribution agents will confirm payload parameters on delivery.</p>
-                        <button onclick="navigateTo('home')" class="border border-white/20 text-white px-8 py-3 text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-all">Return to Core Deck</button>
+                    <div class="max-w-md mx-auto text-center py-32 px-6">
+                        <div class="text-white text-5xl mb-8 font-light">✓</div>
+                        <h1 class="serif-title text-4xl text-white mb-4">Order Confirmed</h1>
+                        <p class="text-xs font-mono text-gray-500 mb-8 border-b border-white/5 pb-8">ID: #${order.id.substring(0,8)}</p>
+                        <p class="text-sm text-gray-400 mb-10 leading-relaxed">Your order has been placed successfully. You will receive tracking details via email shortly.</p>
+                        <button onclick="navigateTo('home')" class="border border-white/20 text-white px-8 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all">Back to Home</button>
                     </div>
                 `;
-            } catch(err) {
-                alert("Order pipeline tracking execution error.");
-            }
+            } catch(err) { alert("Checkout error occurred."); }
         }
 
-        // Initialize Application
         window.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
