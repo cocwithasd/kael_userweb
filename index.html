@@ -13,19 +13,18 @@
         
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #050505; /* Deepened dark theme */
+            background-color: #050505;
             color: #F5F5F5;
         }
         .serif-title {
             font-family: 'Cormorant Garamond', serif;
         }
-        /* Sticky Header Transitions - Sleeker Glassmorphism */
+        /* Sticky Header Transitions - Smooth, borderless merge */
         header.compact {
             padding-top: 0.75rem;
             padding-bottom: 0.75rem;
-            background-color: rgba(5, 5, 5, 0.85);
+            background-color: rgba(5, 5, 5, 0.90);
             backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
         .line-clamp-2 {
             display: -webkit-box;
@@ -33,7 +32,6 @@
             -webkit-box-orient: vertical;  
             overflow: hidden;
         }
-        /* Slider Fades */
         .hero-slide { transition: opacity 1.5s ease-in-out; }
     </style>
 </head>
@@ -59,14 +57,13 @@
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                 <span id="cart-count" class="absolute -top-1 -right-2 bg-amber-500 text-black text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center hidden">0</span>
             </button>
-            <!-- Mobile Menu Toggle -->
             <button class="md:hidden p-1 focus:outline-none hover:text-amber-400" onclick="toggleMobileMenu()">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
         </div>
     </header>
 
-    <!-- MOBILE BREADCRUMB MENU -->
+    <!-- MOBILE MENU -->
     <div id="mobile-menu" class="fixed inset-0 bg-[#050505]/95 backdrop-blur-md z-50 transform translate-x-full transition-transform duration-300 p-8 flex flex-col justify-between hidden">
         <div>
             <div class="flex justify-between items-center mb-12">
@@ -75,14 +72,11 @@
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            <div class="text-[10px] uppercase tracking-widest text-gray-500 mb-8 flex items-center space-x-2">
-                <span>KAEL</span> <span>/</span> <span class="text-white" id="current-crumb">HOME</span>
-            </div>
-            <nav class="flex flex-col space-y-6 text-2xl uppercase tracking-wider font-light">
+            <nav class="flex flex-col space-y-6 text-2xl uppercase tracking-wider font-light mt-12">
                 <a href="#" onclick="navigateTo('home'); toggleMobileMenu(); return false;" class="hover:text-amber-400 transition-colors">The Collection</a>
                 <a href="#" onclick="navigateTo('about'); toggleMobileMenu(); return false;" class="hover:text-amber-400 transition-colors">Our Story</a>
                 <a href="#" onclick="navigateTo('contact'); toggleMobileMenu(); return false;" class="hover:text-amber-400 transition-colors">Client Services</a>
-                <div class="pt-8 space-y-4">
+                <div class="pt-8 space-y-4 border-t border-white/5">
                     <a href="#" onclick="navigateTo('policy-privacy'); toggleMobileMenu(); return false;" class="block text-xs text-gray-500 hover:text-white uppercase tracking-widest">Privacy Policy</a>
                     <a href="#" onclick="navigateTo('policy-return'); toggleMobileMenu(); return false;" class="block text-xs text-gray-500 hover:text-white uppercase tracking-widest">Returns & Replacements</a>
                 </div>
@@ -119,7 +113,7 @@
             </div>
             <div>
                 <h3 class="text-white uppercase tracking-widest font-semibold mb-6 text-[11px]">Secure Systems</h3>
-                <p class="text-xs mb-3 text-gray-500">Accepting Cash on Delivery (COD) tracking validation globally.</p>
+                <p class="text-xs mb-3 text-gray-500">Accepting Cash on Delivery (COD) subject to pin code serviceability.</p>
             </div>
         </div>
         <div class="max-w-7xl mx-auto text-center border-t border-white/5 mt-16 pt-8 text-[10px] uppercase text-gray-600 tracking-widest">
@@ -188,29 +182,28 @@
         let isSignUpMode = false;
         let sliderInterval = null;
 
-        // Sticky Header Automation
+        // Visual Assets
+        const loaderHTML = `
+            <div class="flex flex-col items-center justify-center py-48 w-full">
+                <img src="https://ejjcjskseatjqdoxabhm.supabase.co/storage/v1/object/public/store-assets/kael_weblogo.png" class="h-6 animate-[pulse_2s_ease-in-out_infinite] opacity-60" alt="Loading">
+            </div>
+        `;
+
+        // Formatters
+        const formatINR = (amount) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
+
         window.addEventListener('scroll', () => {
             const header = document.getElementById('main-header');
             if (window.scrollY > 50) header.classList.add('compact');
             else header.classList.remove('compact');
         });
 
-        // Formatter for Indian Rupees
-        const formatINR = (amount) => {
-            return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
-        };
-
-        // App Initializer
         async function initApp() {
             navigateTo('home'); 
             try {
                 await checkSession();
                 await Promise.all([fetchProducts(), fetchHeroSlides()]);
-                
-                // Re-render home with data if still on home view
-                if(document.getElementById('current-crumb').innerText === 'HOME') {
-                    renderHome(document.getElementById('view-content'));
-                }
+                renderHome(document.getElementById('view-content'));
             } catch(e) { console.error("Initialization failed:", e); }
         }
 
@@ -242,11 +235,10 @@
             if (!error && data) heroSlidesData = data;
         }
 
-        // Structural Single Page Router
+        // Router
         function navigateTo(view, param = null) {
-            clearInterval(sliderInterval); // Clear slider loop when leaving home
+            clearInterval(sliderInterval);
             const container = document.getElementById('view-content');
-            document.getElementById('current-crumb').innerText = view.toUpperCase();
             window.scrollTo({top: 0, behavior: 'smooth'});
 
             if (view === 'home') renderHome(container);
@@ -261,11 +253,14 @@
             target.innerHTML = `<div class="max-w-3xl mx-auto px-6 py-32"><h1 class="serif-title text-5xl mb-8 text-white">${title}</h1><p class="text-gray-400 leading-relaxed text-lg">${content}</p></div>`;
         }
 
-        // VIEW BUILDER: Home Grid View
+        // VIEW BUILDER: Home
         function renderHome(target) {
+            if(globalProducts.length === 0) {
+                target.innerHTML = loaderHTML;
+                return;
+            }
+
             let heroHTML = '';
-            
-            // Build Cinematic Slider
             if(heroSlidesData.length > 0) {
                 let slidesHTML = heroSlidesData.map((slide, index) => `
                     <div class="hero-slide absolute inset-0 ${index === 0 ? 'opacity-100' : 'opacity-0'} z-0">
@@ -278,10 +273,8 @@
                         </div>
                     </div>
                 `).join('');
-                
                 heroHTML = `<section class="relative w-full h-[85vh] overflow-hidden mb-20 border-b border-white/5">${slidesHTML}</section>`;
             } else {
-                // Fallback static hero if database table is empty
                 heroHTML = `
                     <section class="relative min-h-[70vh] flex flex-col justify-center items-center text-center px-6 mb-20 border-b border-white/5 bg-[#0A0A0A]">
                         <h1 class="serif-title text-5xl md:text-7xl tracking-widest uppercase mb-4 text-white">KAEL PARFUMS</h1>
@@ -291,40 +284,39 @@
             }
 
             let gridHTML = `<section class="max-w-7xl mx-auto px-6"><h2 class="serif-title text-3xl tracking-widest uppercase mb-12 text-white text-center">The Collection</h2>`;
+            gridHTML += `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">`;
+            
+            globalProducts.forEach(prod => {
+                const offerPrice = formatINR(prod.price);
+                const originalPrice = prod.original_price ? formatINR(prod.original_price) : '';
+                const priceHtml = prod.original_price 
+                    ? `<span class="text-[11px] text-gray-500 line-through mr-3">${originalPrice}</span><span class="font-mono text-sm tracking-wider text-white">${offerPrice}</span>` 
+                    : `<span class="font-mono text-sm tracking-wider text-white">${offerPrice}</span>`;
+                const volumeText = prod.volume_ml ? `${prod.volume_ml} ML` : '';
 
-            if(globalProducts.length === 0) {
-                gridHTML += `<div class="text-center py-20 text-gray-600 font-mono text-xs">Synchronizing database...</div>`;
-            } else {
-                gridHTML += `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">`;
-                globalProducts.forEach(prod => {
-                    const offerPrice = formatINR(prod.price);
-                    const originalPrice = prod.original_price ? formatINR(prod.original_price) : '';
-                    const priceHtml = prod.original_price 
-                        ? `<span class="text-[11px] text-gray-500 line-through mr-3">${originalPrice}</span><span class="font-mono text-sm tracking-wider text-white">${offerPrice}</span>` 
-                        : `<span class="font-mono text-sm tracking-wider text-white">${offerPrice}</span>`;
-
-                    gridHTML += `
-                        <div class="group bg-[#0A0A0A] border border-white/5 hover:border-white/20 transition-all p-8 flex flex-col justify-between cursor-pointer shadow-lg" onclick="navigateTo('product', '${prod.slug}')">
-                            <div class="aspect-[4/5] bg-[#111] mb-8 overflow-hidden relative flex items-center justify-center p-6">
-                                <img src="${prod.image_url}" alt="${prod.name}" class="max-h-full max-w-full object-contain transform group-hover:scale-105 transition-transform duration-700 ease-out">
+                gridHTML += `
+                    <div class="group bg-[#0A0A0A] border border-white/5 hover:border-white/20 transition-all p-8 flex flex-col justify-between cursor-pointer shadow-lg" onclick="navigateTo('product', '${prod.slug}')">
+                        <div class="aspect-[4/5] bg-[#111] mb-8 overflow-hidden relative flex items-center justify-center p-6">
+                            <img src="${prod.image_url}" alt="${prod.name}" class="max-h-full max-w-full object-contain transform group-hover:scale-105 transition-transform duration-700 ease-out">
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-[9px] uppercase tracking-widest text-amber-500 font-bold">Extrait de Parfum</span>
+                                <span class="text-[9px] font-mono text-gray-500 tracking-widest">${volumeText}</span>
                             </div>
-                            <div>
-                                <h3 class="serif-title text-2xl text-white group-hover:text-amber-400 transition-colors">${prod.name}</h3>
-                                <p class="text-xs text-gray-500 mt-3 line-clamp-2 leading-relaxed">${prod.tagline || ''}</p>
-                                <div class="flex justify-between items-center mt-8 pt-5 border-t border-white/5">
-                                    <div>${priceHtml}</div>
-                                    <span class="text-[10px] font-bold uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors">View Product →</span>
-                                </div>
+                            <h3 class="serif-title text-2xl text-white group-hover:text-amber-400 transition-colors">${prod.name}</h3>
+                            <p class="text-xs text-gray-500 mt-3 line-clamp-2 leading-relaxed">${prod.tagline || ''}</p>
+                            <div class="flex justify-between items-center mt-8 pt-5 border-t border-white/5">
+                                <div>${priceHtml}</div>
+                                <span class="text-[10px] font-bold uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors">View Product →</span>
                             </div>
                         </div>
-                    `;
-                });
-                gridHTML += `</div>`;
-            }
+                    </div>
+                `;
+            });
+            gridHTML += `</div></section>`;
+            target.innerHTML = heroHTML + gridHTML;
 
-            target.innerHTML = heroHTML + gridHTML + `</section>`;
-
-            // Init Slider Logic
             if(heroSlidesData.length > 1) {
                 let currentSlide = 0;
                 const slides = document.querySelectorAll('.hero-slide');
@@ -338,13 +330,15 @@
             }
         }
 
-        // VIEW BUILDER: Dynamic Single Product Page Layout
+        // VIEW BUILDER: Product Page
         function renderProductPage(target, slug) {
             const product = globalProducts.find(p => p.slug === slug);
             if (!product) return;
 
             const offerPrice = formatINR(product.price);
             const originalPrice = product.original_price ? formatINR(product.original_price) : '';
+            const volumeText = product.volume_ml ? `${product.volume_ml} ML` : '50 ML';
+
             const priceHtml = product.original_price 
                 ? `<span class="text-lg text-gray-500 line-through mr-4">${originalPrice}</span><span class="text-3xl font-mono tracking-wide text-white">${offerPrice}</span>` 
                 : `<span class="text-3xl font-mono tracking-wide text-white">${offerPrice}</span>`;
@@ -361,7 +355,11 @@
                         </div>
                         
                         <div class="flex flex-col justify-center">
-                            <span class="text-[10px] font-bold uppercase tracking-widest text-amber-500 mb-4">Extrait de Parfum</span>
+                            <div class="flex items-center space-x-3 mb-4">
+                                <span class="text-[10px] font-bold uppercase tracking-widest text-amber-500">Extrait de Parfum</span>
+                                <span class="text-gray-600">|</span>
+                                <span class="text-[10px] font-mono tracking-widest text-gray-400">${volumeText}</span>
+                            </div>
                             <h1 class="serif-title text-4xl md:text-6xl text-white mb-4 leading-tight">${product.name}</h1>
                             <p class="text-sm italic text-gray-400 mb-8 font-light">${product.tagline || ''}</p>
                             <div class="mb-10 flex items-end">${priceHtml}</div>
@@ -380,7 +378,6 @@
                             <button onclick="addToCart('${product.id}')" class="w-full bg-white text-black py-4 uppercase text-[11px] font-bold tracking-widest hover:bg-amber-400 transition-all shadow-lg">
                                 Add to Cart
                             </button>
-                            <p class="text-[10px] text-gray-600 font-mono text-center mt-4">Complimentary express shipping across India.</p>
                         </div>
                     </div>
                 </div>
@@ -389,7 +386,7 @@
 
         // VIEW BUILDER: Policy Pages
         async function renderPolicyPage(target, policyId) {
-            target.innerHTML = `<div class="text-center py-40 text-gray-500 font-mono text-xs">Syncing system policy documentation...</div>`;
+            target.innerHTML = loaderHTML;
             try {
                 const { data, error } = await supabaseClient.from('legal_pages').select('*').eq('id', policyId).single();
                 if (error || !data) throw error;
@@ -405,10 +402,10 @@
             } catch(e) { target.innerHTML = `<div class="text-center py-40 text-red-500 font-mono text-xs">Policy document unavailable.</div>`; }
         }
 
-        // VIEW BUILDER: User Account
+        // VIEW BUILDER: Account
         async function renderAccountPage(target) {
-            if (!currentUser) return target.innerHTML = `<div class="text-center py-40 text-gray-500 font-mono text-xs">Authentication token invalid.</div>`;
-            target.innerHTML = `<div class="text-center py-40 text-gray-600 font-mono text-xs">Fetching client ledger...</div>`;
+            if (!currentUser) return target.innerHTML = `<div class="text-center py-40 text-gray-500 font-mono text-xs">Authentication required.</div>`;
+            target.innerHTML = loaderHTML;
             try {
                 const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
                 const { data: orders } = await supabaseClient.from('orders').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
@@ -427,16 +424,14 @@
                                 <h2 class="uppercase tracking-widest text-[11px] font-semibold text-white mb-6">Profile Details</h2>
                                 <div class="space-y-5 text-sm font-mono text-gray-400">
                                     <div><span class="block text-[10px] text-gray-600 uppercase mb-1">Name</span> <span class="text-white">${profile?.full_name || '-'}</span></div>
-                                    <div><span class="block text-[10px] text-gray-600 uppercase mb-1">Shipping</span> <span class="text-white">${profile?.shipping_address || '-'}</span></div>
                                     <div><span class="block text-[10px] text-gray-600 uppercase mb-1">Phone</span> <span class="text-white">${profile?.phone || '-'}</span></div>
                                 </div>
                             </div>
                             <div class="lg:col-span-2">
                                 <h2 class="uppercase tracking-widest text-[11px] font-semibold text-white mb-6">Order History</h2>
                 `;
-                if(!orders || orders.length === 0) {
-                    html += `<div class="bg-[#0A0A0A] p-8 border border-white/5 text-center text-xs text-gray-600 font-mono">No transactions found.</div>`;
-                } else {
+                if(!orders || orders.length === 0) html += `<div class="bg-[#0A0A0A] p-8 border border-white/5 text-center text-xs text-gray-600 font-mono">No transactions found.</div>`;
+                else {
                     orders.forEach(order => {
                         html += `
                             <div class="bg-[#0A0A0A] border border-white/5 p-6 mb-4 flex justify-between items-center hover:border-white/10 transition-colors">
@@ -464,44 +459,32 @@
             setTimeout(() => el.classList.toggle('translate-x-full'), 10);
             renderCartItems();
         }
-
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
             menu.classList.toggle('hidden');
             setTimeout(() => menu.classList.toggle('translate-x-full'), 10);
         }
-
         function addToCart(productId) {
             const product = globalProducts.find(p => p.id === productId);
             if (!product) return;
             const baseItem = shoppingCart.find(item => item.id === productId);
             if(baseItem) baseItem.quantity += 1;
             else shoppingCart.push({ ...product, quantity: 1 });
-            
-            updateCartCount();
-            toggleCart();
+            updateCartCount(); toggleCart();
         }
-
         function updateCartCount() {
             const cnt = shoppingCart.reduce((acc, item) => acc + item.quantity, 0);
             const badge = document.getElementById('cart-count');
-            if(cnt > 0) {
-                badge.innerText = cnt;
-                badge.classList.remove('hidden');
-            } else badge.classList.add('hidden');
+            if(cnt > 0) { badge.innerText = cnt; badge.classList.remove('hidden'); } else badge.classList.add('hidden');
         }
-
         function renderCartItems() {
             const container = document.getElementById('cart-items');
             const totalEl = document.getElementById('cart-total');
             if(shoppingCart.length === 0) {
                 container.innerHTML = `<div class="text-center py-16 text-[11px] uppercase tracking-widest text-gray-600">Your cart is empty.</div>`;
-                totalEl.innerText = "₹0";
-                return;
+                totalEl.innerText = "₹0"; return;
             }
-
-            let html = '';
-            let total = 0;
+            let html = ''; let total = 0;
             shoppingCart.forEach(item => {
                 total += item.price * item.quantity;
                 html += `
@@ -517,17 +500,11 @@
                     </div>
                 `;
             });
-            container.innerHTML = html;
-            totalEl.innerText = formatINR(total);
+            container.innerHTML = html; totalEl.innerText = formatINR(total);
         }
+        function removeFromCart(id) { shoppingCart = shoppingCart.filter(item => item.id !== id); updateCartCount(); renderCartItems(); }
 
-        function removeFromCart(id) {
-            shoppingCart = shoppingCart.filter(item => item.id !== id);
-            updateCartCount();
-            renderCartItems();
-        }
-
-        // AUTH MODAL LOGIC
+        // AUTH
         function openAuthModal() { document.getElementById('auth-modal').classList.remove('hidden'); }
         function closeAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
         function toggleAuthMode() {
@@ -537,27 +514,23 @@
             document.getElementById('auth-switch-text').innerText = isSignUpMode ? "Already verified?" : "New to the house?";
             document.getElementById('auth-switch-btn').innerText = isSignUpMode ? "Sign In" : "Create Account";
         }
-
         async function handleAuthAction() {
             const email = document.getElementById('auth-email').value;
             const password = document.getElementById('auth-password').value;
             if(!email || !password) return alert("Credentials missing");
-
             try {
                 if(isSignUpMode) {
                     const { error } = await supabaseClient.auth.signUp({ email, password });
-                    if(error) alert(error.message);
-                    else { alert("Check your email to verify account."); closeAuthModal(); }
+                    if(error) alert(error.message); else { alert("Check email to verify."); closeAuthModal(); }
                 } else {
                     const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-                    if(error) alert(error.message);
-                    else { closeAuthModal(); navigateTo('account'); }
+                    if(error) alert(error.message); else { closeAuthModal(); navigateTo('account'); }
                 }
             } catch(e) { alert("Auth error"); }
         }
         async function handleSignOut() { await supabaseClient.auth.signOut(); navigateTo('home'); }
 
-        // CHECKOUT FLOW
+        // CHECKOUT FLOW WITH PINCODE LOGIC
         function openCheckout() {
             if(shoppingCart.length === 0) return;
             toggleCart(); 
@@ -567,24 +540,50 @@
             container.innerHTML = `
                 <div class="max-w-xl mx-auto px-6 py-24">
                     <h1 class="serif-title text-4xl mb-8 text-white border-b border-white/5 pb-6">Secure Checkout</h1>
-                    <form onsubmit="processOrder(event)" class="space-y-6">
-                        <div>
-                            <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Full Name</label>
-                            <input type="text" id="ship-name" required class="w-full bg-[#0A0A0A] border border-white/10 rounded-sm px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400">
+                    <form id="checkoutForm" onsubmit="processOrder(event)" class="space-y-6">
+                        <!-- Contact Info -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Full Name</label>
+                                <input type="text" id="ship-name" required class="w-full bg-[#0A0A0A] border border-white/10 rounded-sm px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Phone Number</label>
+                                <input type="text" id="ship-phone" required class="w-full bg-[#0A0A0A] border border-white/10 rounded-sm px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400">
+                            </div>
                         </div>
                         <div>
                             <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Email Address</label>
                             <input type="email" id="ship-email" value="${currentUser?.email || ''}" required class="w-full bg-[#0A0A0A] border border-white/10 rounded-sm px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400">
                         </div>
-                        <div>
-                            <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Delivery Address</label>
-                            <textarea id="ship-address" required rows="3" class="w-full bg-[#0A0A0A] border border-white/10 rounded-sm px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400"></textarea>
+
+                        <!-- Address Breakdown -->
+                        <div class="pt-4 border-t border-white/5">
+                            <h3 class="text-[11px] uppercase tracking-widest text-white mb-4 font-semibold">Delivery Address</h3>
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Street Address / Appt</label>
+                                    <input type="text" id="ship-address" required class="w-full bg-[#0A0A0A] border border-white/10 rounded-sm px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400">
+                                </div>
+                                <div class="grid grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">City</label>
+                                        <input type="text" id="ship-city" required class="w-full bg-[#0A0A0A] border border-white/10 rounded-sm px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">State</label>
+                                        <input type="text" id="ship-state" required class="w-full bg-[#0A0A0A] border border-white/10 rounded-sm px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Pincode / Postal Code</label>
+                                    <input type="text" id="ship-pincode" required class="w-full bg-[#0A0A0A] border border-white/10 rounded-sm px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400">
+                                    <p id="pin-error" class="text-red-400 text-xs mt-2 hidden"></p>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Phone Number</label>
-                            <input type="text" id="ship-phone" required class="w-full bg-[#0A0A0A] border border-white/10 rounded-sm px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400">
-                        </div>
-                        <div class="bg-[#0A0A0A] p-5 border border-white/5 rounded-sm">
+
+                        <div class="bg-[#0A0A0A] p-5 border border-white/5 rounded-sm mt-8">
                             <span class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Payment Method</span>
                             <span class="text-xs font-mono text-white">✔ Cash On Delivery (COD)</span>
                         </div>
@@ -593,7 +592,7 @@
                                 <span class="text-[10px] tracking-widest uppercase text-gray-500 block mb-1">Total to Pay</span>
                                 <span class="text-2xl font-mono text-white">${formatINR(total)}</span>
                             </div>
-                            <button type="submit" class="bg-white text-black px-8 py-4 uppercase text-[11px] font-bold tracking-widest hover:bg-amber-400 transition-colors shadow-lg">Confirm Order</button>
+                            <button type="submit" id="checkout-btn" class="bg-white text-black px-8 py-4 uppercase text-[11px] font-bold tracking-widest hover:bg-amber-400 transition-colors shadow-lg">Confirm Order</button>
                         </div>
                     </form>
                 </div>
@@ -602,15 +601,39 @@
 
         async function processOrder(e) {
             e.preventDefault();
-            const total_amount = shoppingCart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+            const btn = document.getElementById('checkout-btn');
+            const pinError = document.getElementById('pin-error');
+            const pincode = document.getElementById('ship-pincode').value.trim();
+            
+            btn.innerText = "Processing...";
+            btn.disabled = true;
+            pinError.classList.add('hidden');
 
             try {
+                // 1. Verify Pincode against Delivery Settings
+                const { data: settings, error: settingsErr } = await supabaseClient.from('store_settings').select('*').eq('id', 1).single();
+                
+                if(!settingsErr && settings) {
+                    if(!settings.allow_all_pins && !settings.allowed_pins.includes(pincode)) {
+                        pinError.innerText = `Sorry, delivery to pincode ${pincode} is currently unavailable.`;
+                        pinError.classList.remove('hidden');
+                        btn.innerText = "Confirm Order";
+                        btn.disabled = false;
+                        return;
+                    }
+                }
+
+                // 2. Process Order Insertion
+                const total_amount = shoppingCart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
                 const { data: order, error: orderErr } = await supabaseClient.from('orders').insert([{
                     user_id: currentUser ? currentUser.id : null,
                     customer_name: document.getElementById('ship-name').value,
                     customer_email: document.getElementById('ship-email').value,
-                    shipping_address: document.getElementById('ship-address').value,
                     phone: document.getElementById('ship-phone').value,
+                    shipping_address: document.getElementById('ship-address').value,
+                    city: document.getElementById('ship-city').value,
+                    state: document.getElementById('ship-state').value,
+                    pincode: pincode,
                     total_amount,
                     payment_method: 'COD',
                     order_status: 'Pending'
@@ -634,7 +657,11 @@
                         <button onclick="navigateTo('home')" class="border border-white/20 text-white px-8 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all">Back to Home</button>
                     </div>
                 `;
-            } catch(err) { alert("Checkout error occurred."); }
+            } catch(err) { 
+                alert("Checkout error occurred. Please try again."); 
+                btn.innerText = "Confirm Order";
+                btn.disabled = false;
+            }
         }
 
         window.addEventListener('DOMContentLoaded', initApp);
