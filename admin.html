@@ -22,10 +22,11 @@
         select option { background-color: #0a0a0a; color: #f5f5f5; padding: 10px; }
     </style>
 </head>
-<body class="overflow-hidden h-screen flex flex-col md:flex-row text-sm">
+<body class="overflow-hidden h-screen flex text-sm">
 
     <div id="toast-container" class="fixed top-6 right-6 z-[100] flex flex-col space-y-3 pointer-events-none"></div>
 
+    <!-- LOGIN -->
     <div id="login-view" class="fixed inset-0 bg-[#000] z-50 flex items-center justify-center bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#1a1a1a] to-[#000]">
         <div class="max-w-md w-full mx-4 p-10 bg-[#050505]/80 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl text-center">
             <h1 class="text-xl tracking-widest uppercase font-bold text-white mb-2">Admin Login</h1>
@@ -37,6 +38,7 @@
         </div>
     </div>
 
+    <!-- MAIN INTERFACE -->
     <div id="dashboard-view" class="hidden w-full h-full flex flex-col md:flex-row relative">
         
         <div class="md:hidden flex justify-between items-center bg-[#050505] p-4 border-b border-white/5 z-40">
@@ -66,6 +68,7 @@
         <main class="flex-1 h-full overflow-y-auto bg-[#030303] relative p-4 md:p-10">
             <div class="max-w-7xl mx-auto">
                 
+                <!-- OVERVIEW DASHBOARD -->
                 <div id="view-overview" class="tab-content block">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-white/5 pb-6 gap-4">
                         <h2 class="text-3xl text-white font-bold">Dashboard Overview</h2>
@@ -93,11 +96,12 @@
                     </div>
 
                     <div class="bg-[#0a0a0a] p-6 border border-white/5 rounded-xl shadow-lg">
-                        <h3 class="text-sm font-bold text-white mb-6 uppercase tracking-widest">Revenue Timeline (Last 7 Days)</h3>
-                        <div class="h-80 w-full relative"><canvas id="revenueChart"></canvas></div>
+                        <h3 class="text-sm font-bold text-white mb-6 uppercase tracking-widest">Order Trends (Last 7 Days)</h3>
+                        <div class="h-80 w-full relative"><canvas id="ordersChart"></canvas></div>
                     </div>
                 </div>
 
+                <!-- ORDERS -->
                 <div id="view-orders" class="tab-content hidden">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-white/5 pb-6 gap-4">
                         <h2 class="text-3xl text-white font-bold">Orders</h2>
@@ -113,6 +117,7 @@
                     </div>
                 </div>
 
+                <!-- RETURNS -->
                 <div id="view-returns" class="tab-content hidden">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-white/5 pb-6 gap-4">
                         <h2 class="text-3xl text-white font-bold">Return Requests</h2>
@@ -128,6 +133,7 @@
                     </div>
                 </div>
 
+                <!-- PRODUCTS CATALOG -->
                 <div id="view-catalog" class="tab-content hidden">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-white/5 pb-6 gap-4">
                         <h2 class="text-3xl text-white font-bold">Products</h2>
@@ -136,6 +142,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="catalog-grid"></div>
                 </div>
 
+                <!-- COUPONS -->
                 <div id="view-coupons" class="tab-content hidden">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-white/5 pb-6 gap-4">
                         <h2 class="text-3xl text-white font-bold">Coupons</h2>
@@ -151,10 +158,12 @@
                     </div>
                 </div>
 
+                <!-- SETTINGS (General + Store + Sliders) -->
                 <div id="view-general" class="tab-content hidden">
                     <h2 class="text-3xl text-white font-bold mb-8 border-b border-white/5 pb-6">Settings</h2>
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         
+                        <!-- Order Rules -->
                         <div class="bg-[#0a0a0a] p-6 md:p-8 border border-white/5 rounded-xl shadow-lg">
                             <h3 class="text-xs uppercase tracking-widest font-bold text-white mb-6 border-b border-white/5 pb-4">Order Rules</h3>
                             <div class="space-y-4">
@@ -171,6 +180,7 @@
                             <button onclick="saveOrderRules()" class="mt-6 bg-white text-black px-6 py-2 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-amber-400 transition-colors">Save Rules</button>
                         </div>
 
+                        <!-- Pincodes -->
                         <div class="bg-[#0a0a0a] p-6 md:p-8 border border-white/5 rounded-xl shadow-lg">
                             <h3 class="text-xs uppercase tracking-widest font-bold text-white mb-6 border-b border-white/5 pb-4">Delivery Pincodes</h3>
                             <div class="flex items-center space-x-3 mb-4 p-3 bg-[#111] rounded border border-white/5"><input type="checkbox" id="conf-allow-all" onchange="togglePincodeMode()" class="accent-amber-500 w-4 h-4"><label class="text-xs text-white">Allow All Pincodes</label></div>
@@ -180,6 +190,7 @@
                             </div>
                         </div>
 
+                        <!-- Site Settings -->
                         <div class="bg-[#0a0a0a] p-6 md:p-8 border border-white/5 rounded-xl shadow-lg">
                             <h3 class="text-xs uppercase tracking-widest font-bold text-white mb-6 border-b border-white/5 pb-4">Frontend Details</h3>
                             <div class="space-y-4">
@@ -191,6 +202,7 @@
                             <button onclick="saveGeneralSettings()" class="mt-4 bg-white text-black px-6 py-2 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-amber-400 transition-colors">Save Details</button>
                         </div>
 
+                        <!-- Socials & Contact -->
                         <div class="bg-[#0a0a0a] p-6 md:p-8 border border-white/5 rounded-xl shadow-lg">
                             <h3 class="text-xs uppercase tracking-widest font-bold text-white mb-6 border-b border-white/5 pb-4">Contact & Socials</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -202,20 +214,31 @@
                             <button onclick="saveContactConfig()" class="w-full border border-white/20 text-white py-2 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors">Save Contact</button>
                         </div>
 
-                        <div class="bg-gradient-to-br from-[#0a0a0a] to-[#111] p-6 md:p-8 border border-amber-500/20 rounded-xl shadow-lg lg:col-span-2 relative overflow-hidden">
+                        <!-- Payments -->
+                        <div class="bg-gradient-to-br from-[#0a0a0a] to-[#111] p-6 md:p-8 border border-amber-500/20 rounded-xl shadow-lg relative overflow-hidden">
                             <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl -mr-10 -mt-10"></div>
                             <h3 class="text-xs uppercase tracking-widest font-bold text-amber-500 mb-6 border-b border-white/5 pb-4 relative z-10">Razorpay Payments</h3>
                             <div class="flex items-center space-x-3 mb-4 relative z-10"><input type="checkbox" id="rzp-enable" class="accent-amber-500 w-4 h-4"><label class="text-sm font-bold text-white">Enable Razorpay</label></div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 relative z-10">
-                                <div><label class="text-[10px] text-gray-500 uppercase block mb-1">Key ID (Public)</label><input type="text" id="rzp-key" class="w-full glass-input rounded p-2 text-sm"></div>
-                                <div><label class="text-[10px] text-red-400 uppercase block mb-1">Key Secret (Classified)</label><input type="password" id="rzp-secret" class="w-full bg-[#050505] border border-red-500/30 text-amber-400 rounded p-2 text-sm outline-none"></div>
+                                <div><label class="text-[10px] text-gray-500 uppercase block mb-1">Key ID</label><input type="text" id="rzp-key" class="w-full glass-input rounded p-2 text-sm"></div>
+                                <div><label class="text-[10px] text-red-400 uppercase block mb-1">Key Secret</label><input type="password" id="rzp-secret" class="w-full bg-[#050505] border border-red-500/30 text-amber-400 rounded p-2 text-sm outline-none"></div>
                             </div>
                             <button onclick="saveRazorpayConfig()" class="bg-amber-500 text-black px-6 py-2.5 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-amber-400 shadow-lg relative z-10 transition-colors">Save Payment Settings</button>
+                        </div>
+
+                        <!-- Hero Sliders Manager -->
+                        <div class="bg-[#0a0a0a] p-6 md:p-8 border border-white/5 rounded-xl shadow-lg relative lg:col-span-2">
+                            <div class="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
+                                <h3 class="text-xs uppercase tracking-widest font-bold text-white">Hero Sliders</h3>
+                                <button onclick="openSlideModal()" class="text-[10px] bg-white/10 text-white px-4 py-1.5 rounded hover:bg-white hover:text-black transition-colors uppercase font-bold tracking-widest">Add Slide</button>
+                            </div>
+                            <div id="sliders-container" class="space-y-4"></div>
                         </div>
 
                     </div>
                 </div>
 
+                <!-- CONTENT -->
                 <div id="view-content" class="tab-content hidden max-w-6xl">
                     <h2 class="text-3xl text-white font-bold mb-8 border-b border-white/5 pb-6">Pages & Content</h2>
                     <div class="bg-[#0a0a0a] p-6 md:p-8 border border-white/5 rounded-xl shadow-lg">
@@ -239,6 +262,7 @@
         </main>
     </div>
 
+    <!-- FULL SCREEN ORDER / INVOICE MODAL -->
     <div id="order-fullscreen-view" class="fixed inset-0 bg-[#030303] z-[60] flex flex-col hidden overflow-y-auto transition-opacity">
         <div class="sticky top-0 bg-[#050505] border-b border-white/5 px-6 py-4 flex justify-between items-center z-10 shadow-lg">
             <div class="flex items-center space-x-4">
@@ -323,6 +347,7 @@
         </div>
     </div>
 
+    <!-- PRODUCT MODAL -->
     <div id="product-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-[#0A0A0A] border border-white/10 w-full max-w-4xl max-h-[95vh] flex flex-col rounded-xl shadow-2xl">
             <div class="flex justify-between items-center p-6 md:p-8 border-b border-white/5">
@@ -337,14 +362,17 @@
                     <div class="md:col-span-2"><label class="text-[10px] uppercase text-gray-500 block mb-1">Image URL</label><input type="text" id="pm-image" class="w-full glass-input rounded p-3 text-sm font-mono outline-none"></div>
                 </div>
                 
+                <!-- Variations -->
                 <div class="border-t border-white/5 pt-6 bg-[#111] p-6 rounded border border-white/5">
                     <div class="flex justify-between items-center mb-6"><h4 class="text-xs uppercase font-bold text-amber-500">Variations (Sizes / Quantity)</h4><button onclick="addVariationRow()" class="text-[9px] bg-white/10 px-3 py-1.5 rounded hover:bg-white hover:text-black uppercase font-bold transition-colors">+ Add Variation</button></div>
                     <div id="pm-variations-container" class="space-y-4"></div>
                 </div>
 
+                <!-- Product Details -->
                 <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Description</label><textarea id="pm-description" rows="4" class="w-full glass-input rounded p-4 text-sm text-gray-300 leading-relaxed outline-none"></textarea></div>
                 <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Tagline</label><input type="text" id="pm-tagline" class="w-full glass-input rounded p-3 text-sm outline-none"></div>
 
+                <!-- Fragrance Notes -->
                 <div class="bg-[#111] p-6 rounded border border-white/5">
                     <h4 class="text-[10px] uppercase font-bold text-amber-500 mb-4">Fragrance Notes</h4>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -361,6 +389,27 @@
         </div>
     </div>
 
+    <!-- SLIDER MODAL -->
+    <div id="slider-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-[#0A0A0A] border border-white/10 w-full max-w-2xl flex flex-col rounded-xl shadow-2xl">
+            <div class="flex justify-between items-center p-6 border-b border-white/5">
+                <h3 class="text-sm uppercase tracking-widest font-bold text-white">Hero Slider Configuration</h3>
+                <button onclick="closeSlideModal()" class="text-gray-500 hover:text-white bg-white/5 rounded-full p-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            </div>
+            <div class="p-6 space-y-6">
+                <input type="hidden" id="sm-id">
+                <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Main Title</label><input type="text" id="sm-title" class="w-full glass-input rounded p-3 text-sm outline-none"></div>
+                <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Subtitle</label><input type="text" id="sm-subtitle" class="w-full glass-input rounded p-3 text-sm outline-none"></div>
+                <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Background Image URL</label><input type="text" id="sm-image" class="w-full glass-input rounded p-3 text-sm font-mono outline-none"></div>
+                <div class="flex items-center space-x-3"><input type="checkbox" id="sm-active" class="accent-amber-500 w-4 h-4"><label class="text-xs text-white">Active on Storefront</label></div>
+            </div>
+            <div class="p-6 border-t border-white/5 flex justify-end">
+                <button onclick="saveSlide()" class="w-full md:w-auto bg-amber-500 text-black px-8 py-2.5 rounded text-[11px] font-bold uppercase tracking-widest hover:bg-amber-400">Save Slide</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- COUPON MODAL -->
     <div id="coupon-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-[#0A0A0A] border border-white/10 w-full max-w-2xl flex flex-col rounded-xl shadow-2xl">
             <div class="flex justify-between items-center p-6 border-b border-white/5">
@@ -385,13 +434,13 @@
         </div>
     </div>
 
-
+    <!-- CORE LOGIC -->
     <script>
         const SUPABASE_URL = "https://ejjcjskseatjqdoxabhm.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqamNqc2tzZWF0anFkb3hhYmhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NjY0ODMsImV4cCI6MjA5NjQ0MjQ4M30.tCxYq9BWtU48m4mDI30Bf3-2temFzLW7qnpCG25nKBk";
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let adminUser = null; let localPincodes = []; let allProducts = []; let allPolicies = []; let allCoupons = [];
+        let adminUser = null; let localPincodes = []; let allProducts = []; let allPolicies = []; let allCoupons = []; let allSlides = [];
         let currentEditingOrder = null; let revenueChartObj = null;
 
         const formatINR = (amount) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
@@ -445,18 +494,23 @@
         // 0. OVERVIEW DASHBOARD
         async function loadOverview() {
             try {
-                const { data: orders } = await supabaseClient.from('orders').select('total_amount, created_at');
+                const { data: orders } = await supabaseClient.from('orders').select('total_amount, created_at, order_status');
                 const { count: usersCount } = await supabaseClient.from('profiles').select('*', { count: 'exact', head: true });
                 const { count: returnsCount } = await supabaseClient.from('return_requests').select('*', { count: 'exact', head: true }).eq('status', 'Pending');
 
-                let totalRevenue = 0; let dailyRev = {};
+                let totalRevenue = 0; let dailyAll = {}; let dailyDelivered = {}; let dailyPending = {};
                 const past7Days = [...Array(7)].map((_, i) => { const d = new Date(); d.setDate(d.getDate() - i); return d.toISOString().split('T')[0]; }).reverse();
-                past7Days.forEach(date => dailyRev[date] = 0);
+                
+                past7Days.forEach(date => { dailyAll[date] = 0; dailyDelivered[date] = 0; dailyPending[date] = 0; });
 
                 (orders || []).forEach(o => {
                     totalRevenue += o.total_amount;
                     const dString = o.created_at.split('T')[0];
-                    if(dailyRev[dString] !== undefined) dailyRev[dString] += o.total_amount;
+                    if(dailyAll[dString] !== undefined) {
+                        dailyAll[dString]++;
+                        if(o.order_status === 'Delivered') dailyDelivered[dString]++;
+                        if(o.order_status === 'Pending') dailyPending[dString]++;
+                    }
                 });
 
                 document.getElementById('stat-sales').innerText = formatINR(totalRevenue);
@@ -464,17 +518,24 @@
                 document.getElementById('stat-users').innerText = usersCount || 0;
                 document.getElementById('stat-returns').innerText = returnsCount || 0;
 
-                renderChart(past7Days, past7Days.map(date => dailyRev[date]));
+                renderChart(past7Days, past7Days.map(d => dailyAll[d]), past7Days.map(d => dailyPending[d]), past7Days.map(d => dailyDelivered[d]));
             } catch (error) { console.error("Dashboard error:", error); }
         }
 
-        function renderChart(labels, data) {
-            const ctx = document.getElementById('revenueChart').getContext('2d');
+        function renderChart(labels, allData, pendingData, deliveredData) {
+            const ctx = document.getElementById('ordersChart').getContext('2d');
             if(revenueChartObj) revenueChartObj.destroy();
             revenueChartObj = new Chart(ctx, {
                 type: 'line',
-                data: { labels: labels, datasets: [{ label: 'Daily Revenue (₹)', data: data, borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.1)', borderWidth: 2, fill: true, tension: 0.4 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#666' } }, x: { grid: { display: false }, ticks: { color: '#666' } } } }
+                data: { 
+                    labels: labels, 
+                    datasets: [
+                        { label: 'Total Orders', data: allData, borderColor: '#f59e0b', backgroundColor: 'transparent', borderWidth: 2, tension: 0.4 },
+                        { label: 'Pending', data: pendingData, borderColor: '#ef4444', backgroundColor: 'transparent', borderWidth: 2, tension: 0.4 },
+                        { label: 'Delivered', data: deliveredData, borderColor: '#22c55e', backgroundColor: 'transparent', borderWidth: 2, tension: 0.4 }
+                    ] 
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, labels: { color: '#aaa'} } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#666', stepSize: 1 } }, x: { grid: { display: false }, ticks: { color: '#666' } } } }
             });
         }
 
@@ -502,7 +563,6 @@
             if(error) return showToast("Error loading details", "error");
             currentEditingOrder = order;
 
-            // Details View Setup
             document.getElementById('web-order-id').innerText = `#${order.id.toUpperCase()}`;
             document.getElementById('web-customer-name').innerText = order.customer_name;
             document.getElementById('web-customer-contact').innerHTML = `${order.phone}<br>${order.customer_email}`;
@@ -521,7 +581,6 @@
             document.getElementById('web-discount').innerText = order.discount_amount > 0 ? `- ${formatINR(order.discount_amount)}` : '₹0';
             document.getElementById('web-total').innerText = formatINR(order.total_amount);
 
-            // Invoice Setup
             document.getElementById('inv-id').innerText = `#${order.id.substring(0,8).toUpperCase()}`;
             document.getElementById('inv-date').innerText = new Date(order.created_at).toLocaleString();
             document.getElementById('inv-name').innerText = order.customer_name;
@@ -652,6 +711,8 @@
             else { addVariationRow(); }
         }
 
+        function closeProductModal() { document.getElementById('product-modal').classList.add('hidden'); }
+
         function addVariationRow(v = null) {
             const container = document.getElementById('pm-variations-container');
             const rowId = `var_${Date.now()}_${Math.floor(Math.random()*100)}`;
@@ -694,7 +755,6 @@
             } catch(e) { showToast("Error saving product", "error"); }
         }
 
-        function closeProductModal() { document.getElementById('product-modal').classList.add('hidden'); }
         async function deleteProduct(id) { if(!confirm("Delete this product permanently?")) return; await supabaseClient.from('products').delete().eq('id', id); showToast("Product deleted"); loadCatalog(); }
 
         // SETTINGS & LOGISTICS
@@ -727,13 +787,43 @@
         async function saveContactConfig() { await supabaseClient.from('store_settings').update({ support_email: document.getElementById('conf-email').value, support_phone: document.getElementById('conf-phone').value, social_instagram: document.getElementById('social-ig').value, social_whatsapp: document.getElementById('social-wa').value }).eq('id', 1); showToast("Contact details saved."); }
         async function saveRazorpayConfig() { await supabaseClient.from('store_settings').update({ razorpay_enabled: document.getElementById('rzp-enable').checked, razorpay_key_id: document.getElementById('rzp-key').value }).eq('id', 1); const secret = document.getElementById('rzp-secret').value; if(secret && secret.length > 5) await supabaseClient.from('secure_settings').upsert({ id: 1, razorpay_key_secret: secret }); showToast("Payment settings saved."); }
 
-        // GENERAL SETTINGS & PAGES
+        // GENERAL SETTINGS & HERO SLIDERS
         async function loadGeneralSettings() {
             const { data } = await supabaseClient.from('general_settings').select('*').eq('id', 1).single();
             if(data) { document.getElementById('gs-tagline').value = data.site_tagline || ''; document.getElementById('gs-footer').value = data.footer_description || ''; document.getElementById('gs-secure').value = data.secure_systems_text || ''; document.getElementById('gs-copyright').value = data.copyright_text || ''; }
+            
+            const { data: slides } = await supabaseClient.from('hero_slides').select('*').order('order_index');
+            allSlides = slides || [];
+            document.getElementById('sliders-container').innerHTML = allSlides.map(s => `
+                <div class="flex items-center justify-between p-4 bg-[#111] border border-white/5 rounded-lg">
+                    <div class="flex items-center space-x-4">
+                        <img src="${s.image_url}" class="w-16 h-10 object-cover rounded opacity-50">
+                        <div><p class="text-white text-sm font-bold uppercase tracking-widest">${s.title}</p><p class="text-[9px] text-gray-500 uppercase tracking-widest">${s.active ? '<span class="text-green-500">Active</span>' : 'Disabled'}</p></div>
+                    </div>
+                    <div class="space-x-2">
+                        <button onclick="openSlideModal('${s.id}')" class="text-[9px] uppercase tracking-widest text-gray-400 hover:text-white">Edit</button>
+                        <button onclick="deleteSlide('${s.id}')" class="text-[9px] uppercase tracking-widest text-red-500 hover:text-red-400">Delete</button>
+                    </div>
+                </div>
+            `).join('');
         }
         async function saveGeneralSettings() { await supabaseClient.from('general_settings').update({ site_tagline: document.getElementById('gs-tagline').value, footer_description: document.getElementById('gs-footer').value, secure_systems_text: document.getElementById('gs-secure').value, copyright_text: document.getElementById('gs-copyright').value }).eq('id', 1); showToast("Settings saved."); }
         
+        function openSlideModal(id = null) {
+            document.getElementById('slider-modal').classList.remove('hidden');
+            const s = id ? allSlides.find(x => x.id === id) : null;
+            document.getElementById('sm-id').value = s ? s.id : ''; document.getElementById('sm-title').value = s ? s.title : ''; document.getElementById('sm-subtitle').value = s ? (s.subtitle||'') : ''; document.getElementById('sm-image').value = s ? s.image_url : ''; document.getElementById('sm-active').checked = s ? s.active : true;
+        }
+        function closeSlideModal() { document.getElementById('slider-modal').classList.add('hidden'); }
+        async function saveSlide() {
+            const id = document.getElementById('sm-id').value;
+            const payload = { title: document.getElementById('sm-title').value, subtitle: document.getElementById('sm-subtitle').value, image_url: document.getElementById('sm-image').value, active: document.getElementById('sm-active').checked, order_index: id ? undefined : allSlides.length };
+            if(id) await supabaseClient.from('hero_slides').update(payload).eq('id', id); else await supabaseClient.from('hero_slides').insert([payload]);
+            closeSlideModal(); loadGeneralSettings(); showToast("Slide saved.");
+        }
+        async function deleteSlide(id) { await supabaseClient.from('hero_slides').delete().eq('id', id); loadGeneralSettings(); showToast("Slide deleted."); }
+
+        // PAGES
         async function loadPolicies() { const { data } = await supabaseClient.from('legal_pages').select('id, title, content'); allPolicies = data || []; document.getElementById('policy-select').innerHTML = `<option value="" disabled selected style="display:none">-- Select Page to Edit --</option>` + allPolicies.map(p => `<option value="${p.id}">${p.title}</option>`).join(''); }
         function loadSelectedPolicy() { const id = document.getElementById('policy-select').value; const p = allPolicies.find(x => x.id === id); if(!p) return; document.getElementById('policy-id').value = p.id; document.getElementById('policy-title').value = p.title; document.getElementById('policy-content').value = p.content; document.getElementById('policy-editor').classList.remove('hidden'); updateLivePreview(); }
         function updateLivePreview() { document.getElementById('live-preview-container').innerHTML = `<h1 class="serif-title text-3xl mb-4 text-white">${document.getElementById('policy-title').value}</h1><div class="text-gray-400 leading-relaxed text-sm space-y-6 whitespace-pre-line border-t border-white/5 pt-6">${document.getElementById('policy-content').value}</div>`; }
