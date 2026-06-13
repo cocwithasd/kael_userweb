@@ -117,7 +117,7 @@
                         <div><label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Full Name</label><input type="text" id="auth-name" class="w-full bg-[#111] border border-white/10 rounded px-4 py-2.5 text-sm text-white outline-none focus:border-amber-400"></div>
                         <div><label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Phone Number</label><input type="tel" id="auth-phone" class="w-full bg-[#111] border border-white/10 rounded px-4 py-2.5 text-sm text-white outline-none focus:border-amber-400"></div>
                     </div>
-                    <div id="email-field"><label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Email</label><input type="email" id="auth-email" class="w-full bg-[#111] border border-white/10 rounded px-4 py-2.5 text-sm text-white outline-none focus:border-amber-400"></div>
+                    <div id="email-field"><label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Email Address</label><input type="email" id="auth-email" class="w-full bg-[#111] border border-white/10 rounded px-4 py-2.5 text-sm text-white outline-none focus:border-amber-400"></div>
                     <div id="pw-field"><label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Password</label><input type="password" id="auth-password" class="w-full bg-[#111] border border-white/10 rounded px-4 py-2.5 text-sm text-white outline-none focus:border-amber-400"></div>
                     <button onclick="handleAuthAction()" id="submit-auth-btn" class="w-full bg-amber-500 text-black py-3 rounded text-[11px] font-bold uppercase tracking-widest hover:bg-amber-400 mt-2">Login</button>
                     <div id="auth-switch-wrapper" class="text-center text-[11px] text-gray-500 pt-4 border-t border-white/5">
@@ -275,7 +275,6 @@
             let optionsHtml = '';
             let variationSelector = '';
             
-            // Smart Selector Logic: Hide if only 1 variation exists
             if (vars.length > 1) {
                 vars.forEach((v, idx) => { optionsHtml += `<option value="${idx}">${v.size}</option>`; });
                 variationSelector = `
@@ -295,23 +294,28 @@
             }
 
             target.innerHTML = `
-                <div class="max-w-7xl mx-auto px-6 py-28">
-                    <button onclick="navigateTo('home')" class="text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-white mb-12 flex items-center transition-colors">← Back to Products</button>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-24">
-                        <div class="bg-[#0A0A0A] p-12 border border-white/5 rounded-xl flex items-center justify-center aspect-square shadow-2xl"><img src="${product.image_url}" class="max-h-full object-contain"></div>
-                        <div class="flex flex-col justify-center">
-                            <h1 class="serif-title text-4xl md:text-6xl text-white mb-4 leading-tight">${product.name}</h1>
+                <div class="max-w-7xl mx-auto px-6 pt-24 pb-12 lg:pt-32 lg:pb-24">
+                    <button onclick="navigateTo('home')" class="text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-white mb-8 flex items-center transition-colors">← Back to Products</button>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
+                        
+                        <div class="bg-[#0A0A0A] p-8 lg:p-12 border border-white/5 rounded-xl flex items-center justify-center shadow-2xl h-[400px] sm:h-[500px] lg:h-[calc(100vh-200px)] lg:max-h-[700px] lg:sticky lg:top-24">
+                            <img src="${product.image_url}" alt="${product.name}" class="max-h-full max-w-full object-contain">
+                        </div>
+                        
+                        <div class="flex flex-col justify-center py-4 lg:py-8">
+                            <h1 class="serif-title text-4xl md:text-5xl lg:text-6xl text-white mb-4 leading-tight">${product.name}</h1>
                             <p class="text-sm italic text-gray-400 mb-8 font-light">${product.tagline || ''}</p>
                             
-                            <div class="mb-10 flex items-end" id="prod-price-display"></div>
+                            <div class="mb-8 flex items-end" id="prod-price-display"></div>
                             
                             ${variationSelector}
 
-                            <p class="text-sm text-gray-400 leading-loose mb-10">${product.description}</p>
+                            <p class="text-sm text-gray-400 leading-relaxed mb-8">${product.description}</p>
                             
-                            <div class="border-t border-b border-white/5 py-8 mb-10">
+                            <div class="border-t border-b border-white/5 py-6 mb-8">
                                 <h3 class="text-[11px] uppercase tracking-widest text-white mb-5 font-semibold">Fragrance Notes</h3>
-                                <div class="grid grid-cols-3 gap-4 text-xs font-mono text-gray-400">
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono text-gray-400">
                                     <div><span class="text-amber-500 block mb-1">TOP</span> ${product.top_notes?.join(', ') || 'N/A'}</div>
                                     <div><span class="text-amber-500 block mb-1">HEART</span> ${product.heart_notes?.join(', ') || 'N/A'}</div>
                                     <div><span class="text-amber-500 block mb-1">BASE</span> ${product.base_notes?.join(', ') || 'N/A'}</div>
