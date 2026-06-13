@@ -33,6 +33,9 @@
                 <h1 class="text-xl tracking-widest uppercase font-bold text-white mb-2">System Access</h1>
                 <p class="text-gray-500 text-[10px] tracking-widest uppercase">Admin Clearance Required</p>
             </div>
+            <!-- Error Display Box -->
+            <div id="admin-error" class="hidden bg-red-500/10 border border-red-500/50 text-red-500 text-[10px] uppercase tracking-widest p-4 mb-6"></div>
+
             <input type="email" id="email" placeholder="Administrator Email" class="w-full bg-[#111] border border-white/10 p-3.5 mb-4 text-xs font-mono text-white focus:outline-none focus:border-amber-500 transition-colors">
             <input type="password" id="password" placeholder="Passkey" class="w-full bg-[#111] border border-white/10 p-3.5 mb-8 text-xs font-mono text-white focus:outline-none focus:border-amber-500 transition-colors">
             <button id="auth-btn" onclick="loginAdmin()" class="w-full bg-white text-black py-3.5 font-bold text-[11px] tracking-widest uppercase hover:bg-amber-500 transition-colors">Authenticate</button>
@@ -220,15 +223,13 @@
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqamNqc2tzZWF0anFkb3hhYmhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NjY0ODMsImV4cCI6MjA5NjQ0MjQ4M30.tCxYq9BWtU48m4mDI30Bf3-2temFzLW7qnpCG25nKBk";
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // State
         let adminUser = null;
         let localPincodes = [];
         let allProducts = [];
         let allPolicies = [];
 
-        // Formatting & Utils
         const formatINR = (amount) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
-        
+
         function showToast(message, type = 'success') {
             let container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -241,14 +242,20 @@
             setTimeout(() => { toast.classList.add('translate-x-full'); setTimeout(() => toast.remove(), 300); }, 4000);
         }
 
-        // INIT & AUTH
+        function showError(message) {
+            const box = document.getElementById('admin-error');
+            box.innerText = message;
+            box.classList.remove('hidden');
+        }
+
         async function initAdmin() {
             const { data: { session } } = await supabaseClient.auth.getSession();
             if(!session) return;
 
             const { data: profile, error } = await supabaseClient.from('profiles').select('role').eq('id', session.user.id).single();
+            
             if(error || !profile || profile.role !== 'admin') {
-                showToast("ACCESS DENIED: Lacking Admin Clearance.", "error");
+                showError("ACCESS DENIED: ACCOUNT LACKS ADMIN CLEARANCE.");
                 await supabaseClient.auth.signOut();
                 return;
             }
@@ -258,7 +265,6 @@
             document.getElementById('dashboard-view').classList.remove('hidden');
             document.getElementById('admin-email').innerText = adminUser.email;
 
-            // Load initial view
             switchTab('orders');
             loadLogisticsConfig();
             loadPolicies();
@@ -269,24 +275,24 @@
             const password = document.getElementById('password').value;
             const btn = document.getElementById('auth-btn');
             
-            if(!email || !password) return showToast("Credentials required.", "error");
+            document.getElementById('admin-error').classList.add('hidden');
+            if(!email || !password) return showError("CREDENTIALS MISSING.");
+            
             btn.innerText = "AUTHENTICATING..."; btn.disabled = true;
 
             try {
                 const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
                 if(error) throw error;
                 await initAdmin();
-            } catch(e) { showToast(e.message, "error"); } 
+            } catch(e) { showError(e.message); } 
             finally { btn.innerText = "AUTHENTICATE"; btn.disabled = false; }
         }
 
         async function logoutAdmin() { await supabaseClient.auth.signOut(); window.location.reload(); }
 
-        // NAVIGATION
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            
             document.getElementById(`view-${tabId}${tabId === 'content' ? '-tab' : ''}`).classList.remove('hidden');
             document.getElementById(`tab-btn-${tabId}`).classList.add('active');
 
@@ -299,16 +305,16 @@
             const tbody = document.getElementById('orders-tbody');
             tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-xs">Fetching Intel...</td></tr>`;
             
-            const { data: orders } = await supabaseClient.from('orders').select('*').order('created_at', { ascending: false });
+            const { data: orders, error } = await supabaseClient.from('orders').select('*').order('created_at', { ascending: false });
+            
+            if(error) { tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-xs text-red-500">Error loading orders. Check RLS policies.</td></tr>`; return; }
             if(!orders || orders.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-xs">No records found.</td></tr>`; return; }
 
             const statusOptions = ['Pending', 'Processing', 'Shipped', 'Delivered'];
             
             tbody.innerHTML = orders.map(o => {
-                let selectHtml = `<select onchange="updateOrderStatus('${o.id}', this.value, '${o.customer_email}', '${o.customer_name}')" class="bg-[#111] border border-white/10 px-2 py-1 text-xs text-white focus:outline-none focus:border-amber-500">`;
-                statusOptions.forEach(s => { selectHtml += `<option value="${s}" ${o.order_status === s ? 'selected' : ''}>${s}</option>`; });
-                selectHtml += `</select>`;
-
+                let optionsHtml = statusOptions.map(s => `<option value="${s}" ${o.order_status === s ? 'selected' : ''}>${s}</option>`).join('');
+                
                 return `
                 <tr class="hover:bg-white/5 transition-colors">
                     <td class="px-6 py-4 font-bold text-white">#${o.id.substring(0,8)}</td>
@@ -319,23 +325,37 @@
                     </td>
                     <td class="px-6 py-4 text-amber-500">${formatINR(o.total_amount)}</td>
                     <td class="px-6 py-4"><span class="bg-[#111] px-2 py-1 text-[9px] uppercase tracking-widest">${o.payment_method.replace(' (COD)','').replace(' (Pre-paid)','')}</span></td>
-                    <td class="px-6 py-4">${selectHtml}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center space-x-2">
+                            <select id="status-${o.id}" class="bg-[#111] border border-white/10 px-2 py-1 text-xs text-white focus:outline-none focus:border-amber-500">
+                                ${optionsHtml}
+                            </select>
+                            <button onclick="updateOrderStatus('${o.id}', '${o.customer_email}', '${o.customer_name.replace(/'/g, "\\'")}')" class="bg-white/10 hover:bg-amber-500 hover:text-black text-white px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest transition-colors">Update</button>
+                        </div>
+                    </td>
                 </tr>
                 `;
             }).join('');
         }
 
-        async function updateOrderStatus(orderId, newStatus, customerEmail, customerName) {
+        async function updateOrderStatus(orderId, customerEmail, customerName) {
+            const newStatus = document.getElementById(`status-${orderId}`).value;
+            
             try {
                 // Update DB
-                await supabaseClient.from('orders').update({ order_status: newStatus }).eq('id', orderId);
+                const { error } = await supabaseClient.from('orders').update({ order_status: newStatus }).eq('id', orderId);
+                if(error) throw error;
+                
                 showToast(`Order #${orderId.substring(0,8)} updated to ${newStatus}`);
                 
-                // Trigger Vercel Email
+                // Trigger Vercel Email via API
                 fetch('/api/update-status', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ customerEmail, customerName, orderId: orderId.substring(0,8), newStatus })
                 });
+
+                // Reload UI to show verified backend state
+                loadOrders();
             } catch(e) { showToast("Failed to update status", "error"); }
         }
 
