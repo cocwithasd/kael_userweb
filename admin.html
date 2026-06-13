@@ -21,8 +21,11 @@
         .nav-item.active { background: linear-gradient(90deg, rgba(245,158,11,0.1) 0%, rgba(0,0,0,0) 100%); color: #f59e0b; border-left: 2px solid #f59e0b; }
         
         /* Glass panel inputs */
-        .glass-input { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); transition: all 0.3s ease; }
+        .glass-input { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); transition: all 0.3s ease; color: #fff; }
         .glass-input:focus { background: rgba(255,255,255,0.05); border-color: #f59e0b; box-shadow: 0 0 15px rgba(245,158,11,0.1); }
+        
+        /* Force Dropdown Options to be Dark */
+        select option { background-color: #0a0a0a; color: #f5f5f5; padding: 10px; }
     </style>
 </head>
 <body class="overflow-hidden h-screen flex text-sm">
@@ -39,8 +42,8 @@
             
             <div id="admin-error" class="hidden bg-red-500/10 border border-red-500/30 text-red-400 text-[10px] uppercase tracking-widest p-4 mb-6 rounded-lg text-center"></div>
 
-            <input type="email" id="email" placeholder="Administrator Email" class="w-full glass-input p-4 mb-4 text-xs font-mono text-white rounded-lg outline-none">
-            <input type="password" id="password" placeholder="Passkey" class="w-full glass-input p-4 mb-8 text-xs font-mono text-white rounded-lg outline-none">
+            <input type="email" id="email" placeholder="Administrator Email" class="w-full glass-input p-4 mb-4 text-xs font-mono rounded-lg outline-none">
+            <input type="password" id="password" placeholder="Passkey" class="w-full glass-input p-4 mb-8 text-xs font-mono rounded-lg outline-none">
             
             <button id="auth-btn" onclick="loginAdmin()" class="w-full bg-amber-500 text-black py-4 rounded-lg font-bold text-[11px] tracking-widest uppercase hover:bg-amber-400 hover:shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all">Authenticate</button>
         </div>
@@ -87,7 +90,7 @@
         </aside>
 
         <main class="flex-1 h-full overflow-y-auto bg-[#030303]">
-            <div class="p-10 max-w-7xl mx-auto">
+            <div class="p-10 max-w-[1600px] mx-auto">
                 
                 <div id="view-orders" class="tab-content block">
                     <div class="flex justify-between items-center mb-8 border-b border-white/5 pb-6">
@@ -144,7 +147,7 @@
 
                             <div id="pincode-manager" class="transition-opacity duration-300">
                                 <div class="flex space-x-3 mb-6">
-                                    <input type="text" id="new-pin-input" placeholder="Enter Pincode (e.g. 700001)" class="flex-1 glass-input rounded-lg px-4 py-2.5 text-xs text-white outline-none">
+                                    <input type="text" id="new-pin-input" placeholder="Enter Pincode (e.g. 700001)" class="flex-1 glass-input rounded-lg px-4 py-2.5 text-xs outline-none">
                                     <button onclick="addPincode()" class="bg-white text-black px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-amber-400 transition-colors">Add</button>
                                 </div>
                                 <div id="pin-chips" class="flex flex-wrap gap-2 max-h-[300px] overflow-y-auto pr-2">
@@ -164,7 +167,7 @@
                                     <label class="text-xs font-bold text-white tracking-wide">ACTIVATE ONLINE PAYMENTS</label>
                                 </div>
                                 <div class="space-y-5 mb-8 relative z-10">
-                                    <div><label class="text-[10px] text-gray-500 uppercase tracking-widest block mb-2">Key ID (Public)</label><input type="text" id="rzp-key" class="w-full glass-input rounded-lg px-4 py-3 text-xs font-mono text-white outline-none"></div>
+                                    <div><label class="text-[10px] text-gray-500 uppercase tracking-widest block mb-2">Key ID (Public)</label><input type="text" id="rzp-key" class="w-full glass-input rounded-lg px-4 py-3 text-xs font-mono outline-none"></div>
                                     <div><label class="text-[10px] text-red-400 uppercase tracking-widest block mb-2">Key Secret (Classified Vault)</label><input type="password" id="rzp-secret" class="w-full bg-[#050505] border border-red-500/30 rounded-lg px-4 py-3 text-xs font-mono text-amber-400 outline-none focus:border-red-500 transition-colors"></div>
                                 </div>
                                 <button onclick="saveRazorpayConfig()" class="w-full bg-amber-500 text-black py-3 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.2)] transition-all relative z-10">Sync Payment Strategy</button>
@@ -176,8 +179,8 @@
                                     Client Care Routing
                                 </h3>
                                 <div class="space-y-5 mb-8">
-                                    <div><label class="text-[10px] text-gray-500 uppercase tracking-widest block mb-2">Concierge Email</label><input type="text" id="conf-email" class="w-full glass-input rounded-lg px-4 py-3 text-xs text-white outline-none"></div>
-                                    <div><label class="text-[10px] text-gray-500 uppercase tracking-widest block mb-2">Direct Line</label><input type="text" id="conf-phone" class="w-full glass-input rounded-lg px-4 py-3 text-xs text-white outline-none"></div>
+                                    <div><label class="text-[10px] text-gray-500 uppercase tracking-widest block mb-2">Concierge Email</label><input type="text" id="conf-email" class="w-full glass-input rounded-lg px-4 py-3 text-xs outline-none"></div>
+                                    <div><label class="text-[10px] text-gray-500 uppercase tracking-widest block mb-2">Direct Line</label><input type="text" id="conf-phone" class="w-full glass-input rounded-lg px-4 py-3 text-xs outline-none"></div>
                                 </div>
                                 <button onclick="saveContactConfig()" class="w-full border border-white/20 text-white py-3 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors">Save Infrastructure</button>
                             </div>
@@ -185,27 +188,46 @@
                     </div>
                 </div>
 
-                <div id="view-content-tab" class="tab-content hidden max-w-4xl">
+                <div id="view-content-tab" class="tab-content hidden w-full">
                     <h2 class="serif-title text-4xl text-white mb-8 border-b border-white/5 pb-6">Content & Legal Framework</h2>
-                    <div class="bg-[#0a0a0a] p-10 border border-white/5 rounded-xl shadow-xl">
-                        <div class="mb-10 bg-[#111] p-6 rounded-lg border border-white/5">
+                    
+                    <div class="bg-[#0a0a0a] p-8 lg:p-10 border border-white/5 rounded-xl shadow-xl">
+                        <div class="mb-10 max-w-xl">
                             <label class="text-[10px] text-gray-400 uppercase tracking-widest block mb-3 font-bold">Select Master Document</label>
-                            <select id="policy-select" onchange="loadSelectedPolicy()" class="w-full glass-input rounded-lg px-4 py-3 text-sm text-white outline-none">
-                                </select>
+                            <div class="relative">
+                                <select id="policy-select" onchange="loadSelectedPolicy()" class="w-full glass-input rounded-lg px-4 py-3 text-sm appearance-none outline-none cursor-pointer pr-10">
+                                    </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-white">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
                         </div>
-                        <div id="policy-editor" class="hidden space-y-6">
-                            <input type="hidden" id="policy-id">
-                            <div>
-                                <label class="text-[10px] text-gray-500 uppercase tracking-widest block mb-2">Document Nomenclature</label>
-                                <input type="text" id="policy-title" class="w-full glass-input rounded-lg px-4 py-3 text-sm text-white outline-none">
+
+                        <div id="policy-editor" class="hidden flex flex-col xl:flex-row gap-10">
+                            
+                            <div class="flex-1 space-y-6">
+                                <h3 class="text-xs uppercase tracking-widest font-bold text-amber-500 border-b border-white/5 pb-2">HTML/Text Editor</h3>
+                                <input type="hidden" id="policy-id">
+                                <div>
+                                    <label class="text-[10px] text-gray-500 uppercase tracking-widest block mb-2">Document Nomenclature</label>
+                                    <input type="text" id="policy-title" oninput="updateLivePreview()" class="w-full glass-input rounded-lg px-4 py-3 text-sm outline-none">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-gray-500 uppercase tracking-widest block mb-2">Structural Content</label>
+                                    <textarea id="policy-content" oninput="updateLivePreview()" rows="20" class="w-full glass-input rounded-lg px-5 py-4 text-sm text-gray-300 leading-relaxed font-mono outline-none"></textarea>
+                                </div>
+                                <div class="flex justify-start pt-2">
+                                    <button onclick="savePolicy()" class="bg-white text-black px-10 py-3.5 rounded-lg text-[11px] font-bold uppercase tracking-widest hover:bg-amber-500 transition-colors shadow-lg">Publish Override</button>
+                                </div>
                             </div>
-                            <div>
-                                <label class="text-[10px] text-gray-500 uppercase tracking-widest block mb-2">Structural Content (Text / HTML)</label>
-                                <textarea id="policy-content" rows="18" class="w-full glass-input rounded-lg px-5 py-4 text-sm text-gray-300 leading-relaxed font-mono outline-none"></textarea>
+
+                            <div class="flex-1 bg-[#050505] border border-white/5 rounded-xl p-8 overflow-y-auto max-h-[800px] shadow-inner relative">
+                                <h3 class="text-xs uppercase tracking-widest font-bold text-gray-600 border-b border-white/5 pb-2 mb-8 sticky top-0 bg-[#050505] pt-2">Live Storefront Preview</h3>
+                                
+                                <div id="live-preview-container" class="max-w-3xl mx-auto">
+                                    </div>
                             </div>
-                            <div class="flex justify-end pt-6 border-t border-white/5 mt-8">
-                                <button onclick="savePolicy()" class="bg-white text-black px-10 py-3.5 rounded-lg text-[11px] font-bold uppercase tracking-widest hover:bg-amber-500 transition-colors shadow-lg">Publish Override</button>
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -224,27 +246,27 @@
                 <input type="hidden" id="pm-id">
                 
                 <div class="grid grid-cols-2 gap-8">
-                    <div><label class="text-[10px] uppercase tracking-widest text-gray-500 block mb-2">Product Name</label><input type="text" id="pm-name" class="w-full glass-input rounded-lg p-3 text-sm text-white outline-none"></div>
+                    <div><label class="text-[10px] uppercase tracking-widest text-gray-500 block mb-2">Product Name</label><input type="text" id="pm-name" class="w-full glass-input rounded-lg p-3 text-sm outline-none"></div>
                     <div><label class="text-[10px] uppercase tracking-widest text-gray-500 block mb-2">URL Slug</label><input type="text" id="pm-slug" class="w-full glass-input rounded-lg p-3 text-sm font-mono text-gray-400 outline-none"></div>
                     
                     <div><label class="text-[10px] uppercase tracking-widest text-gray-500 block mb-2">Current Price (₹)</label><input type="number" id="pm-price" class="w-full glass-input rounded-lg p-3 text-sm font-mono text-amber-500 outline-none"></div>
                     <div><label class="text-[10px] uppercase tracking-widest text-gray-500 block mb-2">Original Price (₹) [Optional]</label><input type="number" id="pm-original-price" class="w-full glass-input rounded-lg p-3 text-sm font-mono text-gray-500 outline-none"></div>
                     
-                    <div><label class="text-[10px] uppercase tracking-widest text-gray-500 block mb-2">Volume (ML)</label><input type="number" id="pm-volume" value="50" class="w-full glass-input rounded-lg p-3 text-sm text-white outline-none"></div>
+                    <div><label class="text-[10px] uppercase tracking-widest text-gray-500 block mb-2">Volume (ML)</label><input type="number" id="pm-volume" value="50" class="w-full glass-input rounded-lg p-3 text-sm outline-none"></div>
                     <div><label class="text-[10px] uppercase tracking-widest text-gray-500 block mb-2">Image URL</label><input type="text" id="pm-image" class="w-full glass-input rounded-lg p-3 text-sm font-mono text-gray-400 outline-none"></div>
                 </div>
 
                 <div class="border-t border-white/5 pt-8">
-                    <div class="mb-6"><label class="text-[10px] uppercase tracking-widest text-gray-500 block mb-2">Narrative Tagline</label><input type="text" id="pm-tagline" class="w-full glass-input rounded-lg p-3 text-sm text-white outline-none"></div>
+                    <div class="mb-6"><label class="text-[10px] uppercase tracking-widest text-gray-500 block mb-2">Narrative Tagline</label><input type="text" id="pm-tagline" class="w-full glass-input rounded-lg p-3 text-sm outline-none"></div>
                     <div><label class="text-[10px] uppercase tracking-widest text-gray-500 block mb-2">Structural Description</label><textarea id="pm-description" rows="4" class="w-full glass-input rounded-lg p-4 text-sm text-gray-300 leading-relaxed outline-none"></textarea></div>
                 </div>
 
                 <div class="bg-[#111] p-6 rounded-lg border border-white/5">
                     <h4 class="text-[10px] uppercase tracking-widest font-bold text-amber-500 mb-4 flex items-center"><svg class="w-3 h-3 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2l2.5 6h6.5l-5 4.5 2 6.5-6-4.5-6 4.5 2-6.5-5-4.5h6.5z"/></svg> Olfactory Matrix</h4>
                     <div class="grid grid-cols-3 gap-6">
-                        <div><label class="text-[9px] uppercase tracking-widest text-gray-500 block mb-2">Top Notes (Comma sep.)</label><input type="text" id="pm-top" class="w-full glass-input rounded-md p-2.5 text-xs text-white outline-none"></div>
-                        <div><label class="text-[9px] uppercase tracking-widest text-gray-500 block mb-2">Heart Notes</label><input type="text" id="pm-heart" class="w-full glass-input rounded-md p-2.5 text-xs text-white outline-none"></div>
-                        <div><label class="text-[9px] uppercase tracking-widest text-gray-500 block mb-2">Base Notes</label><input type="text" id="pm-base" class="w-full glass-input rounded-md p-2.5 text-xs text-white outline-none"></div>
+                        <div><label class="text-[9px] uppercase tracking-widest text-gray-500 block mb-2">Top Notes (Comma sep.)</label><input type="text" id="pm-top" class="w-full glass-input rounded-md p-2.5 text-xs outline-none"></div>
+                        <div><label class="text-[9px] uppercase tracking-widest text-gray-500 block mb-2">Heart Notes</label><input type="text" id="pm-heart" class="w-full glass-input rounded-md p-2.5 text-xs outline-none"></div>
+                        <div><label class="text-[9px] uppercase tracking-widest text-gray-500 block mb-2">Base Notes</label><input type="text" id="pm-base" class="w-full glass-input rounded-md p-2.5 text-xs outline-none"></div>
                     </div>
                 </div>
             </div>
@@ -257,6 +279,7 @@
     <script>
         const SUPABASE_URL = "https://ejjcjskseatjqdoxabhm.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqamNqc2tzZWF0anFkb3hhYmhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NjY0ODMsImV4cCI6MjA5NjQ0MjQ4M30.tCxYq9BWtU48m4mDI30Bf3-2temFzLW7qnpCG25nKBk";
+        
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let adminUser = null;
@@ -294,6 +317,7 @@
             const { data: { session } } = await supabaseClient.auth.getSession();
             if(!session) return;
 
+            // Verify Admin Role
             const { data: profile, error } = await supabaseClient.from('profiles').select('role').eq('id', session.user.id).single();
             
             if(error || !profile || profile.role !== 'admin') {
@@ -369,7 +393,7 @@
                     <td class="px-6 py-4"><span class="bg-[#050505] border border-white/10 rounded px-2 py-1 text-[9px] uppercase tracking-widest text-gray-400">${o.payment_method.replace(' (COD)','').replace(' (Pre-paid)','')}</span></td>
                     <td class="px-6 py-4">
                         <div class="flex items-center space-x-2">
-                            <select id="status-${o.id}" class="glass-input rounded px-3 py-1.5 text-xs font-mono text-white outline-none focus:border-amber-500">
+                            <select id="status-${o.id}" class="glass-input rounded px-3 py-1.5 text-xs font-mono text-white outline-none focus:border-amber-500 cursor-pointer">
                                 ${optionsHtml}
                             </select>
                             <button onclick="updateOrderStatus('${o.id}', '${o.customer_email}', '${o.customer_name.replace(/'/g, "\\'")}')" class="bg-white/5 border border-white/10 hover:border-amber-500 hover:bg-amber-500 hover:text-black text-white px-3 py-1.5 rounded text-[9px] font-bold uppercase tracking-widest transition-all opacity-0 group-hover:opacity-100">Update</button>
@@ -389,7 +413,6 @@
                 
                 showToast(`Registry #${orderId.substring(0,8)} updated to ${newStatus}`);
                 
-                // Trigger Background Email
                 fetch('/api/update-status', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ customerEmail, customerName, orderId: orderId.substring(0,8), newStatus })
@@ -506,21 +529,21 @@
                 document.getElementById('conf-allow-all').checked = config.allow_all_pins;
                 localPincodes = config.allowed_pins || [];
                 
-                togglePincodeMode();
+                togglePincodeMode(true); // pass true to suppress initial toast
             }
 
             const { data: secure } = await supabaseClient.from('secure_settings').select('razorpay_key_secret').eq('id', 1).maybeSingle();
             if(secure) document.getElementById('rzp-secret').value = secure.razorpay_key_secret || '';
         }
 
-        function togglePincodeMode() {
+        function togglePincodeMode(initialLoad = false) {
             const isAll = document.getElementById('conf-allow-all').checked;
             const manager = document.getElementById('pincode-manager');
             if(isAll) manager.classList.add('opacity-20', 'pointer-events-none', 'blur-[2px]');
             else manager.classList.remove('opacity-20', 'pointer-events-none', 'blur-[2px]');
             
-            // Sync the toggle state immediately to prevent user confusion
-            syncPincodesToDB(true); 
+            if(!initialLoad) syncPincodesToDB(true); 
+            else renderPincodes();
         }
 
         function renderPincodes() {
@@ -605,7 +628,7 @@
             
             allPolicies = data || [];
             const select = document.getElementById('policy-select');
-            select.innerHTML = `<option value="">-- Initiate Document Selection --</option>` + allPolicies.map(p => `<option value="${p.id}">${p.title}</option>`).join('');
+            select.innerHTML = `<option value="" disabled selected style="display:none">-- Initiate Document Selection --</option>` + allPolicies.map(p => `<option value="${p.id}">${p.title}</option>`).join('');
         }
 
         function loadSelectedPolicy() {
@@ -617,7 +640,24 @@
             document.getElementById('policy-id').value = p.id;
             document.getElementById('policy-title').value = p.title;
             document.getElementById('policy-content').value = p.content;
+            
             editor.classList.remove('hidden');
+            updateLivePreview(); // Run preview immediately upon loading
+        }
+
+        // Live HTML Rendering Engine
+        function updateLivePreview() {
+            const title = document.getElementById('policy-title').value;
+            const content = document.getElementById('policy-content').value;
+            
+            const previewContainer = document.getElementById('live-preview-container');
+            previewContainer.innerHTML = `
+                <h1 class="serif-title text-4xl mb-4 text-white">${title || 'Document Title'}</h1>
+                <p class="text-[10px] uppercase tracking-widest font-mono text-gray-600 mb-12">Updated: Just Now</p>
+                <div class="text-gray-400 leading-relaxed text-sm space-y-6 whitespace-pre-line border-t border-white/5 pt-10">
+                    ${content || 'Your structured content will reflect here...'}
+                </div>
+            `;
         }
 
         async function savePolicy() {
@@ -629,7 +669,7 @@
                 const { error } = await supabaseClient.from('legal_pages').update({ title, content }).eq('id', id);
                 if (error) throw error;
                 showToast(`Framework [${title}] committed to server.`);
-                loadPolicies();
+                loadPolicies(); // Refresh cache
             } catch(e) { showToast("Framework injection failed.", "error"); }
         }
 
