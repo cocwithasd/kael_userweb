@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KAEL | Admin Command Center</title>
+    <title>KAEL | Admin Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #030303; color: #F5F5F5; }
-        .serif-title { font-family: 'Cormorant Garamond', serif; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #0a0a0a; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
@@ -26,188 +25,155 @@
 
     <div id="toast-container" class="fixed top-6 right-6 z-[100] flex flex-col space-y-3 pointer-events-none"></div>
 
+    <!-- LOGIN -->
     <div id="login-view" class="fixed inset-0 bg-[#000] z-50 flex items-center justify-center bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#1a1a1a] to-[#000]">
-        <div class="max-w-md w-full p-10 bg-[#050505]/80 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl">
-            <div class="text-center mb-10">
-                <img src="https://ejjcjskseatjqdoxabhm.supabase.co/storage/v1/object/public/store-assets/kael_weblogo.png" class="h-6 mx-auto mb-6 opacity-90" alt="KAEL">
-                <h1 class="text-xl tracking-widest uppercase font-bold text-white mb-2">Command Center</h1>
-                <p class="text-amber-500 text-[10px] tracking-widest uppercase">Admin Clearance Required</p>
-            </div>
-            <div id="admin-error" class="hidden bg-red-500/10 border border-red-500/30 text-red-400 text-[10px] uppercase tracking-widest p-4 mb-6 rounded-lg text-center"></div>
-            <input type="email" id="email" placeholder="Administrator Email" class="w-full glass-input p-4 mb-4 text-xs font-mono rounded-lg outline-none">
-            <input type="password" id="password" placeholder="Passkey" class="w-full glass-input p-4 mb-8 text-xs font-mono rounded-lg outline-none">
-            <button id="auth-btn" onclick="loginAdmin()" class="w-full bg-amber-500 text-black py-4 rounded-lg font-bold text-[11px] tracking-widest uppercase hover:bg-amber-400 hover:shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all">Authenticate</button>
+        <div class="max-w-md w-full p-10 bg-[#050505]/80 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl text-center">
+            <h1 class="text-xl tracking-widest uppercase font-bold text-white mb-2">Admin Login</h1>
+            <p class="text-gray-500 text-xs mb-8">Please log in to continue</p>
+            <div id="admin-error" class="hidden bg-red-500/10 border border-red-500/30 text-red-400 text-xs p-3 mb-6 rounded text-center"></div>
+            <input type="email" id="email" placeholder="Email Address" class="w-full glass-input p-3 mb-4 text-sm rounded outline-none">
+            <input type="password" id="password" placeholder="Password" class="w-full glass-input p-3 mb-8 text-sm rounded outline-none">
+            <button id="auth-btn" onclick="loginAdmin()" class="w-full bg-amber-500 text-black py-3 rounded font-bold uppercase tracking-widest hover:bg-amber-400 transition-all">Login</button>
         </div>
     </div>
 
+    <!-- DASHBOARD -->
     <div id="dashboard-view" class="hidden w-full h-full flex">
         
-        <aside class="w-72 bg-[#050505] border-r border-white/5 flex flex-col justify-between flex-shrink-0 relative z-10 shadow-[4px_0_24px_rgba(0,0,0,0.5)]">
+        <aside class="w-64 bg-[#050505] border-r border-white/5 flex flex-col justify-between flex-shrink-0 relative z-10">
             <div>
-                <div class="h-24 flex items-center justify-center border-b border-white/5">
-                    <img src="https://ejjcjskseatjqdoxabhm.supabase.co/storage/v1/object/public/store-assets/kael_weblogo.png" class="h-6 opacity-90" alt="KAEL">
-                </div>
-                <nav class="mt-8 flex flex-col space-y-1">
-                    <button onclick="switchTab('orders')" id="tab-btn-orders" class="nav-item active text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white">Fulfillment</button>
-                    <button onclick="switchTab('catalog')" id="tab-btn-catalog" class="nav-item text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white">Catalog</button>
+                <div class="h-20 flex items-center justify-center border-b border-white/5 font-bold tracking-widest text-lg uppercase text-white">KAEL ADMIN</div>
+                <nav class="mt-6 flex flex-col">
+                    <button onclick="switchTab('orders')" id="tab-btn-orders" class="nav-item active text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white">Orders</button>
+                    <button onclick="switchTab('catalog')" id="tab-btn-catalog" class="nav-item text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white">Products</button>
                     <button onclick="switchTab('coupons')" id="tab-btn-coupons" class="nav-item text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white">Coupons</button>
-                    <button onclick="switchTab('general')" id="tab-btn-general" class="nav-item text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white">General Settings</button>
-                    <button onclick="switchTab('store')" id="tab-btn-store" class="nav-item text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white">Store Settings</button>
-                    <button onclick="switchTab('content')" id="tab-btn-content" class="nav-item text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white">Content & Legal</button>
+                    <button onclick="switchTab('general')" id="tab-btn-general" class="nav-item text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white">Settings</button>
+                    <button onclick="switchTab('content')" id="tab-btn-content" class="nav-item text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white">Pages & Legal</button>
                 </nav>
             </div>
-            <div class="p-8 border-t border-white/5 bg-[#080808]">
-                <button onclick="logoutAdmin()" class="w-full border border-red-500/30 text-[10px] tracking-widest uppercase font-bold text-red-500 hover:bg-red-500 hover:text-white py-2.5 rounded transition-colors">Terminate Session</button>
+            <div class="p-6 border-t border-white/5 bg-[#080808]">
+                <button onclick="logoutAdmin()" class="w-full border border-red-500/30 text-[10px] tracking-widest uppercase font-bold text-red-500 hover:bg-red-500 hover:text-white py-2.5 rounded transition-colors">Logout</button>
             </div>
         </aside>
 
         <main class="flex-1 h-full overflow-y-auto bg-[#030303] relative">
-            <div class="p-10 max-w-[1600px] mx-auto">
+            <div class="p-10 max-w-7xl mx-auto">
                 
+                <!-- ORDERS -->
                 <div id="view-orders" class="tab-content block">
                     <div class="flex justify-between items-center mb-8 border-b border-white/5 pb-6">
-                        <h2 class="serif-title text-4xl text-white">Order Fulfillment</h2>
-                        <button onclick="loadOrders()" class="text-xs bg-white/5 border border-white/10 px-5 py-2.5 rounded hover:bg-white/10">⟳ Refresh</button>
+                        <h2 class="text-3xl text-white font-bold">Orders</h2>
+                        <button onclick="loadOrders()" class="text-xs bg-white/5 border border-white/10 px-5 py-2.5 rounded hover:bg-white/10 transition-colors">Refresh Orders</button>
                     </div>
-                    <div class="bg-[#0a0a0a] border border-white/5 rounded-xl overflow-hidden shadow-2xl">
+                    <div class="bg-[#0a0a0a] border border-white/5 rounded-xl overflow-hidden">
                         <table class="w-full text-left text-xs text-gray-400">
                             <thead class="bg-[#050505] text-[10px] uppercase tracking-widest text-gray-500 border-b border-white/5">
                                 <tr>
-                                    <th class="px-6 py-5">Registry ID</th>
-                                    <th class="px-6 py-5">Date</th>
-                                    <th class="px-6 py-5">Client Info</th>
-                                    <th class="px-6 py-5">Settlement</th>
-                                    <th class="px-6 py-5">Strategy</th>
-                                    <th class="px-6 py-5 text-right">Actions</th>
+                                    <th class="px-6 py-4">Order ID</th>
+                                    <th class="px-6 py-4">Date</th>
+                                    <th class="px-6 py-4">Customer</th>
+                                    <th class="px-6 py-4">Total</th>
+                                    <th class="px-6 py-4">Payment</th>
+                                    <th class="px-6 py-4 text-right">Status</th>
                                 </tr>
                             </thead>
-                            <tbody id="orders-tbody" class="divide-y divide-white/5 font-mono"></tbody>
+                            <tbody id="orders-tbody" class="divide-y divide-white/5"></tbody>
                         </table>
                     </div>
                 </div>
 
+                <!-- PRODUCTS -->
                 <div id="view-catalog" class="tab-content hidden">
                     <div class="flex justify-between items-center mb-8 border-b border-white/5 pb-6">
-                        <h2 class="serif-title text-4xl text-white">Product Catalog</h2>
-                        <button onclick="openProductModal()" class="bg-amber-500 text-black text-[10px] font-bold tracking-widest uppercase px-6 py-2.5 rounded hover:bg-amber-400">Add Formulation</button>
+                        <h2 class="text-3xl text-white font-bold">Products</h2>
+                        <button onclick="openProductModal()" class="bg-amber-500 text-black text-[10px] font-bold tracking-widest uppercase px-6 py-2.5 rounded hover:bg-amber-400">Add Product</button>
                     </div>
-                    <div class="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-6" id="catalog-grid"></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="catalog-grid"></div>
                 </div>
 
+                <!-- COUPONS -->
                 <div id="view-coupons" class="tab-content hidden">
                     <div class="flex justify-between items-center mb-8 border-b border-white/5 pb-6">
-                        <h2 class="serif-title text-4xl text-white">Coupon Management</h2>
-                        <button onclick="openCouponModal()" class="bg-amber-500 text-black text-[10px] font-bold tracking-widest uppercase px-6 py-2.5 rounded hover:bg-amber-400">Create Coupon</button>
+                        <h2 class="text-3xl text-white font-bold">Coupons</h2>
+                        <button onclick="openCouponModal()" class="bg-amber-500 text-black text-[10px] font-bold tracking-widest uppercase px-6 py-2.5 rounded hover:bg-amber-400">Add Coupon</button>
                     </div>
-                    <div class="bg-[#0a0a0a] border border-white/5 rounded-xl overflow-hidden shadow-2xl">
+                    <div class="bg-[#0a0a0a] border border-white/5 rounded-xl overflow-hidden">
                         <table class="w-full text-left text-xs text-gray-400">
                             <thead class="bg-[#050505] text-[10px] uppercase tracking-widest text-gray-500 border-b border-white/5">
-                                <tr>
-                                    <th class="px-6 py-5">Code</th>
-                                    <th class="px-6 py-5">Value</th>
-                                    <th class="px-6 py-5">Validity</th>
-                                    <th class="px-6 py-5">Usage Stats</th>
-                                    <th class="px-6 py-5">Status</th>
-                                    <th class="px-6 py-5 text-right">Action</th>
-                                </tr>
+                                <tr><th class="px-6 py-4">Code</th><th class="px-6 py-4">Value</th><th class="px-6 py-4">Validity</th><th class="px-6 py-4">Uses</th><th class="px-6 py-4">Status</th><th class="px-6 py-4 text-right">Action</th></tr>
                             </thead>
-                            <tbody id="coupons-tbody" class="divide-y divide-white/5 font-mono"></tbody>
+                            <tbody id="coupons-tbody" class="divide-y divide-white/5"></tbody>
                         </table>
                     </div>
                 </div>
 
-                <div id="view-general" class="tab-content hidden max-w-5xl">
-                    <h2 class="serif-title text-4xl text-white mb-8 border-b border-white/5 pb-6">General System Settings</h2>
-                    
-                    <div class="bg-[#0a0a0a] p-8 border border-white/5 rounded-xl shadow-xl mb-10">
-                        <h3 class="text-xs uppercase tracking-widest font-bold text-white mb-6 border-b border-white/5 pb-4">Brand Typography & Footer</h3>
-                        <div class="space-y-6">
-                            <div><label class="text-[10px] text-gray-500 uppercase tracking-widest block mb-2">Main Site Tagline</label><input type="text" id="gs-tagline" class="w-full glass-input rounded-lg px-4 py-3 text-sm outline-none"></div>
-                            <div><label class="text-[10px] text-gray-500 uppercase tracking-widest block mb-2">Footer Description</label><textarea id="gs-footer" rows="2" class="w-full glass-input rounded-lg px-4 py-3 text-sm outline-none"></textarea></div>
-                            <div><label class="text-[10px] text-gray-500 uppercase tracking-widest block mb-2">Secure Systems Text</label><input type="text" id="gs-secure" class="w-full glass-input rounded-lg px-4 py-3 text-sm outline-none"></div>
-                            <div><label class="text-[10px] text-gray-500 uppercase tracking-widest block mb-2">Copyright Text</label><input type="text" id="gs-copyright" class="w-full glass-input rounded-lg px-4 py-3 text-sm outline-none"></div>
-                        </div>
-                        <button onclick="saveGeneralSettings()" class="mt-6 bg-amber-500 text-black px-8 py-3 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-amber-400">Save Text Configuration</button>
-                    </div>
-
-                    <div class="bg-[#0a0a0a] p-8 border border-white/5 rounded-xl shadow-xl">
-                        <div class="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
-                            <h3 class="text-xs uppercase tracking-widest font-bold text-white">Hero Slider Banners</h3>
-                            <button onclick="openSlideModal()" class="text-[10px] border border-white/20 text-white px-4 py-1.5 rounded hover:bg-white hover:text-black transition-colors uppercase tracking-widest">Add Slide</button>
-                        </div>
-                        <div id="sliders-container" class="space-y-4"></div>
-                    </div>
-                </div>
-
-                <div id="view-store" class="tab-content hidden">
-                    <h2 class="serif-title text-4xl text-white mb-8 border-b border-white/5 pb-6">Store Operations & Logistics</h2>
+                <!-- SETTINGS (General + Store) -->
+                <div id="view-general" class="tab-content hidden">
+                    <h2 class="text-3xl text-white font-bold mb-8 border-b border-white/5 pb-6">Settings</h2>
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         
-                        <div class="bg-[#0a0a0a] p-8 border border-white/5 rounded-xl shadow-xl">
-                            <h3 class="text-xs uppercase tracking-widest font-bold text-white mb-6 border-b border-white/5 pb-4">Serviceable Territories</h3>
-                            <div class="flex items-center space-x-3 mb-8 p-4 bg-[#111] rounded-lg border border-white/5">
-                                <input type="checkbox" id="conf-allow-all" onchange="togglePincodeMode()" class="accent-amber-500 w-4 h-4">
-                                <label class="text-xs font-medium text-gray-300">Enable Pan-India Delivery (Ignores List Below)</label>
+                        <!-- Site Settings -->
+                        <div class="bg-[#0a0a0a] p-8 border border-white/5 rounded-xl">
+                            <h3 class="text-xs uppercase tracking-widest font-bold text-white mb-6 border-b border-white/5 pb-4">Storefront Details</h3>
+                            <div class="space-y-4">
+                                <div><label class="text-[10px] text-gray-500 uppercase block mb-1">Tagline</label><input type="text" id="gs-tagline" class="w-full glass-input rounded p-2 text-sm"></div>
+                                <div><label class="text-[10px] text-gray-500 uppercase block mb-1">Footer Text</label><textarea id="gs-footer" rows="2" class="w-full glass-input rounded p-2 text-sm"></textarea></div>
+                                <div><label class="text-[10px] text-gray-500 uppercase block mb-1">Secure Banner Text</label><input type="text" id="gs-secure" class="w-full glass-input rounded p-2 text-sm"></div>
+                                <div><label class="text-[10px] text-gray-500 uppercase block mb-1">Copyright</label><input type="text" id="gs-copyright" class="w-full glass-input rounded p-2 text-sm"></div>
                             </div>
-                            <div id="pincode-manager" class="transition-opacity duration-300">
-                                <div class="flex space-x-3 mb-6">
-                                    <input type="text" id="new-pin-input" placeholder="Enter Pincode" class="flex-1 glass-input rounded-lg px-4 py-2.5 text-xs outline-none">
-                                    <button onclick="addPincode()" class="bg-white text-black px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-amber-400">Add</button>
-                                </div>
-                                <div id="pin-chips" class="flex flex-wrap gap-2 max-h-[300px] overflow-y-auto pr-2"></div>
+                            <button onclick="saveGeneralSettings()" class="mt-4 bg-white text-black px-6 py-2 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-amber-400">Save Details</button>
+                        </div>
+
+                        <!-- Socials & Contact -->
+                        <div class="bg-[#0a0a0a] p-8 border border-white/5 rounded-xl">
+                            <h3 class="text-xs uppercase tracking-widest font-bold text-white mb-6 border-b border-white/5 pb-4">Contact & Socials</h3>
+                            <div class="grid grid-cols-2 gap-4 mb-4">
+                                <div><label class="text-[10px] text-gray-500 uppercase block mb-1">Email</label><input type="text" id="conf-email" class="w-full glass-input rounded p-2 text-sm"></div>
+                                <div><label class="text-[10px] text-gray-500 uppercase block mb-1">Phone</label><input type="text" id="conf-phone" class="w-full glass-input rounded p-2 text-sm"></div>
+                                <div><label class="text-[10px] text-gray-500 uppercase block mb-1">Instagram URL</label><input type="text" id="social-ig" class="w-full glass-input rounded p-2 text-sm"></div>
+                                <div><label class="text-[10px] text-gray-500 uppercase block mb-1">WhatsApp URL</label><input type="text" id="social-wa" class="w-full glass-input rounded p-2 text-sm"></div>
+                            </div>
+                            <button onclick="saveContactConfig()" class="w-full border border-white/20 text-white py-2 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-black">Save Contact</button>
+                        </div>
+
+                        <!-- Payments -->
+                        <div class="bg-[#0a0a0a] p-8 border border-amber-500/20 rounded-xl">
+                            <h3 class="text-xs uppercase tracking-widest font-bold text-amber-500 mb-6 border-b border-white/5 pb-4">Razorpay Payments</h3>
+                            <div class="flex items-center space-x-3 mb-4"><input type="checkbox" id="rzp-enable" class="accent-amber-500 w-4 h-4"><label class="text-sm font-bold text-white">Enable Razorpay</label></div>
+                            <div class="space-y-4 mb-4">
+                                <div><label class="text-[10px] text-gray-500 uppercase block mb-1">Key ID</label><input type="text" id="rzp-key" class="w-full glass-input rounded p-2 text-sm"></div>
+                                <div><label class="text-[10px] text-gray-500 uppercase block mb-1">Key Secret</label><input type="password" id="rzp-secret" class="w-full glass-input rounded p-2 text-sm"></div>
+                            </div>
+                            <button onclick="saveRazorpayConfig()" class="w-full bg-amber-500 text-black py-2 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-amber-400">Save Payment Settings</button>
+                        </div>
+
+                        <!-- Pincodes -->
+                        <div class="bg-[#0a0a0a] p-8 border border-white/5 rounded-xl">
+                            <h3 class="text-xs uppercase tracking-widest font-bold text-white mb-6 border-b border-white/5 pb-4">Delivery Pincodes</h3>
+                            <div class="flex items-center space-x-3 mb-4 p-3 bg-[#111] rounded border border-white/5"><input type="checkbox" id="conf-allow-all" onchange="togglePincodeMode()" class="accent-amber-500 w-4 h-4"><label class="text-xs text-white">Allow All Pincodes</label></div>
+                            <div id="pincode-manager">
+                                <div class="flex space-x-2 mb-4"><input type="text" id="new-pin-input" placeholder="Enter Pincode" class="flex-1 glass-input rounded px-3 py-2 text-sm"><button onclick="addPincode()" class="bg-white text-black px-4 py-2 rounded text-xs font-bold uppercase hover:bg-amber-400">Add</button></div>
+                                <div id="pin-chips" class="flex flex-wrap gap-2 max-h-32 overflow-y-auto"></div>
                             </div>
                         </div>
 
-                        <div class="space-y-8">
-                            <div class="bg-[#0a0a0a] p-8 border border-white/5 rounded-xl shadow-xl">
-                                <h3 class="text-xs uppercase tracking-widest font-bold text-white mb-6 border-b border-white/5 pb-4">Contact & Social Media</h3>
-                                <div class="space-y-4 mb-6">
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div><label class="text-[9px] text-gray-500 uppercase tracking-widest block mb-1">Support Email</label><input type="text" id="conf-email" class="w-full glass-input rounded-lg px-3 py-2 text-xs outline-none"></div>
-                                        <div><label class="text-[9px] text-gray-500 uppercase tracking-widest block mb-1">Support Phone</label><input type="text" id="conf-phone" class="w-full glass-input rounded-lg px-3 py-2 text-xs outline-none"></div>
-                                    </div>
-                                    <div class="grid grid-cols-2 gap-4 border-t border-white/5 pt-4">
-                                        <div><label class="text-[9px] text-gray-500 uppercase tracking-widest block mb-1">Instagram URL</label><input type="text" id="social-ig" class="w-full glass-input rounded-lg px-3 py-2 text-xs outline-none"></div>
-                                        <div><label class="text-[9px] text-gray-500 uppercase tracking-widest block mb-1">WhatsApp URL</label><input type="text" id="social-wa" class="w-full glass-input rounded-lg px-3 py-2 text-xs outline-none"></div>
-                                        <div><label class="text-[9px] text-gray-500 uppercase tracking-widest block mb-1">YouTube URL</label><input type="text" id="social-yt" class="w-full glass-input rounded-lg px-3 py-2 text-xs outline-none"></div>
-                                        <div><label class="text-[9px] text-gray-500 uppercase tracking-widest block mb-1">Facebook URL</label><input type="text" id="social-fb" class="w-full glass-input rounded-lg px-3 py-2 text-xs outline-none"></div>
-                                    </div>
-                                </div>
-                                <button onclick="saveContactConfig()" class="w-full border border-white/20 text-white py-3 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors">Save Infrastructure</button>
-                            </div>
-
-                            <div class="bg-gradient-to-br from-[#0a0a0a] to-[#111] p-8 border border-amber-500/20 rounded-xl shadow-xl">
-                                <h3 class="text-xs uppercase tracking-widest font-bold text-amber-500 mb-6 border-b border-white/5 pb-4">Razorpay Engine</h3>
-                                <div class="flex items-center space-x-3 mb-6">
-                                    <input type="checkbox" id="rzp-enable" class="accent-amber-500 w-4 h-4">
-                                    <label class="text-xs font-bold text-white tracking-wide">ACTIVATE ONLINE PAYMENTS</label>
-                                </div>
-                                <div class="space-y-4 mb-6">
-                                    <div><label class="text-[10px] text-gray-500 uppercase tracking-widest block mb-1">Key ID (Public)</label><input type="text" id="rzp-key" class="w-full glass-input rounded-lg px-4 py-2 text-xs font-mono outline-none"></div>
-                                    <div><label class="text-[10px] text-red-400 uppercase tracking-widest block mb-1">Key Secret (Classified)</label><input type="password" id="rzp-secret" class="w-full bg-[#050505] border border-red-500/30 rounded-lg px-4 py-2 text-xs font-mono text-amber-400 outline-none"></div>
-                                </div>
-                                <button onclick="saveRazorpayConfig()" class="w-full bg-amber-500 text-black py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-amber-400 transition-all">Sync Payment Strategy</button>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
-                <div id="view-content-tab" class="tab-content hidden max-w-4xl">
-                    <h2 class="serif-title text-4xl text-white mb-8 border-b border-white/5 pb-6">Content & Legal Framework</h2>
-                    <div class="bg-[#0a0a0a] p-8 border border-white/5 rounded-xl shadow-xl">
-                        <div class="mb-8 bg-[#111] p-6 rounded-lg border border-white/5">
-                            <label class="text-[10px] text-gray-400 uppercase tracking-widest block mb-3 font-bold">Select Master Document</label>
-                            <select id="policy-select" onchange="loadSelectedPolicy()" class="w-full glass-input rounded-lg px-4 py-3 text-sm outline-none cursor-pointer"></select>
-                        </div>
-                        <div id="policy-editor" class="hidden flex flex-col xl:flex-row gap-8">
-                            <div class="flex-1 space-y-4">
+                <!-- CONTENT & LEGAL PAGES -->
+                <div id="view-content" class="tab-content hidden max-w-4xl">
+                    <h2 class="text-3xl text-white font-bold mb-8 border-b border-white/5 pb-6">Pages & Policies</h2>
+                    <div class="bg-[#0a0a0a] p-8 border border-white/5 rounded-xl">
+                        <select id="policy-select" onchange="loadSelectedPolicy()" class="w-full glass-input rounded px-4 py-3 text-sm outline-none mb-8"></select>
+                        <div id="policy-editor" class="hidden grid grid-cols-2 gap-8">
+                            <div class="space-y-4">
                                 <input type="hidden" id="policy-id">
-                                <div><label class="text-[10px] text-gray-500 uppercase tracking-widest block mb-2">Title</label><input type="text" id="policy-title" oninput="updateLivePreview()" class="w-full glass-input rounded-lg px-4 py-2.5 text-sm outline-none"></div>
-                                <div><label class="text-[10px] text-gray-500 uppercase tracking-widest block mb-2">Structural Content</label><textarea id="policy-content" oninput="updateLivePreview()" rows="15" class="w-full glass-input rounded-lg px-4 py-3 text-sm text-gray-300 font-mono outline-none"></textarea></div>
-                                <button onclick="savePolicy()" class="bg-white text-black px-8 py-3 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-amber-500">Publish Override</button>
+                                <div><label class="text-[10px] text-gray-500 uppercase block mb-1">Page Title</label><input type="text" id="policy-title" oninput="updateLivePreview()" class="w-full glass-input rounded p-2 text-sm"></div>
+                                <div><label class="text-[10px] text-gray-500 uppercase block mb-1">Page Content (HTML/Text)</label><textarea id="policy-content" oninput="updateLivePreview()" rows="15" class="w-full glass-input rounded p-3 text-sm text-gray-300 font-mono"></textarea></div>
+                                <button onclick="savePolicy()" class="w-full bg-amber-500 text-black py-3 rounded text-[11px] font-bold uppercase hover:bg-amber-400">Save Page</button>
                             </div>
-                            <div class="flex-1 bg-[#050505] border border-white/5 rounded-xl p-6 overflow-y-auto max-h-[600px]">
-                                <h3 class="text-[10px] uppercase tracking-widest font-bold text-gray-600 border-b border-white/5 pb-2 mb-6">Live Preview</h3>
+                            <div class="bg-[#050505] border border-white/5 rounded-lg p-6 overflow-y-auto max-h-[600px]">
+                                <h3 class="text-[10px] uppercase font-bold text-gray-600 border-b border-white/5 pb-2 mb-4">Live Preview</h3>
                                 <div id="live-preview-container"></div>
                             </div>
                         </div>
@@ -218,103 +184,147 @@
         </main>
     </div>
 
+    <!-- ORDER DETAILS / INVOICE MODAL -->
     <div id="order-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-[#0A0A0A] border border-white/10 w-full max-w-4xl max-h-[95vh] flex flex-col rounded-xl shadow-2xl">
+            <!-- Modal Header -->
             <div class="flex justify-between items-center p-6 border-b border-white/5">
                 <div class="flex space-x-3 items-center">
-                    <h3 class="text-sm uppercase tracking-widest font-bold text-white">Registry Dossier</h3>
-                    <select id="modal-order-status" class="glass-input rounded px-3 py-1.5 text-xs font-mono text-white outline-none cursor-pointer">
-                        <option value="Pending">Pending</option>
-                        <option value="Processing">Processing</option>
-                        <option value="Shipped">Shipped</option>
-                        <option value="Delivered">Delivered</option>
-                    </select>
-                    <button onclick="saveModalOrderStatus()" class="bg-amber-500 text-black px-4 py-1.5 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-amber-400">Update Status</button>
+                    <h3 class="text-lg font-bold text-white mr-4">Order Details</h3>
+                    <button onclick="toggleOrderView('details')" id="btn-view-details" class="text-xs bg-white/10 text-white px-3 py-1.5 rounded hover:bg-white/20">Details</button>
+                    <button onclick="toggleOrderView('invoice')" id="btn-view-invoice" class="text-xs text-gray-500 px-3 py-1.5 hover:text-white">Invoice</button>
                 </div>
-                <button onclick="document.getElementById('order-modal').classList.add('hidden')" class="text-gray-500 hover:text-white bg-white/5 rounded-full p-2 hover:bg-red-500/20"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                <button onclick="document.getElementById('order-modal').classList.add('hidden')" class="text-gray-500 hover:text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
             
-            <div class="p-8 overflow-y-auto flex-1 bg-white text-black" id="invoice-content">
-                <div class="max-w-3xl mx-auto py-4">
-                    <div class="flex justify-between items-start border-b-2 border-black pb-8 mb-8">
+            <div class="overflow-y-auto flex-1 relative">
+                <!-- DETAILS WEB VIEW -->
+                <div id="order-web-view" class="p-8 space-y-8 text-sm text-gray-300 block">
+                    <div class="flex justify-between items-start bg-[#111] p-6 rounded-lg border border-white/5">
                         <div>
-                            <h1 class="serif-title text-4xl font-bold uppercase tracking-widest mb-1">KAEL</h1>
-                            <p class="text-[10px] tracking-[0.2em] font-bold text-gray-500">Haute Parfumerie</p>
+                            <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Order ID</p>
+                            <p class="font-mono text-lg text-white font-bold mb-4" id="web-order-id"></p>
+                            <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Customer</p>
+                            <p class="font-bold text-white" id="web-customer-name"></p>
+                            <p id="web-customer-contact" class="text-xs text-gray-400 mt-1"></p>
                         </div>
-                        <div class="text-right font-mono text-xs text-gray-600 space-y-1">
-                            <p>INVOICE / RECEIPT</p>
-                            <p class="font-bold text-black text-sm mt-1" id="inv-id"></p>
-                            <p id="inv-date"></p>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-12 mb-12 text-sm">
-                        <div>
-                            <p class="text-[10px] uppercase tracking-widest font-bold text-gray-400 mb-2">Billed To</p>
-                            <p class="font-bold" id="inv-name"></p>
-                            <p id="inv-address" class="text-gray-600 mt-1"></p>
-                            <p id="inv-contact" class="text-gray-600 mt-1"></p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-[10px] uppercase tracking-widest font-bold text-gray-400 mb-2">Payment Strategy</p>
-                            <p class="font-bold uppercase" id="inv-method"></p>
+                        <div class="text-right flex flex-col items-end">
+                            <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-2">Update Status</p>
+                            <div class="flex items-center space-x-2 bg-[#050505] p-2 rounded border border-white/10">
+                                <select id="web-order-status" class="bg-transparent text-white font-bold outline-none cursor-pointer">
+                                    <option value="Pending">Pending</option><option value="Processing">Processing</option><option value="Shipped">Shipped</option><option value="Delivered">Delivered</option>
+                                </select>
+                                <button onclick="saveModalOrderStatus()" class="bg-amber-500 text-black px-3 py-1 rounded text-[10px] font-bold uppercase hover:bg-amber-400">Save</button>
+                            </div>
                         </div>
                     </div>
 
-                    <table class="w-full text-left mb-12 text-sm border-collapse">
-                        <thead class="border-b-2 border-black text-[10px] uppercase tracking-widest text-gray-500">
-                            <tr>
-                                <th class="py-3">Item Description</th>
-                                <th class="py-3 text-center">Qty</th>
-                                <th class="py-3 text-right">Unit Price</th>
-                                <th class="py-3 text-right">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody id="inv-items" class="divide-y divide-gray-200"></tbody>
-                    </table>
+                    <div class="grid grid-cols-2 gap-8">
+                        <div class="bg-[#111] p-6 rounded-lg border border-white/5">
+                            <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-3 border-b border-white/5 pb-2">Delivery Address</p>
+                            <p id="web-shipping" class="leading-relaxed"></p>
+                        </div>
+                        <div class="bg-[#111] p-6 rounded-lg border border-white/5">
+                            <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-3 border-b border-white/5 pb-2">Payment Summary</p>
+                            <p class="mb-2">Method: <span class="font-bold text-white uppercase" id="web-payment"></span></p>
+                            <div class="flex justify-between text-gray-400 mt-4 pt-4 border-t border-white/5"><span class="text-xs">Discount Applied</span><span id="web-discount" class="text-green-500 font-mono"></span></div>
+                            <div class="flex justify-between text-white font-bold text-lg mt-2 pt-2 border-t border-white/5"><span>Total</span><span id="web-total" class="font-mono text-amber-500"></span></div>
+                        </div>
+                    </div>
 
-                    <div class="flex justify-end border-t-2 border-black pt-6">
-                        <div class="w-64 space-y-3 text-sm">
-                            <div class="flex justify-between text-gray-600"><span>Subtotal</span><span id="inv-subtotal" class="font-mono"></span></div>
-                            <div class="flex justify-between text-gray-600"><span>Coupon Applied</span><span id="inv-discount" class="font-mono text-green-600"></span></div>
-                            <div class="flex justify-between font-bold text-lg pt-2 border-t border-gray-200"><span>Total</span><span id="inv-total" class="font-mono"></span></div>
+                    <div>
+                        <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-3 border-b border-white/5 pb-2">Items Ordered</p>
+                        <div class="bg-[#111] border border-white/5 rounded-lg overflow-hidden">
+                            <table class="w-full text-left">
+                                <thead class="bg-[#050505] text-[10px] text-gray-500 border-b border-white/5"><tr><th class="p-3">Product</th><th class="p-3 text-center">Qty</th><th class="p-3 text-right">Price</th></tr></thead>
+                                <tbody id="web-items" class="divide-y divide-white/5"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PRINTABLE INVOICE VIEW -->
+                <div id="order-invoice-view" class="p-8 bg-white text-black hidden min-h-full">
+                    <div id="invoice-content" class="max-w-3xl mx-auto py-4">
+                        <div class="flex justify-between items-start border-b-2 border-black pb-8 mb-8">
+                            <div><h1 class="serif-title text-4xl font-bold uppercase tracking-widest mb-1">KAEL</h1><p class="text-[10px] tracking-[0.2em] font-bold text-gray-500">Haute Parfumerie</p></div>
+                            <div class="text-right font-mono text-xs text-gray-600 space-y-1"><p>INVOICE / RECEIPT</p><p class="font-bold text-black text-sm mt-1" id="inv-id"></p><p id="inv-date"></p></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-12 mb-12 text-sm">
+                            <div><p class="text-[10px] uppercase tracking-widest font-bold text-gray-400 mb-2">Billed To</p><p class="font-bold" id="inv-name"></p><p id="inv-address" class="text-gray-600 mt-1"></p><p id="inv-contact" class="text-gray-600 mt-1"></p></div>
+                            <div class="text-right"><p class="text-[10px] uppercase tracking-widest font-bold text-gray-400 mb-2">Payment Method</p><p class="font-bold uppercase" id="inv-method"></p></div>
+                        </div>
+                        <table class="w-full text-left mb-12 text-sm border-collapse">
+                            <thead class="border-b-2 border-black text-[10px] uppercase tracking-widest text-gray-500"><tr><th class="py-3">Item Description</th><th class="py-3 text-center">Qty</th><th class="py-3 text-right">Unit Price</th><th class="py-3 text-right">Total</th></tr></thead>
+                            <tbody id="inv-items" class="divide-y divide-gray-200"></tbody>
+                        </table>
+                        <div class="flex justify-end border-t-2 border-black pt-6">
+                            <div class="w-64 space-y-3 text-sm">
+                                <div class="flex justify-between text-gray-600"><span>Subtotal</span><span id="inv-subtotal" class="font-mono"></span></div>
+                                <div class="flex justify-between text-gray-600"><span>Discount</span><span id="inv-discount" class="font-mono text-green-600"></span></div>
+                                <div class="flex justify-between font-bold text-lg pt-2 border-t border-gray-200"><span>Total</span><span id="inv-total" class="font-mono"></span></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Footer Action -->
             <div class="p-6 border-t border-white/5 bg-[#050505] flex justify-end rounded-b-xl">
-                <button onclick="downloadInvoicePDF()" class="border border-white/20 text-white px-8 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all flex items-center">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                    Download Invoice PDF
+                <button onclick="downloadInvoicePDF()" class="border border-white/20 text-white px-6 py-2 rounded text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Download Invoice PDF
                 </button>
             </div>
         </div>
     </div>
 
+    <!-- PRODUCT & VARIATIONS MODAL -->
     <div id="product-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-[#0A0A0A] border border-white/10 w-full max-w-4xl max-h-[90vh] flex flex-col rounded-xl shadow-2xl">
-            <div class="flex justify-between items-center p-8 border-b border-white/5">
+        <div class="bg-[#0A0A0A] border border-white/10 w-full max-w-4xl max-h-[95vh] flex flex-col rounded-xl shadow-2xl">
+            <div class="flex justify-between items-center p-6 border-b border-white/5">
                 <h3 class="text-sm uppercase tracking-widest font-bold text-white" id="pm-title">Add/Edit Product</h3>
-                <button onclick="closeProductModal()" class="text-gray-500 hover:text-white transition-colors bg-white/5 rounded-full p-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                <button onclick="document.getElementById('product-modal').classList.add('hidden')" class="text-gray-500 hover:text-white bg-white/5 rounded-full p-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
-            <div class="p-8 overflow-y-auto flex-1 space-y-6">
+            <div class="p-8 overflow-y-auto flex-1 space-y-8">
                 <input type="hidden" id="pm-id">
+                
                 <div class="grid grid-cols-2 gap-6">
-                    <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Name</label><input type="text" id="pm-name" class="w-full glass-input rounded p-3 text-sm outline-none"></div>
-                    <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Slug</label><input type="text" id="pm-slug" class="w-full glass-input rounded p-3 text-sm outline-none"></div>
-                    <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Price</label><input type="number" id="pm-price" class="w-full glass-input rounded p-3 text-sm outline-none"></div>
-                    <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Vol (ML)</label><input type="number" id="pm-volume" value="50" class="w-full glass-input rounded p-3 text-sm outline-none"></div>
-                    <div class="col-span-2"><label class="text-[10px] uppercase text-gray-500 block mb-1">Image URL</label><input type="text" id="pm-image" class="w-full glass-input rounded p-3 text-sm outline-none"></div>
+                    <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Product Name</label><input type="text" id="pm-name" class="w-full glass-input rounded p-3 text-sm outline-none"></div>
+                    <div><label class="text-[10px] uppercase text-gray-500 block mb-1">URL Slug</label><input type="text" id="pm-slug" class="w-full glass-input rounded p-3 text-sm font-mono text-gray-400 outline-none"></div>
+                    <div class="col-span-2"><label class="text-[10px] uppercase text-gray-500 block mb-1">Image URL</label><input type="text" id="pm-image" class="w-full glass-input rounded p-3 text-sm font-mono outline-none"></div>
                 </div>
-                <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Description</label><textarea id="pm-description" rows="3" class="w-full glass-input rounded p-3 text-sm outline-none"></textarea></div>
+
+                <div class="border-t border-white/5 pt-6">
+                    <div class="flex justify-between items-end mb-4">
+                        <h4 class="text-xs uppercase tracking-widest font-bold text-white">Product Variations (Sizes / Prices)</h4>
+                        <button onclick="addVariationRow()" class="text-[9px] bg-white/10 px-3 py-1.5 rounded hover:bg-white hover:text-black uppercase font-bold transition-colors">+ Add Variation</button>
+                    </div>
+                    <div id="pm-variations-container" class="space-y-3">
+                        <!-- Variations injected here -->
+                    </div>
+                </div>
+
+                <div class="border-t border-white/5 pt-6">
+                    <div class="mb-4"><label class="text-[10px] uppercase text-gray-500 block mb-1">Tagline</label><input type="text" id="pm-tagline" class="w-full glass-input rounded p-3 text-sm outline-none"></div>
+                    <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Description</label><textarea id="pm-description" rows="3" class="w-full glass-input rounded p-4 text-sm text-gray-300 leading-relaxed outline-none"></textarea></div>
+                </div>
+
+                <div class="bg-[#111] p-6 rounded border border-white/5">
+                    <h4 class="text-[10px] uppercase font-bold text-amber-500 mb-4">Fragrance Notes</h4>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div><label class="text-[9px] text-gray-500 block mb-1">Top Notes (Comma sep.)</label><input type="text" id="pm-top" class="w-full glass-input rounded p-2 text-xs outline-none"></div>
+                        <div><label class="text-[9px] text-gray-500 block mb-1">Heart Notes</label><input type="text" id="pm-heart" class="w-full glass-input rounded p-2 text-xs outline-none"></div>
+                        <div><label class="text-[9px] text-gray-500 block mb-1">Base Notes</label><input type="text" id="pm-base" class="w-full glass-input rounded p-2 text-xs outline-none"></div>
+                    </div>
+                </div>
             </div>
-            <div class="p-8 border-t border-white/5 flex justify-end">
-                <button onclick="saveProduct()" class="bg-amber-500 text-black px-8 py-2.5 rounded text-[11px] font-bold uppercase tracking-widest hover:bg-amber-400">Save Product</button>
+            <div class="p-6 border-t border-white/5 flex justify-end bg-[#050505] rounded-b-xl">
+                <button onclick="saveProduct()" class="bg-amber-500 text-black px-8 py-3 rounded text-[11px] font-bold uppercase tracking-widest hover:bg-amber-400 transition-all">Save Product</button>
             </div>
         </div>
     </div>
 
+    <!-- COUPON MODAL (Same as previous) -->
     <div id="coupon-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-[#0A0A0A] border border-white/10 w-full max-w-2xl flex flex-col rounded-xl shadow-2xl">
             <div class="flex justify-between items-center p-6 border-b border-white/5">
@@ -324,168 +334,146 @@
             <div class="p-6 space-y-6">
                 <input type="hidden" id="cm-id">
                 <div class="grid grid-cols-2 gap-6">
-                    <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Coupon Code</label><input type="text" id="cm-code" class="w-full glass-input rounded p-3 text-sm uppercase font-mono outline-none"></div>
-                    <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Active Status</label><select id="cm-active" class="w-full glass-input rounded p-3 text-sm outline-none"><option value="true">Active</option><option value="false">Disabled</option></select></div>
-                    
-                    <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Discount Type</label><select id="cm-type" class="w-full glass-input rounded p-3 text-sm outline-none"><option value="PERCENT">Percentage (%)</option><option value="FLAT">Flat Amount (₹)</option></select></div>
-                    <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Discount Value</label><input type="number" id="cm-value" class="w-full glass-input rounded p-3 text-sm font-mono text-amber-500 outline-none"></div>
-                    
-                    <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Total Uses Allowed (Blank=∞)</label><input type="number" id="cm-total-uses" class="w-full glass-input rounded p-3 text-sm outline-none"></div>
-                    <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Uses Per User</label><input type="number" id="cm-per-user" value="1" class="w-full glass-input rounded p-3 text-sm outline-none"></div>
-                    
-                    <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Valid Until (Optional)</label><input type="date" id="cm-until" class="w-full glass-input rounded p-3 text-sm outline-none dark:[color-scheme:dark]"></div>
+                    <div><label class="text-[10px] text-gray-500 block mb-1">Coupon Code</label><input type="text" id="cm-code" class="w-full glass-input rounded p-3 text-sm uppercase font-mono outline-none"></div>
+                    <div><label class="text-[10px] text-gray-500 block mb-1">Status</label><select id="cm-active" class="w-full glass-input rounded p-3 text-sm outline-none"><option value="true">Active</option><option value="false">Disabled</option></select></div>
+                    <div><label class="text-[10px] text-gray-500 block mb-1">Discount Type</label><select id="cm-type" class="w-full glass-input rounded p-3 text-sm outline-none"><option value="PERCENT">Percentage (%)</option><option value="FLAT">Flat Amount (₹)</option></select></div>
+                    <div><label class="text-[10px] text-gray-500 block mb-1">Value</label><input type="number" id="cm-value" class="w-full glass-input rounded p-3 text-sm font-mono text-amber-500 outline-none"></div>
+                    <div><label class="text-[10px] text-gray-500 block mb-1">Total Uses Allowed (Blank=∞)</label><input type="number" id="cm-total-uses" class="w-full glass-input rounded p-3 text-sm outline-none"></div>
+                    <div><label class="text-[10px] text-gray-500 block mb-1">Uses Per User</label><input type="number" id="cm-per-user" value="1" class="w-full glass-input rounded p-3 text-sm outline-none"></div>
+                    <div><label class="text-[10px] text-gray-500 block mb-1">Valid Until</label><input type="date" id="cm-until" class="w-full glass-input rounded p-3 text-sm outline-none dark:[color-scheme:dark]"></div>
                 </div>
             </div>
             <div class="p-6 border-t border-white/5 flex justify-end">
-                <button onclick="saveCoupon()" class="bg-amber-500 text-black px-8 py-2.5 rounded text-[11px] font-bold uppercase tracking-widest hover:bg-amber-400">Save Coupon</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="slider-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-[#0A0A0A] border border-white/10 w-full max-w-2xl flex flex-col rounded-xl shadow-2xl">
-            <div class="flex justify-between items-center p-6 border-b border-white/5">
-                <h3 class="text-sm uppercase tracking-widest font-bold text-white">Hero Slider Configuration</h3>
-                <button onclick="document.getElementById('slider-modal').classList.add('hidden')" class="text-gray-500 hover:text-white bg-white/5 rounded-full p-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
-            </div>
-            <div class="p-6 space-y-6">
-                <input type="hidden" id="sm-id">
-                <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Main Title</label><input type="text" id="sm-title" class="w-full glass-input rounded p-3 text-sm outline-none"></div>
-                <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Subtitle</label><input type="text" id="sm-subtitle" class="w-full glass-input rounded p-3 text-sm outline-none"></div>
-                <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Background Image URL</label><input type="text" id="sm-image" class="w-full glass-input rounded p-3 text-sm font-mono outline-none"></div>
-                <div class="flex items-center space-x-3"><input type="checkbox" id="sm-active" class="accent-amber-500 w-4 h-4"><label class="text-xs text-white">Active on Storefront</label></div>
-            </div>
-            <div class="p-6 border-t border-white/5 flex justify-end">
-                <button onclick="saveSlide()" class="bg-amber-500 text-black px-8 py-2.5 rounded text-[11px] font-bold uppercase tracking-widest hover:bg-amber-400">Save Slide</button>
+                <button onclick="saveCoupon()" class="bg-amber-500 text-black px-8 py-2.5 rounded text-[11px] font-bold uppercase tracking-widest hover:bg-amber-400">Save</button>
             </div>
         </div>
     </div>
 
 
+    <!-- CORE LOGIC -->
     <script>
         const SUPABASE_URL = "https://ejjcjskseatjqdoxabhm.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqamNqc2tzZWF0anFkb3hhYmhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NjY0ODMsImV4cCI6MjA5NjQ0MjQ4M30.tCxYq9BWtU48m4mDI30Bf3-2temFzLW7qnpCG25nKBk";
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let adminUser = null;
-        let localPincodes = [];
-        let allProducts = [];
-        let allPolicies = [];
-        let allCoupons = [];
-        let allSlides = [];
+        let adminUser = null; let localPincodes = []; let allProducts = []; let allPolicies = []; let allCoupons = [];
         let currentEditingOrder = null;
 
         const formatINR = (amount) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
+        const uuidv4 = () => { return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); }); };
 
         function showToast(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            const bgClass = type === 'success' ? 'bg-[#0a0a0a]' : 'bg-[#1a0a0a]';
-            const borderClass = type === 'success' ? 'border-amber-500/30' : 'border-red-500/50';
-            const iconColor = type === 'success' ? 'text-amber-500' : 'text-red-500';
-            toast.className = `flex items-center space-x-3 p-4 ${bgClass} border ${borderClass} rounded-lg text-white text-xs font-mono shadow-2xl transform transition-all duration-300 translate-x-[120%] pointer-events-auto`;
+            const container = document.getElementById('toast-container'); const toast = document.createElement('div');
+            const bgClass = type === 'success' ? 'bg-[#0a0a0a]' : 'bg-[#1a0a0a]'; const borderClass = type === 'success' ? 'border-amber-500/30' : 'border-red-500/50'; const iconColor = type === 'success' ? 'text-amber-500' : 'text-red-500';
+            toast.className = `flex items-center space-x-3 p-4 ${bgClass} border ${borderClass} rounded text-white text-xs font-mono shadow-2xl transform transition-all duration-300 translate-x-[120%] pointer-events-auto`;
             toast.innerHTML = `<div class="${iconColor} flex-shrink-0">${type==='success'?'✓':'✕'}</div><div class="leading-relaxed flex-1">${message}</div>`;
-            container.appendChild(toast);
-            setTimeout(() => { toast.classList.remove('translate-x-[120%]'); }, 50);
-            setTimeout(() => { toast.classList.add('translate-x-[120%]'); setTimeout(() => toast.remove(), 300); }, 4000);
+            container.appendChild(toast); setTimeout(() => { toast.classList.remove('translate-x-[120%]'); }, 50); setTimeout(() => { toast.classList.add('translate-x-[120%]'); setTimeout(() => toast.remove(), 300); }, 4000);
         }
 
         async function initAdmin() {
             const { data: { session } } = await supabaseClient.auth.getSession();
             if(!session) return;
             const { data: profile, error } = await supabaseClient.from('profiles').select('role').eq('id', session.user.id).single();
-            if(error || !profile || profile.role !== 'admin') {
-                document.getElementById('admin-error').innerText = "ACCESS DENIED."; document.getElementById('admin-error').classList.remove('hidden');
-                await supabaseClient.auth.signOut(); return;
-            }
+            if(error || !profile || profile.role !== 'admin') { document.getElementById('admin-error').innerText = "ACCESS DENIED"; document.getElementById('admin-error').classList.remove('hidden'); await supabaseClient.auth.signOut(); return; }
             adminUser = session.user;
-            document.getElementById('login-view').classList.add('hidden');
-            document.getElementById('dashboard-view').classList.remove('hidden');
-            document.getElementById('admin-email').innerText = adminUser.email;
-
-            switchTab('orders');
+            document.getElementById('login-view').classList.add('hidden'); document.getElementById('dashboard-view').classList.remove('hidden');
+            switchTab('orders'); loadLogisticsConfig(); loadGeneralSettings(); loadPolicies();
         }
 
         async function loginAdmin() {
-            const email = document.getElementById('email').value, password = document.getElementById('password').value;
-            try {
-                const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-                if(error) throw error;
-                await initAdmin();
-            } catch(e) { document.getElementById('admin-error').innerText = e.message; document.getElementById('admin-error').classList.remove('hidden'); }
+            const email = document.getElementById('email').value, password = document.getElementById('password').value, btn = document.getElementById('auth-btn');
+            document.getElementById('admin-error').classList.add('hidden');
+            if(!email || !password) { document.getElementById('admin-error').innerText = "CREDENTIALS MISSING."; document.getElementById('admin-error').classList.remove('hidden'); return; }
+            btn.innerText = "AUTHENTICATING..."; btn.disabled = true;
+            try { const { error } = await supabaseClient.auth.signInWithPassword({ email, password }); if(error) throw error; await initAdmin(); } 
+            catch(e) { document.getElementById('admin-error').innerText = e.message; document.getElementById('admin-error').classList.remove('hidden'); } finally { btn.innerText = "LOGIN"; btn.disabled = false; }
         }
 
         async function logoutAdmin() { await supabaseClient.auth.signOut(); window.location.reload(); }
 
         function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            document.getElementById(`view-${tabId}${tabId === 'content' ? '-tab' : ''}`).classList.remove('hidden');
-            document.getElementById(`tab-btn-${tabId}`).classList.add('active');
-
-            if(tabId === 'orders') loadOrders();
-            if(tabId === 'catalog') loadCatalog();
-            if(tabId === 'store') loadLogisticsConfig();
-            if(tabId === 'content') loadPolicies();
-            if(tabId === 'general') loadGeneralSettings();
-            if(tabId === 'coupons') loadCoupons();
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden')); document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(`view-${tabId}`).classList.remove('hidden'); document.getElementById(`tab-btn-${tabId}`).classList.add('active');
+            if(tabId === 'orders') loadOrders(); if(tabId === 'catalog') loadCatalog(); if(tabId === 'coupons') loadCoupons();
         }
 
-        // 1. ORDERS MODULE (WITH INVOICE)
+        // 1. ORDERS MODULE
         async function loadOrders() {
-            const tbody = document.getElementById('orders-tbody');
-            const { data: orders, error } = await supabaseClient.from('orders').select('*, order_items(*, products(*))').order('created_at', { ascending: false });
-            if(!orders || orders.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">No records found.</td></tr>`; return; }
+            const tbody = document.getElementById('orders-tbody'); tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-10 text-center text-xs animate-pulse">Loading orders...</td></tr>`;
+            const { data: orders, error } = await supabaseClient.from('orders').select('*').order('created_at', { ascending: false });
+            if(error || !orders || orders.length===0) return tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-10 text-center text-xs text-gray-500">No orders found.</td></tr>`;
             
             tbody.innerHTML = orders.map(o => `
-                <tr class="hover:bg-[#111] transition-colors group cursor-pointer border-b border-white/5" onclick="openOrderInvoice('${o.id}')">
+                <tr class="hover:bg-[#111] transition-colors cursor-pointer group" onclick="openOrderModal('${o.id}')">
                     <td class="px-6 py-4 font-bold text-white text-sm">#${o.id.substring(0,8)}</td>
                     <td class="px-6 py-4 text-gray-500">${new Date(o.created_at).toLocaleDateString()}</td>
-                    <td class="px-6 py-4 text-xs font-sans text-gray-300"><span class="font-bold text-white">${o.customer_name}</span><br><span class="text-[10px] text-gray-500 uppercase tracking-widest">${o.city}, ${o.pincode}</span></td>
+                    <td class="px-6 py-4 text-xs text-gray-300"><span class="font-bold text-white">${o.customer_name}</span><br><span class="text-[10px] text-gray-500 uppercase tracking-widest">${o.city}, ${o.pincode}</span></td>
                     <td class="px-6 py-4 font-bold text-amber-500">${formatINR(o.total_amount)}</td>
                     <td class="px-6 py-4"><span class="bg-[#050505] border border-white/10 rounded px-2 py-1 text-[9px] uppercase tracking-widest text-gray-400">${o.payment_method.split(' ')[0]}</span></td>
-                    <td class="px-6 py-4 text-right"><span class="${o.order_status === 'Pending' ? 'text-amber-500' : 'text-gray-400'} font-bold uppercase text-[10px] tracking-widest">${o.order_status}</span></td>
+                    <td class="px-6 py-4 text-right"><span class="font-bold uppercase tracking-widest text-[10px] ${o.order_status==='Pending'?'text-amber-500':(o.order_status==='Delivered'?'text-green-500':'text-blue-400')}">${o.order_status}</span></td>
                 </tr>
             `).join('');
         }
 
-        async function openOrderInvoice(orderId) {
+        async function openOrderModal(orderId) {
             const { data: order } = await supabaseClient.from('orders').select('*, order_items(*, products(*))').eq('id', orderId).single();
-            if(!order) return;
-            currentEditingOrder = order;
+            if(!order) return; currentEditingOrder = order;
 
-            document.getElementById('modal-order-status').value = order.order_status;
-            document.getElementById('inv-id').innerText = `#${order.id.toUpperCase()}`;
+            // Details View Setup
+            document.getElementById('web-order-id').innerText = `#${order.id.toUpperCase()}`;
+            document.getElementById('web-customer-name').innerText = order.customer_name;
+            document.getElementById('web-customer-contact').innerHTML = `${order.phone}<br>${order.customer_email}`;
+            document.getElementById('web-order-status').value = order.order_status;
+            document.getElementById('web-shipping').innerHTML = `${order.shipping_address}<br>${order.city}, ${order.state} - ${order.pincode}`;
+            document.getElementById('web-payment').innerText = order.payment_method;
+            
+            let subtotal = 0;
+            const itemsHtml = order.order_items.map(item => {
+                const total = item.price_at_purchase * item.quantity; subtotal += total;
+                const varName = item.variation_name ? `<span class="text-[10px] text-gray-500 block">${item.variation_name}</span>` : '';
+                return `<tr><td class="p-3 text-white font-medium">${item.products?.name || 'Deleted Product'} ${varName}</td><td class="p-3 text-center text-gray-400">${item.quantity}</td><td class="p-3 text-right font-mono text-white">${formatINR(total)}</td></tr>`;
+            }).join('');
+            
+            document.getElementById('web-items').innerHTML = itemsHtml;
+            document.getElementById('web-discount').innerText = order.discount_amount > 0 ? `- ${formatINR(order.discount_amount)}` : '₹0';
+            document.getElementById('web-total').innerText = formatINR(order.total_amount);
+
+            // Invoice View Setup
+            document.getElementById('inv-id').innerText = `#${order.id.substring(0,8).toUpperCase()}`;
             document.getElementById('inv-date').innerText = new Date(order.created_at).toLocaleString();
             document.getElementById('inv-name').innerText = order.customer_name;
             document.getElementById('inv-address').innerHTML = `${order.shipping_address}<br>${order.city}, ${order.state} - ${order.pincode}`;
             document.getElementById('inv-contact').innerHTML = `${order.phone}<br>${order.customer_email}`;
             document.getElementById('inv-method').innerText = order.payment_method;
-
-            let subtotal = 0;
+            
             document.getElementById('inv-items').innerHTML = order.order_items.map(item => {
-                const itemTotal = item.price_at_purchase * item.quantity;
-                subtotal += itemTotal;
-                return `
-                    <tr class="border-b border-gray-100">
-                        <td class="py-3 font-medium text-gray-800">${item.products.name}</td>
-                        <td class="py-3 text-center">${item.quantity}</td>
-                        <td class="py-3 text-right font-mono text-gray-600">${formatINR(item.price_at_purchase)}</td>
-                        <td class="py-3 text-right font-mono text-gray-900">${formatINR(itemTotal)}</td>
-                    </tr>
-                `;
+                const varName = item.variation_name ? ` (${item.variation_name})` : '';
+                return `<tr class="border-b border-gray-100"><td class="py-3 font-medium text-gray-800">${item.products?.name || 'Product'}${varName}</td><td class="py-3 text-center">${item.quantity}</td><td class="py-3 text-right font-mono text-gray-600">${formatINR(item.price_at_purchase)}</td><td class="py-3 text-right font-mono text-gray-900">${formatINR(item.price_at_purchase * item.quantity)}</td></tr>`;
             }).join('');
-
             document.getElementById('inv-subtotal').innerText = formatINR(subtotal);
             document.getElementById('inv-discount').innerText = order.discount_amount > 0 ? `- ${formatINR(order.discount_amount)}` : '₹0';
             document.getElementById('inv-total').innerText = formatINR(order.total_amount);
 
+            toggleOrderView('details');
             document.getElementById('order-modal').classList.remove('hidden');
+        }
+
+        function toggleOrderView(view) {
+            const btnDetails = document.getElementById('btn-view-details'); const btnInvoice = document.getElementById('btn-view-invoice');
+            const viewDetails = document.getElementById('order-web-view'); const viewInvoice = document.getElementById('order-invoice-view');
+            
+            if(view === 'details') {
+                btnDetails.className = "text-xs bg-white/10 text-white px-3 py-1.5 rounded"; btnInvoice.className = "text-xs text-gray-500 px-3 py-1.5 hover:text-white";
+                viewDetails.classList.remove('hidden'); viewInvoice.classList.add('hidden');
+            } else {
+                btnInvoice.className = "text-xs bg-white/10 text-white px-3 py-1.5 rounded"; btnDetails.className = "text-xs text-gray-500 px-3 py-1.5 hover:text-white";
+                viewInvoice.classList.remove('hidden'); viewDetails.classList.add('hidden');
+            }
         }
 
         async function saveModalOrderStatus() {
             if(!currentEditingOrder) return;
-            const newStatus = document.getElementById('modal-order-status').value;
+            const newStatus = document.getElementById('web-order-status').value;
             try {
                 await supabaseClient.from('orders').update({ order_status: newStatus }).eq('id', currentEditingOrder.id);
                 showToast(`Order updated to ${newStatus}`);
@@ -495,217 +483,150 @@
         }
 
         function downloadInvoicePDF() {
-            const element = document.getElementById('invoice-content');
-            const opt = {
-                margin: 0.5,
-                filename: `KAEL_Invoice_${currentEditingOrder.id.substring(0,8)}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-            };
-            html2pdf().set(opt).from(element).save();
+            toggleOrderView('invoice'); // Ensure invoice is visible for html2pdf
+            setTimeout(() => {
+                const element = document.getElementById('invoice-content');
+                html2pdf().set({ margin: 0.5, filename: `KAEL_Order_${currentEditingOrder.id.substring(0,8)}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } }).from(element).save();
+            }, 100);
         }
 
-        // 2. COUPONS
-        async function loadCoupons() {
-            const tbody = document.getElementById('coupons-tbody');
-            const { data } = await supabaseClient.from('coupons').select('*').order('created_at', { ascending: false });
-            allCoupons = data || [];
+        // 2. CATALOG & VARIATIONS MODULE
+        async function loadCatalog() {
+            const { data } = await supabaseClient.from('products').select('*'); allProducts = data || [];
+            const grid = document.getElementById('catalog-grid');
+            if(allProducts.length === 0) { grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500 text-xs">No products found.</div>`; return; }
+
+            grid.innerHTML = allProducts.map(p => {
+                const vars = p.variations || [];
+                const basePrice = vars.length > 0 ? vars[0].price : 0;
+                const varCount = vars.length;
+                return `
+                <div class="bg-[#0a0a0a] border border-white/5 rounded-xl p-5 flex flex-col justify-between hover:border-white/20 transition-all">
+                    <div class="flex items-center space-x-5 mb-5">
+                        <div class="w-16 h-16 bg-[#050505] rounded flex items-center justify-center p-2"><img src="${p.image_url}" class="max-h-full object-contain"></div>
+                        <div><h4 class="text-sm text-white font-bold">${p.name}</h4><p class="text-[10px] text-gray-500 mt-1">${varCount} Variation(s) • From ${formatINR(basePrice)}</p></div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="openProductModal('${p.id}')" class="flex-1 bg-white/5 hover:bg-white text-gray-300 hover:text-black py-2 rounded text-[10px] uppercase font-bold transition-colors">Edit</button>
+                        <button onclick="deleteProduct('${p.id}')" class="px-4 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white rounded py-2 transition-colors">✕</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function openProductModal(id = null) {
+            document.getElementById('product-modal').classList.remove('hidden');
+            const p = id ? allProducts.find(x => x.id === id) : null;
             
-            if(allCoupons.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">No coupons active.</td></tr>`; return; }
+            document.getElementById('pm-title').innerText = p ? "Edit Product" : "Add Product";
+            document.getElementById('pm-id').value = p ? p.id : '';
+            document.getElementById('pm-name').value = p ? p.name : '';
+            document.getElementById('pm-slug').value = p ? p.slug : '';
+            document.getElementById('pm-image').value = p ? p.image_url : '';
+            document.getElementById('pm-tagline').value = p ? (p.tagline || '') : '';
+            document.getElementById('pm-description').value = p ? p.description : '';
+            document.getElementById('pm-top').value = p && p.top_notes ? p.top_notes.join(', ') : '';
+            document.getElementById('pm-heart').value = p && p.heart_notes ? p.heart_notes.join(', ') : '';
+            document.getElementById('pm-base').value = p && p.base_notes ? p.base_notes.join(', ') : '';
 
-            tbody.innerHTML = allCoupons.map(c => `
-                <tr class="border-b border-white/5 hover:bg-[#111]">
-                    <td class="px-6 py-4 font-bold text-amber-500">${c.code}</td>
-                    <td class="px-6 py-4">${c.discount_type === 'FLAT' ? formatINR(c.discount_value) : c.discount_value + '%'}</td>
-                    <td class="px-6 py-4 text-xs text-gray-500">${c.valid_until ? new Date(c.valid_until).toLocaleDateString() : 'Forever'}</td>
-                    <td class="px-6 py-4 text-xs"><span class="text-white font-bold">${c.times_used}</span> / ${c.max_uses_total || '∞'} total<br><span class="text-gray-500 text-[9px]">${c.max_uses_per_user} per user</span></td>
-                    <td class="px-6 py-4"><span class="${c.active ? 'text-green-500' : 'text-red-500'} text-[10px] uppercase font-bold tracking-widest">${c.active ? 'Active' : 'Disabled'}</span></td>
-                    <td class="px-6 py-4 text-right"><button onclick="openCouponModal('${c.id}')" class="text-[10px] border border-white/20 px-3 py-1 hover:bg-white hover:text-black transition-colors uppercase">Edit</button></td>
-                </tr>
-            `).join('');
+            const container = document.getElementById('pm-variations-container');
+            container.innerHTML = '';
+            if(p && p.variations && p.variations.length > 0) { p.variations.forEach(v => addVariationRow(v)); } 
+            else { addVariationRow(); } // Add one blank by default
         }
 
-        function openCouponModal(id = null) {
-            document.getElementById('coupon-modal').classList.remove('hidden');
-            const c = id ? allCoupons.find(x => x.id === id) : null;
+        function addVariationRow(v = null) {
+            const container = document.getElementById('pm-variations-container');
+            const rowId = `var_${Date.now()}_${Math.floor(Math.random()*100)}`;
+            const div = document.createElement('div');
+            div.id = rowId; div.className = "flex space-x-3 items-end variation-row";
+            div.innerHTML = `
+                <div class="flex-1"><label class="text-[9px] text-gray-500 uppercase block mb-1">Size / Variant Name</label><input type="text" class="var-size w-full glass-input rounded p-2 text-xs" value="${v ? v.size : '50 ML'}" required></div>
+                <div class="flex-1"><label class="text-[9px] text-gray-500 uppercase block mb-1">Price (₹)</label><input type="number" class="var-price w-full glass-input rounded p-2 text-xs font-mono text-amber-500" value="${v ? v.price : ''}" required></div>
+                <div class="flex-1"><label class="text-[9px] text-gray-500 uppercase block mb-1">Original Price (₹)</label><input type="number" class="var-orig w-full glass-input rounded p-2 text-xs font-mono" value="${v && v.original_price ? v.original_price : ''}"></div>
+                <button onclick="document.getElementById('${rowId}').remove()" class="bg-red-500/10 text-red-500 p-2.5 rounded hover:bg-red-500 hover:text-white transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            `;
+            container.appendChild(div);
+        }
+
+        async function saveProduct() {
+            const id = document.getElementById('pm-id').value;
+            const parseNotes = (str) => str.split(',').map(s => s.trim()).filter(s => s);
             
-            document.getElementById('cm-title').innerText = c ? "Edit Coupon" : "Create Coupon";
-            document.getElementById('cm-id').value = c ? c.id : '';
-            document.getElementById('cm-code').value = c ? c.code : '';
-            document.getElementById('cm-type').value = c ? c.discount_type : 'PERCENT';
-            document.getElementById('cm-value').value = c ? c.discount_value : '';
-            document.getElementById('cm-total-uses').value = c ? (c.max_uses_total || '') : '';
-            document.getElementById('cm-per-user').value = c ? c.max_uses_per_user : '1';
-            document.getElementById('cm-active').value = c ? (c.active ? 'true':'false') : 'true';
-            document.getElementById('cm-until').value = c && c.valid_until ? c.valid_until.split('T')[0] : '';
-        }
+            // Gather Variations
+            const varRows = document.querySelectorAll('.variation-row');
+            let variations = [];
+            varRows.forEach(row => {
+                variations.push({
+                    id: uuidv4(),
+                    size: row.querySelector('.var-size').value,
+                    price: parseFloat(row.querySelector('.var-price').value),
+                    original_price: row.querySelector('.var-orig').value ? parseFloat(row.querySelector('.var-orig').value) : null
+                });
+            });
 
-        async function saveCoupon() {
-            const id = document.getElementById('cm-id').value;
+            if(variations.length === 0) return showToast("You must add at least one variation.", "error");
+
             const payload = {
-                code: document.getElementById('cm-code').value.toUpperCase(),
-                discount_type: document.getElementById('cm-type').value,
-                discount_value: parseFloat(document.getElementById('cm-value').value),
-                max_uses_total: document.getElementById('cm-total-uses').value ? parseInt(document.getElementById('cm-total-uses').value) : null,
-                max_uses_per_user: parseInt(document.getElementById('cm-per-user').value) || 1,
-                active: document.getElementById('cm-active').value === 'true',
-                valid_until: document.getElementById('cm-until').value ? new Date(document.getElementById('cm-until').value).toISOString() : null
+                name: document.getElementById('pm-name').value, slug: document.getElementById('pm-slug').value, image_url: document.getElementById('pm-image').value, tagline: document.getElementById('pm-tagline').value, description: document.getElementById('pm-description').value,
+                top_notes: parseNotes(document.getElementById('pm-top').value), heart_notes: parseNotes(document.getElementById('pm-heart').value), base_notes: parseNotes(document.getElementById('pm-base').value),
+                variations: variations,
+                // Legacy fields fallback (using first variation)
+                price: variations[0].price, original_price: variations[0].original_price, volume_ml: parseInt(variations[0].size) || 50
             };
+
             try {
-                if(id) await supabaseClient.from('coupons').update(payload).eq('id', id);
-                else await supabaseClient.from('coupons').insert([payload]);
-                showToast("Coupon updated"); document.getElementById('coupon-modal').classList.add('hidden'); loadCoupons();
-            } catch(e) { showToast("Error saving coupon", "error"); }
+                if(id) await supabaseClient.from('products').update(payload).eq('id', id); else await supabaseClient.from('products').insert([payload]);
+                showToast("Product saved"); document.getElementById('product-modal').classList.add('hidden'); loadCatalog();
+            } catch(e) { showToast("Error saving product", "error"); }
         }
 
-        // 3. GENERAL SETTINGS (Taglines & Hero)
-        async function loadGeneralSettings() {
-            const { data } = await supabaseClient.from('general_settings').select('*').eq('id', 1).single();
-            if(data) {
-                document.getElementById('gs-tagline').value = data.site_tagline || '';
-                document.getElementById('gs-footer').value = data.footer_description || '';
-                document.getElementById('gs-secure').value = data.secure_systems_text || '';
-                document.getElementById('gs-copyright').value = data.copyright_text || '';
-            }
-
-            const { data: slides } = await supabaseClient.from('hero_slides').select('*').order('order_index');
-            allSlides = slides || [];
-            const container = document.getElementById('sliders-container');
-            container.innerHTML = allSlides.map(s => `
-                <div class="flex items-center justify-between p-4 bg-[#111] border border-white/5 rounded-lg">
-                    <div class="flex items-center space-x-4">
-                        <img src="${s.image_url}" class="w-16 h-10 object-cover rounded opacity-50">
-                        <div><p class="text-white text-sm font-bold uppercase tracking-widest">${s.title}</p><p class="text-[9px] text-gray-500 uppercase tracking-widest">${s.active ? '<span class="text-green-500">Active</span>' : 'Disabled'}</p></div>
-                    </div>
-                    <div class="space-x-2">
-                        <button onclick="openSlideModal('${s.id}')" class="text-[9px] uppercase tracking-widest text-gray-400 hover:text-white">Edit</button>
-                        <button onclick="deleteSlide('${s.id}')" class="text-[9px] uppercase tracking-widest text-red-500 hover:text-red-400">Delete</button>
-                    </div>
-                </div>
-            `).join('');
+        async function deleteProduct(id) {
+            if(!confirm("Delete this product permanently?")) return;
+            await supabaseClient.from('products').delete().eq('id', id); showToast("Product deleted"); loadCatalog();
         }
 
-        async function saveGeneralSettings() {
-            await supabaseClient.from('general_settings').update({
-                site_tagline: document.getElementById('gs-tagline').value,
-                footer_description: document.getElementById('gs-footer').value,
-                secure_systems_text: document.getElementById('gs-secure').value,
-                copyright_text: document.getElementById('gs-copyright').value
-            }).eq('id', 1);
-            showToast("General texts updated.");
-        }
-
-        function openSlideModal(id = null) {
-            document.getElementById('slider-modal').classList.remove('hidden');
-            const s = id ? allSlides.find(x => x.id === id) : null;
-            document.getElementById('sm-id').value = s ? s.id : '';
-            document.getElementById('sm-title').value = s ? s.title : '';
-            document.getElementById('sm-subtitle').value = s ? (s.subtitle||'') : '';
-            document.getElementById('sm-image').value = s ? s.image_url : '';
-            document.getElementById('sm-active').checked = s ? s.active : true;
-        }
-
-        async function saveSlide() {
-            const id = document.getElementById('sm-id').value;
-            const payload = {
-                title: document.getElementById('sm-title').value,
-                subtitle: document.getElementById('sm-subtitle').value,
-                image_url: document.getElementById('sm-image').value,
-                active: document.getElementById('sm-active').checked,
-                order_index: id ? undefined : allSlides.length
-            };
-            if(id) await supabaseClient.from('hero_slides').update(payload).eq('id', id);
-            else await supabaseClient.from('hero_slides').insert([payload]);
-            document.getElementById('slider-modal').classList.add('hidden');
-            loadGeneralSettings(); showToast("Slide saved.");
-        }
-        async function deleteSlide(id) { await supabaseClient.from('hero_slides').delete().eq('id', id); loadGeneralSettings(); }
-
-        // 4. STORE SETTINGS (Logistics & Socials)
+        // SETTINGS & LOGISTICS (Abbreviated identical implementation)
         async function loadLogisticsConfig() {
             const { data: config } = await supabaseClient.from('store_settings').select('*').eq('id', 1).single();
             if(config) {
-                document.getElementById('conf-email').value = config.support_email || '';
-                document.getElementById('conf-phone').value = config.support_phone || '';
-                document.getElementById('social-ig').value = config.social_instagram || '';
-                document.getElementById('social-wa').value = config.social_whatsapp || '';
-                document.getElementById('social-yt').value = config.social_youtube || '';
-                document.getElementById('social-fb').value = config.social_facebook || '';
-                
-                document.getElementById('rzp-enable').checked = config.razorpay_enabled;
-                document.getElementById('rzp-key').value = config.razorpay_key_id || '';
-
-                document.getElementById('conf-allow-all').checked = config.allow_all_pins;
-                localPincodes = config.allowed_pins || [];
+                document.getElementById('conf-email').value = config.support_email || ''; document.getElementById('conf-phone').value = config.support_phone || '';
+                document.getElementById('social-ig').value = config.social_instagram || ''; document.getElementById('social-wa').value = config.social_whatsapp || '';
+                document.getElementById('rzp-enable').checked = config.razorpay_enabled; document.getElementById('rzp-key').value = config.razorpay_key_id || '';
+                document.getElementById('conf-allow-all').checked = config.allow_all_pins; localPincodes = config.allowed_pins || [];
                 togglePincodeMode(true);
             }
+            const { data: secure } = await supabaseClient.from('secure_settings').select('razorpay_key_secret').eq('id', 1).maybeSingle();
+            if(secure) document.getElementById('rzp-secret').value = secure.razorpay_key_secret || '';
         }
-        async function saveContactConfig() {
-            await supabaseClient.from('store_settings').update({
-                support_email: document.getElementById('conf-email').value, support_phone: document.getElementById('conf-phone').value,
-                social_instagram: document.getElementById('social-ig').value, social_whatsapp: document.getElementById('social-wa').value,
-                social_youtube: document.getElementById('social-yt').value, social_facebook: document.getElementById('social-fb').value
-            }).eq('id', 1);
-            showToast("Contact & Socials Synced.");
-        }
-
-        /* Pincode & Razorpay functions remain same as before... */
         function togglePincodeMode(initialLoad = false) {
-            const isAll = document.getElementById('conf-allow-all').checked;
-            const manager = document.getElementById('pincode-manager');
-            if(isAll) manager.classList.add('opacity-20', 'pointer-events-none');
-            else manager.classList.remove('opacity-20', 'pointer-events-none');
+            const isAll = document.getElementById('conf-allow-all').checked; const manager = document.getElementById('pincode-manager');
+            if(isAll) manager.classList.add('opacity-30', 'pointer-events-none'); else manager.classList.remove('opacity-30', 'pointer-events-none');
             if(!initialLoad) syncPincodesToDB(true); else renderPincodes();
         }
-        function renderPincodes() {
-            const container = document.getElementById('pin-chips');
-            if(localPincodes.length === 0) return container.innerHTML = '';
-            container.innerHTML = localPincodes.map(pin => `<div class="inline-flex items-center px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 text-xs font-mono text-amber-500 rounded">${pin} <button onclick="removePincode('${pin}')" class="ml-3 text-red-500/70 hover:text-red-500">✕</button></div>`).join('');
-        }
-        async function addPincode() {
-            const val = document.getElementById('new-pin-input').value.trim();
-            if(!val || localPincodes.includes(val)) return;
-            localPincodes.push(val); await syncPincodesToDB(); document.getElementById('new-pin-input').value = ''; showToast(`Territory ${val} added.`);
-        }
-        async function removePincode(pin) { localPincodes = localPincodes.filter(p => p !== pin); await syncPincodesToDB(); showToast("Removed."); }
-        async function syncPincodesToDB(silent = false) {
-            await supabaseClient.from('store_settings').update({ allow_all_pins: document.getElementById('conf-allow-all').checked, allowed_pins: localPincodes }).eq('id', 1);
-            renderPincodes(); if(!silent) showToast("Logistics grid synchronized.");
-        }
-        async function saveRazorpayConfig() {
-            await supabaseClient.from('store_settings').update({ razorpay_enabled: document.getElementById('rzp-enable').checked, razorpay_key_id: document.getElementById('rzp-key').value }).eq('id', 1);
-            const secret = document.getElementById('rzp-secret').value;
-            if(secret && secret.length > 5) await supabaseClient.from('secure_settings').upsert({ id: 1, razorpay_key_secret: secret });
-            showToast("Payment engine re-calibrated.");
-        }
+        function renderPincodes() { document.getElementById('pin-chips').innerHTML = localPincodes.map(pin => `<div class="inline-flex items-center px-2 py-1 bg-[#111] text-xs font-mono border border-white/5 rounded">${pin} <button onclick="removePincode('${pin}')" class="ml-2 text-red-500 hover:text-red-400">✕</button></div>`).join(''); }
+        async function addPincode() { const val = document.getElementById('new-pin-input').value.trim(); if(!val || localPincodes.includes(val)) return; localPincodes.push(val); await syncPincodesToDB(); document.getElementById('new-pin-input').value = ''; }
+        async function removePincode(pin) { localPincodes = localPincodes.filter(p => p !== pin); await syncPincodesToDB(); }
+        async function syncPincodesToDB(silent = false) { await supabaseClient.from('store_settings').update({ allow_all_pins: document.getElementById('conf-allow-all').checked, allowed_pins: localPincodes }).eq('id', 1); renderPincodes(); if(!silent) showToast("Pincodes saved."); }
+        async function saveContactConfig() { await supabaseClient.from('store_settings').update({ support_email: document.getElementById('conf-email').value, support_phone: document.getElementById('conf-phone').value, social_instagram: document.getElementById('social-ig').value, social_whatsapp: document.getElementById('social-wa').value }).eq('id', 1); showToast("Contact details saved."); }
+        async function saveRazorpayConfig() { await supabaseClient.from('store_settings').update({ razorpay_enabled: document.getElementById('rzp-enable').checked, razorpay_key_id: document.getElementById('rzp-key').value }).eq('id', 1); const secret = document.getElementById('rzp-secret').value; if(secret && secret.length > 5) await supabaseClient.from('secure_settings').upsert({ id: 1, razorpay_key_secret: secret }); showToast("Payment settings saved."); }
 
-        // CATALOG & CONTENT functions remain mostly identical, abbreviated for token space.
-        function openProductModal(id = null) { /* Same as before */ document.getElementById('product-modal').classList.remove('hidden'); }
-        function closeProductModal() { document.getElementById('product-modal').classList.add('hidden'); }
-        async function loadCatalog() { /* Same as before, populates catalog-grid */ 
-            const { data } = await supabaseClient.from('products').select('*'); allProducts = data || [];
-            document.getElementById('catalog-grid').innerHTML = allProducts.map(p => `<div class="bg-[#0a0a0a] border border-white/5 rounded-xl p-5 flex flex-col justify-between group shadow-lg hover:border-white/20"><div class="flex items-center space-x-5 mb-5"><div class="w-20 h-20 bg-[#050505] border border-white/5 rounded-lg p-2 flex items-center justify-center flex-shrink-0"><img src="${p.image_url}" class="max-h-full object-contain"></div><div><h4 class="text-lg text-white font-serif mb-1">${p.name}</h4><span class="text-[10px] font-mono font-bold text-amber-500 bg-amber-500/10 px-2 py-1 rounded">${formatINR(p.price)}</span></div></div></div>`).join('');
+        // GENERAL SETTINGS & PAGES (Abbreviated identical implementation)
+        async function loadGeneralSettings() {
+            const { data } = await supabaseClient.from('general_settings').select('*').eq('id', 1).single();
+            if(data) { document.getElementById('gs-tagline').value = data.site_tagline || ''; document.getElementById('gs-footer').value = data.footer_description || ''; document.getElementById('gs-secure').value = data.secure_systems_text || ''; document.getElementById('gs-copyright').value = data.copyright_text || ''; }
         }
-        async function loadPolicies() { /* Same as before */
-            const { data } = await supabaseClient.from('legal_pages').select('id, title, content'); allPolicies = data || [];
-            document.getElementById('policy-select').innerHTML = `<option value="" disabled selected style="display:none">-- Initiate Document Selection --</option>` + allPolicies.map(p => `<option value="${p.id}">${p.title}</option>`).join('');
-        }
-        function loadSelectedPolicy() { /* Same as before */
-            const id = document.getElementById('policy-select').value;
-            const p = allPolicies.find(x => x.id === id); if(!p) return;
-            document.getElementById('policy-id').value = p.id; document.getElementById('policy-title').value = p.title; document.getElementById('policy-content').value = p.content;
-            document.getElementById('policy-editor').classList.remove('hidden'); updateLivePreview();
-        }
-        function updateLivePreview() {
-            document.getElementById('live-preview-container').innerHTML = `
-                <h1 class="serif-title text-4xl mb-4 text-white">${document.getElementById('policy-title').value}</h1>
-                <div class="text-gray-400 leading-relaxed text-sm space-y-6 whitespace-pre-line border-t border-white/5 pt-10">${document.getElementById('policy-content').value}</div>`;
-        }
-        async function savePolicy() {
-            await supabaseClient.from('legal_pages').update({ title: document.getElementById('policy-title').value, content: document.getElementById('policy-content').value }).eq('id', document.getElementById('policy-id').value);
-            showToast("Document saved."); loadPolicies();
-        }
+        async function saveGeneralSettings() { await supabaseClient.from('general_settings').update({ site_tagline: document.getElementById('gs-tagline').value, footer_description: document.getElementById('gs-footer').value, secure_systems_text: document.getElementById('gs-secure').value, copyright_text: document.getElementById('gs-copyright').value }).eq('id', 1); showToast("Settings saved."); }
+        
+        async function loadPolicies() { const { data } = await supabaseClient.from('legal_pages').select('id, title, content'); allPolicies = data || []; document.getElementById('policy-select').innerHTML = `<option value="" disabled selected style="display:none">-- Select Page to Edit --</option>` + allPolicies.map(p => `<option value="${p.id}">${p.title}</option>`).join(''); }
+        function loadSelectedPolicy() { const id = document.getElementById('policy-select').value; const p = allPolicies.find(x => x.id === id); if(!p) return; document.getElementById('policy-id').value = p.id; document.getElementById('policy-title').value = p.title; document.getElementById('policy-content').value = p.content; document.getElementById('policy-editor').classList.remove('hidden'); updateLivePreview(); }
+        function updateLivePreview() { document.getElementById('live-preview-container').innerHTML = `<h1 class="serif-title text-3xl mb-4 text-white">${document.getElementById('policy-title').value}</h1><div class="text-gray-400 leading-relaxed text-sm space-y-6 whitespace-pre-line border-t border-white/5 pt-6">${document.getElementById('policy-content').value}</div>`; }
+        async function savePolicy() { await supabaseClient.from('legal_pages').update({ title: document.getElementById('policy-title').value, content: document.getElementById('policy-content').value }).eq('id', document.getElementById('policy-id').value); showToast("Page saved."); loadPolicies(); }
+        
+        // COUPONS (Abbreviated identical implementation)
+        async function loadCoupons() { const { data } = await supabaseClient.from('coupons').select('*').order('created_at', { ascending: false }); allCoupons = data || []; document.getElementById('coupons-tbody').innerHTML = allCoupons.map(c => `<tr class="border-b border-white/5 hover:bg-[#111]"><td class="px-6 py-4 font-bold text-amber-500">${c.code}</td><td class="px-6 py-4">${c.discount_type === 'FLAT' ? formatINR(c.discount_value) : c.discount_value + '%'}</td><td class="px-6 py-4 text-xs text-gray-500">${c.valid_until ? new Date(c.valid_until).toLocaleDateString() : 'Forever'}</td><td class="px-6 py-4 text-xs"><span class="text-white font-bold">${c.times_used}</span> / ${c.max_uses_total || '∞'}</td><td class="px-6 py-4"><span class="${c.active ? 'text-green-500' : 'text-red-500'} text-[10px] uppercase font-bold tracking-widest">${c.active ? 'Active' : 'Disabled'}</span></td><td class="px-6 py-4 text-right"><button onclick="openCouponModal('${c.id}')" class="text-[10px] border border-white/20 px-3 py-1 hover:bg-white hover:text-black uppercase">Edit</button></td></tr>`).join(''); }
+        function openCouponModal(id = null) { document.getElementById('coupon-modal').classList.remove('hidden'); const c = id ? allCoupons.find(x => x.id === id) : null; document.getElementById('cm-id').value = c ? c.id : ''; document.getElementById('cm-code').value = c ? c.code : ''; document.getElementById('cm-type').value = c ? c.discount_type : 'PERCENT'; document.getElementById('cm-value').value = c ? c.discount_value : ''; document.getElementById('cm-total-uses').value = c ? (c.max_uses_total || '') : ''; document.getElementById('cm-per-user').value = c ? c.max_uses_per_user : '1'; document.getElementById('cm-active').value = c ? (c.active ? 'true':'false') : 'true'; document.getElementById('cm-until').value = c && c.valid_until ? c.valid_until.split('T')[0] : ''; }
+        async function saveCoupon() { const id = document.getElementById('cm-id').value; const payload = { code: document.getElementById('cm-code').value.toUpperCase(), discount_type: document.getElementById('cm-type').value, discount_value: parseFloat(document.getElementById('cm-value').value), max_uses_total: document.getElementById('cm-total-uses').value ? parseInt(document.getElementById('cm-total-uses').value) : null, max_uses_per_user: parseInt(document.getElementById('cm-per-user').value) || 1, active: document.getElementById('cm-active').value === 'true', valid_until: document.getElementById('cm-until').value ? new Date(document.getElementById('cm-until').value).toISOString() : null }; try { if(id) await supabaseClient.from('coupons').update(payload).eq('id', id); else await supabaseClient.from('coupons').insert([payload]); showToast("Coupon saved"); document.getElementById('coupon-modal').classList.add('hidden'); loadCoupons(); } catch(e) { showToast("Error saving coupon", "error"); } }
 
         window.addEventListener('DOMContentLoaded', initAdmin);
     </script>
