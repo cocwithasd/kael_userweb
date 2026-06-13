@@ -32,13 +32,13 @@ module.exports = async function handler(req, res) {
           <tr>
             <td style="padding: 40px 30px; text-align: center;">
               <h1 style="font-family: Georgia, serif; font-size: 28px; font-weight: 400; letter-spacing: 2px; color: #fff; margin-bottom: 10px; text-transform: uppercase;">Order Confirmed</h1>
-              <div style="font-size: 11px; letter-spacing: 3px; color: #ca8a04; text-transform: uppercase; margin-bottom: 30px; font-weight: 600;">Procurement Allocation Verified</div>
-              <p style="font-size: 14px; line-height: 1.8; color: #a3a3a3; margin-bottom: 30px;">Thank you for your acquisition, ${customerName}. Your structural fragrance compound registry signature has successfully locked into our active fulfillment line.</p>
+              <div style="font-size: 11px; letter-spacing: 3px; color: #ca8a04; text-transform: uppercase; margin-bottom: 30px; font-weight: 600;">Thank you for your purchase</div>
+              <p style="font-size: 14px; line-height: 1.8; color: #a3a3a3; margin-bottom: 30px;">Hi ${customerName}, your order has been successfully placed and is now being processed by our team. We will notify you once it dispatches.</p>
               
               <div style="background-color: #111; padding: 25px; margin-bottom: 30px; text-align: left; border: 1px solid #1c1c1c;">
-                <div style="font-size: 12px; font-family: monospace; color: #737373; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">Reference Registry: <span style="color: #fff; font-weight: bold; font-family: sans-serif; font-size: 14px;">#${orderId}</span></div>
-                <div style="font-size: 12px; font-family: monospace; color: #737373; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">Fulfillment Model: <span style="color: #fff; font-weight: bold; font-family: sans-serif; font-size: 14px;">Cash On Delivery (COD)</span></div>
-                <div style="font-size: 12px; font-family: monospace; color: #737373; text-transform: uppercase; letter-spacing: 1px;">Liquidation Settlement: <span style="color: #fbbf24; font-weight: bold; font-family: sans-serif; font-size: 14px;">${totalAmount}</span></div>
+                <div style="font-size: 12px; font-family: monospace; color: #737373; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">Order ID: <span style="color: #fff; font-weight: bold; font-family: sans-serif; font-size: 14px;">#${orderId}</span></div>
+                <div style="font-size: 12px; font-family: monospace; color: #737373; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">Payment Mode: <span style="color: #fff; font-weight: bold; font-family: sans-serif; font-size: 14px;">Cash On Delivery (COD)</span></div>
+                <div style="font-size: 12px; font-family: monospace; color: #737373; text-transform: uppercase; letter-spacing: 1px;">Total Amount: <span style="color: #fbbf24; font-weight: bold; font-family: sans-serif; font-size: 14px;">${totalAmount}</span></div>
               </div>
             </td>
           </tr>
@@ -54,18 +54,20 @@ module.exports = async function handler(req, res) {
   `;
 
   try {
+    // Send to Customer
     await transporter.sendMail({
       from: `"KAEL Parfums" <${process.env.ZOHO_EMAIL}>`,
       to: customerEmail,
-      subject: `Fulfillment Registry Confirmation: #${orderId}`,
+      subject: `Order Confirmation: #${orderId}`,
       html: emailTemplate,
     });
 
+    // Send Alert to Admin
     await transporter.sendMail({
-      from: `"KAEL Systems" <${process.env.ZOHO_EMAIL}>`,
+      from: `"KAEL Store" <${process.env.ZOHO_EMAIL}>`,
       to: process.env.ZOHO_EMAIL,
-      subject: `Fulfillment Dispatch Required: #${orderId} [${totalAmount}]`,
-      text: `Client Name: ${customerName}\nContact Target: ${customerEmail}\nTotal Invoice Vector: ${totalAmount}\nOrder Payload Index: #${orderId}`,
+      subject: `New Order Received: #${orderId} [${totalAmount}]`,
+      text: `New Order Alert.\n\nCustomer Name: ${customerName}\nCustomer Email: ${customerEmail}\nTotal Amount: ${totalAmount}\nOrder ID: #${orderId}`,
     });
 
     res.status(200).json({ success: true });
