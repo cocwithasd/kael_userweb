@@ -125,7 +125,7 @@
         </div>
     </footer>
 
-    <!-- INTERACTIVE CART OVERLAY DRAW -->
+    <!-- INTERACTIVE CART OVERLAY -->
     <div id="cart-drawer" class="fixed inset-y-0 right-0 w-full max-w-md bg-[#080808] border-l border-white/5 z-50 transform translate-x-full transition-transform duration-300 p-6 flex flex-col justify-between hidden shadow-2xl">
         <div>
             <div class="flex justify-between items-center mb-8 pb-4 border-b border-white/5">
@@ -330,7 +330,7 @@
                 sliderInterval = setInterval(() => {
                     slides[currentSlide].classList.remove('opacity-100'); slides[currentSlide].classList.add('opacity-0');
                     currentSlide = (currentSlide + 1) % slides.length;
-                    slides[currentSlide].remove('opacity-0'); slides[currentSlide].classList.add('opacity-100');
+                    slides[currentSlide].classList.remove('opacity-0'); slides[currentSlide].classList.add('opacity-100');
                 }, 6000);
             }
         }
@@ -434,13 +434,32 @@
             } catch(err) { alert("Failed to send message."); btn.innerText = "Send Message"; btn.disabled = false; }
         }
 
-        // VIEW: Client Portal / Profile Details
+        // VIEW: Client Portal, Profile & Address Book
         async function renderAccountPage(target) {
             if (!currentUser) { openAuthModal('Account Login'); return navigateTo('/'); }
             target.innerHTML = loaderHTML;
             try {
                 const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
                 const { data: orders } = await supabaseClient.from('orders').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+                const { data: addresses } = await supabaseClient.from('user_addresses').select('*').eq('user_id', currentUser.id);
+                userSavedAddresses = addresses || [];
+
+                let addressHtml = '';
+                if(userSavedAddresses.length === 0) {
+                    addressHtml = `<p class="text-xs text-gray-600 font-mono">No addresses saved.</p>`;
+                } else {
+                    userSavedAddresses.forEach(addr => {
+                        addressHtml += `
+                            <div class="p-5 border border-white/10 bg-[#111] rounded-sm text-xs font-mono text-gray-400 relative mb-4">
+                                <p class="text-white mb-1 font-sans font-semibold">${addr.full_name}</p>
+                                <p>${addr.street_address}</p>
+                                <p>${addr.city}, ${addr.state} - ${addr.pincode}</p>
+                                <p class="mt-2">Ph: ${addr.phone}</p>
+                                <button onclick="deleteAddress('${addr.id}')" class="absolute top-4 right-4 text-red-500 hover:text-red-400 uppercase tracking-widest text-[9px] border border-red-500/20 px-2 py-1">Remove</button>
+                            </div>
+                        `;
+                    });
+                }
 
                 let html = `
                     <div class="max-w-6xl mx-auto px-6 py-28">
@@ -448,15 +467,39 @@
                             <div><h1 class="serif-title text-4xl text-white mb-2">Client Portal</h1><p class="text-xs font-mono text-gray-500">${currentUser.email}</p></div>
                             <button onclick="handleSignOut()" class="text-[10px] uppercase font-bold tracking-widest border border-white/10 text-gray-400 px-5 py-2 hover:bg-white hover:text-black transition-all">Sign Out</button>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-                            <div class="bg-[#0A0A0A] p-8 border border-white/5 h-fit">
-                                <h2 class="uppercase tracking-widest text-[11px] font-semibold text-white mb-6">Profile Details</h2>
-                                <div class="space-y-5 text-sm font-mono text-gray-400">
-                                    <div><span class="block text-[10px] text-gray-600 uppercase mb-1">Name</span> <span class="text-white">${profile?.full_name || '-'}</span></div>
-                                    <div><span class="block text-[10px] text-gray-600 uppercase mb-1">Phone</span> <span class="text-white">${profile?.phone || '-'}</span></div>
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                            
+                            <!-- Profile & Addresses Column -->
+                            <div>
+                                <div class="bg-[#0A0A0A] p-8 border border-white/5 h-fit">
+                                    <h2 class="uppercase tracking-widest text-[11px] font-semibold text-white mb-6">Profile Details</h2>
+                                    <div class="space-y-5 text-sm font-mono text-gray-400">
+                                        <div><span class="block text-[10px] text-gray-600 uppercase mb-1">Name</span> <span class="text-white">${profile?.full_name || '-'}</span></div>
+                                        <div><span class="block text-[10px] text-gray-600 uppercase mb-1">Phone</span> <span class="text-white">${profile?.phone || '-'}</span></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-[#0A0A0A] p-8 border border-white/5 h-fit mt-8">
+                                    <h2 class="uppercase tracking-widest text-[11px] font-semibold text-white mb-6">Address Book</h2>
+                                    <div class="space-y-2">${addressHtml}</div>
+                                    <button onclick="document.getElementById('add-address-form').classList.toggle('hidden')" class="w-full mt-6 border border-white/20 text-white py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors">Add New Address</button>
+                                    
+                                    <form id="add-address-form" onsubmit="saveNewAddress(event)" class="hidden mt-6 space-y-4 pt-6 border-t border-white/10">
+                                        <input type="text" id="addr-name" placeholder="Full Name" required class="w-full bg-[#111] border border-white/10 rounded-sm px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+                                        <input type="text" id="addr-phone" placeholder="Phone Number" required class="w-full bg-[#111] border border-white/10 rounded-sm px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+                                        <input type="text" id="addr-street" placeholder="Street / Appt" required class="w-full bg-[#111] border border-white/10 rounded-sm px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <input type="text" id="addr-city" placeholder="City" required class="w-full bg-[#111] border border-white/10 rounded-sm px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+                                            <input type="text" id="addr-state" placeholder="State" required class="w-full bg-[#111] border border-white/10 rounded-sm px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+                                        </div>
+                                        <input type="text" id="addr-pin" placeholder="Pincode" required class="w-full bg-[#111] border border-white/10 rounded-sm px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+                                        <button type="submit" class="w-full bg-amber-500 text-black py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-amber-400 transition-colors">Save Address</button>
+                                    </form>
                                 </div>
                             </div>
-                            <div class="md:col-span-2">
+                            
+                            <!-- Orders Column -->
+                            <div class="lg:col-span-2">
                                 <h2 class="uppercase tracking-widest text-[11px] font-semibold text-white mb-6">Order History</h2>
                 `;
                 if(!orders || orders.length === 0) html += `<div class="bg-[#0A0A0A] p-8 border border-white/5 text-center text-xs text-gray-600 font-mono">No transactions found.</div>`;
@@ -478,6 +521,27 @@
                 }
                 html += `</div></div></div>`; target.innerHTML = html;
             } catch(e) { target.innerHTML = `<div class="text-center py-40 text-red-500 font-mono text-xs">Error rendering data.</div>`; }
+        }
+
+        async function saveNewAddress(e) {
+            e.preventDefault();
+            try {
+                await supabaseClient.from('user_addresses').insert([{
+                    user_id: currentUser.id,
+                    full_name: document.getElementById('addr-name').value,
+                    phone: document.getElementById('addr-phone').value,
+                    street_address: document.getElementById('addr-street').value,
+                    city: document.getElementById('addr-city').value,
+                    state: document.getElementById('addr-state').value,
+                    pincode: document.getElementById('addr-pin').value
+                }]);
+                renderAccountPage(document.getElementById('view-content'));
+            } catch(err) { alert("Failed to save address."); }
+        }
+
+        async function deleteAddress(id) {
+            await supabaseClient.from('user_addresses').delete().eq('id', id);
+            renderAccountPage(document.getElementById('view-content'));
         }
 
         // VIEW: Detailed Order Status Tracker
@@ -654,7 +718,15 @@
                     const { data, error } = await supabaseClient.auth.signUp({ email, password });
                     if(error) alert(error.message); 
                     else { 
-                        if(data.user) await supabaseClient.from('profiles').update({ full_name: name, phone: phone }).eq('id', data.user.id);
+                        // FIXED: Ensure Upsert is used to capture Name and Phone
+                        if(data.user) {
+                            const { error: profileErr } = await supabaseClient.from('profiles').upsert({ 
+                                id: data.user.id, 
+                                full_name: name, 
+                                phone: phone 
+                            });
+                            if(profileErr) console.error("Profile save warning:", profileErr);
+                        }
                         alert("Registration successful. You can now login."); toggleAuthMode();
                     }
                 } else {
@@ -756,7 +828,7 @@
                 const itemsPayload = shoppingCart.map(item => ({ order_id: order.id, product_id: item.id, quantity: item.quantity, price_at_purchase: item.price }));
                 await supabaseClient.from('order_items').insert(itemsPayload);
 
-                // Safe clean background call to Vercel Serverless Email Endpoint
+                // Safe clean background call to Vercel Serverless Email Endpoint WITH Error Catching
                 fetch('/api/send-email', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -766,7 +838,16 @@
                         orderId: order.id.substring(0,8),
                         totalAmount: formatINR(total_amount)
                     })
-                }).catch(e => console.error("Email trigger failed:", e));
+                })
+                .then(async res => {
+                    if(!res.ok) {
+                        const errData = await res.json();
+                        console.error("Vercel API failed to send email. Zoho Error:", errData);
+                    } else {
+                        console.log("Emails securely dispatched via Vercel.");
+                    }
+                })
+                .catch(e => console.error("Email trigger network failure:", e));
 
                 shoppingCart = []; updateCartCount();
                 document.getElementById('view-content').innerHTML = `
