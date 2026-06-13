@@ -37,6 +37,7 @@
         </div>
     </div>
 
+    <!-- MAIN INTERFACE -->
     <div id="dashboard-view" class="hidden w-full h-full flex flex-col md:flex-row relative">
         
         <div class="md:hidden flex justify-between items-center bg-[#050505] p-4 border-b border-white/5 z-40">
@@ -50,11 +51,12 @@
                 <div class="h-16 md:h-20 flex items-center justify-center border-b border-white/5 font-bold tracking-widest text-lg uppercase text-white">KAEL ADMIN</div>
                 <nav class="mt-6 flex flex-col">
                     <button onclick="switchTab('overview')" id="tab-btn-overview" class="nav-item active text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white">Overview</button>
-                    <button onclick="switchTab('orders')" id="tab-btn-orders" class="nav-item text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white">Orders</button>
+                    <button onclick="switchTab('orders')" id="tab-btn-orders" class="nav-item text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white flex justify-between">Orders</button>
+                    <button onclick="switchTab('returns')" id="tab-btn-returns" class="nav-item text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white">Returns</button>
                     <button onclick="switchTab('catalog')" id="tab-btn-catalog" class="nav-item text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white">Products</button>
                     <button onclick="switchTab('coupons')" id="tab-btn-coupons" class="nav-item text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white">Coupons</button>
                     <button onclick="switchTab('general')" id="tab-btn-general" class="nav-item text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white">Settings</button>
-                    <button onclick="switchTab('content')" id="tab-btn-content" class="nav-item text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white">Pages & Legal</button>
+                    <button onclick="switchTab('content')" id="tab-btn-content" class="nav-item text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white">Pages</button>
                 </nav>
             </div>
             <div class="p-6 border-t border-white/5 bg-[#080808]">
@@ -65,6 +67,7 @@
         <main class="flex-1 h-full overflow-y-auto bg-[#030303] relative p-4 md:p-10">
             <div class="max-w-7xl mx-auto">
                 
+                <!-- OVERVIEW -->
                 <div id="view-overview" class="tab-content block">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-white/5 pb-6 gap-4">
                         <h2 class="text-3xl text-white font-bold">Dashboard</h2>
@@ -86,19 +89,18 @@
                             <h3 class="text-3xl font-bold font-mono text-white" id="stat-users">0</h3>
                         </div>
                         <div class="bg-[#0a0a0a] p-6 border border-white/5 rounded-xl shadow-lg">
-                            <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Active Coupons</p>
-                            <h3 class="text-3xl font-bold font-mono text-white" id="stat-coupons">0</h3>
+                            <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Pending Returns</p>
+                            <h3 class="text-3xl font-bold font-mono text-amber-500" id="stat-returns">0</h3>
                         </div>
                     </div>
 
                     <div class="bg-[#0a0a0a] p-6 border border-white/5 rounded-xl shadow-lg">
                         <h3 class="text-sm font-bold text-white mb-6 uppercase tracking-widest">Revenue Timeline (Last 7 Days)</h3>
-                        <div class="h-80 w-full relative">
-                            <canvas id="revenueChart"></canvas>
-                        </div>
+                        <div class="h-80 w-full relative"><canvas id="revenueChart"></canvas></div>
                     </div>
                 </div>
 
+                <!-- ORDERS -->
                 <div id="view-orders" class="tab-content hidden">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-white/5 pb-6 gap-4">
                         <h2 class="text-3xl text-white font-bold">Orders</h2>
@@ -114,6 +116,23 @@
                     </div>
                 </div>
 
+                <!-- RETURNS -->
+                <div id="view-returns" class="tab-content hidden">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-white/5 pb-6 gap-4">
+                        <h2 class="text-3xl text-white font-bold">Return Requests</h2>
+                        <button onclick="loadReturns()" class="text-xs bg-white/5 border border-white/10 px-5 py-2.5 rounded hover:bg-white/10 transition-colors">Refresh Data</button>
+                    </div>
+                    <div class="bg-[#0a0a0a] border border-white/5 rounded-xl overflow-hidden overflow-x-auto">
+                        <table class="w-full text-left text-xs text-gray-400 min-w-[800px]">
+                            <thead class="bg-[#050505] text-[10px] uppercase tracking-widest text-gray-500 border-b border-white/5">
+                                <tr><th class="px-6 py-4">Date</th><th class="px-6 py-4">Order ID</th><th class="px-6 py-4">Customer ID</th><th class="px-6 py-4">Issue Details</th><th class="px-6 py-4">Status</th><th class="px-6 py-4 text-right">Action</th></tr>
+                            </thead>
+                            <tbody id="returns-tbody" class="divide-y divide-white/5"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- CATALOG -->
                 <div id="view-catalog" class="tab-content hidden">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-white/5 pb-6 gap-4">
                         <h2 class="text-3xl text-white font-bold">Products</h2>
@@ -122,6 +141,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="catalog-grid"></div>
                 </div>
 
+                <!-- COUPONS -->
                 <div id="view-coupons" class="tab-content hidden">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-white/5 pb-6 gap-4">
                         <h2 class="text-3xl text-white font-bold">Coupons</h2>
@@ -137,11 +157,41 @@
                     </div>
                 </div>
 
+                <!-- SETTINGS -->
                 <div id="view-general" class="tab-content hidden">
-                    <h2 class="text-3xl text-white font-bold mb-8 border-b border-white/5 pb-6">Settings</h2>
+                    <h2 class="text-3xl text-white font-bold mb-8 border-b border-white/5 pb-6">Store Settings</h2>
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        
+                        <!-- Order Rules -->
                         <div class="bg-[#0a0a0a] p-6 md:p-8 border border-white/5 rounded-xl">
-                            <h3 class="text-xs uppercase tracking-widest font-bold text-white mb-6 border-b border-white/5 pb-4">Storefront Details</h3>
+                            <h3 class="text-xs uppercase tracking-widest font-bold text-white mb-6 border-b border-white/5 pb-4">Order Rules</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="text-[10px] text-gray-500 uppercase block mb-2">Max Stage for User Cancellation</label>
+                                    <select id="conf-cancel-stage" class="w-full glass-input rounded p-3 text-sm outline-none cursor-pointer">
+                                        <option value="Pending">Only when Pending</option>
+                                        <option value="Processing">Up to Processing</option>
+                                        <option value="Shipped">Up to Shipped</option>
+                                    </select>
+                                    <p class="text-[9px] text-gray-500 mt-2">Users cannot cancel orders after they pass this stage.</p>
+                                </div>
+                            </div>
+                            <button onclick="saveOrderRules()" class="mt-6 bg-white text-black px-6 py-2 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-amber-400">Save Rules</button>
+                        </div>
+
+                        <!-- Pincodes -->
+                        <div class="bg-[#0a0a0a] p-6 md:p-8 border border-white/5 rounded-xl">
+                            <h3 class="text-xs uppercase tracking-widest font-bold text-white mb-6 border-b border-white/5 pb-4">Delivery Pincodes</h3>
+                            <div class="flex items-center space-x-3 mb-4 p-3 bg-[#111] rounded border border-white/5"><input type="checkbox" id="conf-allow-all" onchange="togglePincodeMode()" class="accent-amber-500 w-4 h-4"><label class="text-xs text-white">Allow All Pincodes</label></div>
+                            <div id="pincode-manager">
+                                <div class="flex space-x-2 mb-4"><input type="text" id="new-pin-input" placeholder="Enter Pincode" class="flex-1 glass-input rounded px-3 py-2 text-sm"><button onclick="addPincode()" class="bg-white text-black px-4 py-2 rounded text-xs font-bold uppercase hover:bg-amber-400">Add</button></div>
+                                <div id="pin-chips" class="flex flex-wrap gap-2 max-h-32 overflow-y-auto"></div>
+                            </div>
+                        </div>
+
+                        <!-- Site Settings -->
+                        <div class="bg-[#0a0a0a] p-6 md:p-8 border border-white/5 rounded-xl">
+                            <h3 class="text-xs uppercase tracking-widest font-bold text-white mb-6 border-b border-white/5 pb-4">Frontend Details</h3>
                             <div class="space-y-4">
                                 <div><label class="text-[10px] text-gray-500 uppercase block mb-1">Tagline</label><input type="text" id="gs-tagline" class="w-full glass-input rounded p-2 text-sm"></div>
                                 <div><label class="text-[10px] text-gray-500 uppercase block mb-1">Footer Text</label><textarea id="gs-footer" rows="2" class="w-full glass-input rounded p-2 text-sm"></textarea></div>
@@ -150,6 +200,8 @@
                             </div>
                             <button onclick="saveGeneralSettings()" class="mt-4 bg-white text-black px-6 py-2 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-amber-400">Save Details</button>
                         </div>
+
+                        <!-- Socials & Contact -->
                         <div class="bg-[#0a0a0a] p-6 md:p-8 border border-white/5 rounded-xl">
                             <h3 class="text-xs uppercase tracking-widest font-bold text-white mb-6 border-b border-white/5 pb-4">Contact & Socials</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -160,30 +212,26 @@
                             </div>
                             <button onclick="saveContactConfig()" class="w-full border border-white/20 text-white py-2 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-black">Save Contact</button>
                         </div>
-                        <div class="bg-[#0a0a0a] p-6 md:p-8 border border-amber-500/20 rounded-xl">
+
+                        <!-- Payments -->
+                        <div class="bg-[#0a0a0a] p-6 md:p-8 border border-amber-500/20 rounded-xl lg:col-span-2">
                             <h3 class="text-xs uppercase tracking-widest font-bold text-amber-500 mb-6 border-b border-white/5 pb-4">Razorpay Payments</h3>
                             <div class="flex items-center space-x-3 mb-4"><input type="checkbox" id="rzp-enable" class="accent-amber-500 w-4 h-4"><label class="text-sm font-bold text-white">Enable Razorpay</label></div>
-                            <div class="space-y-4 mb-4">
+                            <div class="space-y-4 mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div><label class="text-[10px] text-gray-500 uppercase block mb-1">Key ID</label><input type="text" id="rzp-key" class="w-full glass-input rounded p-2 text-sm"></div>
                                 <div><label class="text-[10px] text-gray-500 uppercase block mb-1">Key Secret</label><input type="password" id="rzp-secret" class="w-full glass-input rounded p-2 text-sm"></div>
                             </div>
-                            <button onclick="saveRazorpayConfig()" class="w-full bg-amber-500 text-black py-2 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-amber-400">Save Payment Settings</button>
+                            <button onclick="saveRazorpayConfig()" class="bg-amber-500 text-black px-6 py-2 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-amber-400">Save Payment Settings</button>
                         </div>
-                        <div class="bg-[#0a0a0a] p-6 md:p-8 border border-white/5 rounded-xl">
-                            <h3 class="text-xs uppercase tracking-widest font-bold text-white mb-6 border-b border-white/5 pb-4">Delivery Pincodes</h3>
-                            <div class="flex items-center space-x-3 mb-4 p-3 bg-[#111] rounded border border-white/5"><input type="checkbox" id="conf-allow-all" onchange="togglePincodeMode()" class="accent-amber-500 w-4 h-4"><label class="text-xs text-white">Allow All Pincodes</label></div>
-                            <div id="pincode-manager">
-                                <div class="flex space-x-2 mb-4"><input type="text" id="new-pin-input" placeholder="Enter Pincode" class="flex-1 glass-input rounded px-3 py-2 text-sm"><button onclick="addPincode()" class="bg-white text-black px-4 py-2 rounded text-xs font-bold uppercase hover:bg-amber-400">Add</button></div>
-                                <div id="pin-chips" class="flex flex-wrap gap-2 max-h-32 overflow-y-auto"></div>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
 
+                <!-- CONTENT -->
                 <div id="view-content" class="tab-content hidden max-w-5xl">
-                    <h2 class="text-3xl text-white font-bold mb-8 border-b border-white/5 pb-6">Pages & Policies</h2>
+                    <h2 class="text-3xl text-white font-bold mb-8 border-b border-white/5 pb-6">Pages</h2>
                     <div class="bg-[#0a0a0a] p-6 md:p-8 border border-white/5 rounded-xl">
-                        <select id="policy-select" onchange="loadSelectedPolicy()" class="w-full glass-input rounded px-4 py-3 text-sm outline-none mb-8"></select>
+                        <select id="policy-select" onchange="loadSelectedPolicy()" class="w-full glass-input rounded px-4 py-3 text-sm outline-none mb-8 cursor-pointer"></select>
                         <div id="policy-editor" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-8">
                             <div class="space-y-4">
                                 <input type="hidden" id="policy-id">
@@ -203,6 +251,7 @@
         </main>
     </div>
 
+    <!-- FULL SCREEN ORDER MODAL -->
     <div id="order-fullscreen-view" class="fixed inset-0 bg-[#030303] z-[60] flex flex-col hidden overflow-y-auto transition-opacity">
         <div class="sticky top-0 bg-[#050505] border-b border-white/5 px-6 py-4 flex justify-between items-center z-10 shadow-lg">
             <div class="flex items-center space-x-4">
@@ -241,7 +290,7 @@
                     <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-4 border-b border-white/5 pb-2">Order Status</p>
                     <div class="flex flex-col space-y-3">
                         <select id="web-order-status" class="w-full bg-[#111] glass-input text-white font-bold outline-none cursor-pointer rounded p-3">
-                            <option value="Pending">Pending</option><option value="Processing">Processing</option><option value="Shipped">Shipped</option><option value="Delivered">Delivered</option>
+                            <option value="Pending">Pending</option><option value="Processing">Processing</option><option value="Shipped">Shipped</option><option value="Delivered">Delivered</option><option value="Cancelled">Cancelled</option><option value="Returned">Returned</option>
                         </select>
                         <button onclick="saveModalOrderStatus()" class="w-full bg-amber-500 text-black px-4 py-3 rounded text-xs font-bold uppercase hover:bg-amber-400 transition-colors">Update Status</button>
                     </div>
@@ -287,6 +336,7 @@
         </div>
     </div>
 
+    <!-- PRODUCT MODAL -->
     <div id="product-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-[#0A0A0A] border border-white/10 w-full max-w-4xl max-h-[95vh] flex flex-col rounded-xl shadow-2xl">
             <div class="flex justify-between items-center p-6 md:p-8 border-b border-white/5">
@@ -313,8 +363,31 @@
         </div>
     </div>
 
+    <!-- COUPON MODAL -->
     <div id="coupon-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-[#0A0A0A] border border-white/10 w-full max-w-2xl flex flex-col rounded-xl shadow-2xl">
+            <div class="flex justify-between items-center p-6 border-b border-white/5">
+                <h3 class="text-sm uppercase tracking-widest font-bold text-white" id="cm-title">Configure Coupon</h3>
+                <button onclick="document.getElementById('coupon-modal').classList.add('hidden')" class="text-gray-500 hover:text-white bg-white/5 rounded-full p-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            </div>
+            <div class="p-6 space-y-6 overflow-y-auto max-h-[70vh]">
+                <input type="hidden" id="cm-id">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div><label class="text-[10px] text-gray-500 block mb-1">Coupon Code</label><input type="text" id="cm-code" class="w-full glass-input rounded p-3 text-sm uppercase font-mono outline-none"></div>
+                    <div><label class="text-[10px] text-gray-500 block mb-1">Status</label><select id="cm-active" class="w-full glass-input rounded p-3 text-sm outline-none"><option value="true">Active</option><option value="false">Disabled</option></select></div>
+                    <div><label class="text-[10px] text-gray-500 block mb-1">Discount Type</label><select id="cm-type" class="w-full glass-input rounded p-3 text-sm outline-none"><option value="PERCENT">Percentage (%)</option><option value="FLAT">Flat Amount (₹)</option></select></div>
+                    <div><label class="text-[10px] text-gray-500 block mb-1">Value</label><input type="number" id="cm-value" class="w-full glass-input rounded p-3 text-sm font-mono text-amber-500 outline-none"></div>
+                    <div><label class="text-[10px] text-gray-500 block mb-1">Total Uses Allowed (Blank=∞)</label><input type="number" id="cm-total-uses" class="w-full glass-input rounded p-3 text-sm outline-none"></div>
+                    <div><label class="text-[10px] text-gray-500 block mb-1">Uses Per User</label><input type="number" id="cm-per-user" value="1" class="w-full glass-input rounded p-3 text-sm outline-none"></div>
+                    <div class="md:col-span-2"><label class="text-[10px] text-gray-500 block mb-1">Valid Until</label><input type="date" id="cm-until" class="w-full glass-input rounded p-3 text-sm outline-none dark:[color-scheme:dark]"></div>
+                </div>
+            </div>
+            <div class="p-6 border-t border-white/5 flex justify-end">
+                <button onclick="saveCoupon()" class="w-full md:w-auto bg-amber-500 text-black px-8 py-2.5 rounded text-[11px] font-bold uppercase tracking-widest hover:bg-amber-400">Save</button>
+            </div>
         </div>
+    </div>
+
 
     <script>
         const SUPABASE_URL = "https://ejjcjskseatjqdoxabhm.supabase.co";
@@ -330,9 +403,9 @@
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container'); const toast = document.createElement('div');
             const bgClass = type === 'success' ? 'bg-[#0a0a0a]' : 'bg-[#1a0a0a]'; const borderClass = type === 'success' ? 'border-amber-500/30' : 'border-red-500/50'; const iconColor = type === 'success' ? 'text-amber-500' : 'text-red-500';
-            toast.className = `flex items-center space-x-3 p-4 ${bgClass} border ${borderClass} rounded text-white text-xs font-mono shadow-2xl transform transition-all duration-300 translate-x-[120%] pointer-events-auto w-80`;
+            toast.className = `flex items-center space-x-3 p-4 ${bgClass} border ${borderClass} rounded-lg text-white text-xs font-mono shadow-[0_10px_30px_rgba(0,0,0,0.5)] transform transition-all duration-300 translate-x-[120%] pointer-events-auto w-80`;
             toast.innerHTML = `<div class="${iconColor} flex-shrink-0">${type==='success'?'✓':'✕'}</div><div class="leading-relaxed flex-1">${message}</div>`;
-            container.appendChild(toast); setTimeout(() => { toast.classList.remove('translate-x-[120%]'); }, 50); setTimeout(() => { toast.classList.add('translate-x-[120%]'); setTimeout(() => toast.remove(), 300); }, 4000);
+            container.appendChild(toast); setTimeout(() => { toast.classList.remove('translate-x-[120%]'); }, 50); setTimeout(() => { toast.classList.add('translate-x-[120%]'); setTimeout(() => toast.remove(), 300); }, 4500);
         }
 
         function toggleSidebar() {
@@ -344,8 +417,11 @@
         async function initAdmin() {
             const { data: { session } } = await supabaseClient.auth.getSession();
             if(!session) return;
-            const { data: profile, error } = await supabaseClient.from('profiles').select('role').eq('id', session.user.id).single();
-            if(error || !profile || profile.role !== 'admin') { document.getElementById('admin-error').innerText = "ACCESS DENIED"; document.getElementById('admin-error').classList.remove('hidden'); await supabaseClient.auth.signOut(); return; }
+            const { data: profile } = await supabaseClient.from('profiles').select('role').eq('id', session.user.id).single();
+            if(!profile || profile.role !== 'admin') {
+                document.getElementById('admin-error').innerText = "ACCESS DENIED."; document.getElementById('admin-error').classList.remove('hidden');
+                await supabaseClient.auth.signOut(); return;
+            }
             adminUser = session.user;
             document.getElementById('login-view').classList.add('hidden'); document.getElementById('dashboard-view').classList.remove('hidden');
             switchTab('overview'); loadLogisticsConfig(); loadGeneralSettings(); loadPolicies();
@@ -353,6 +429,7 @@
 
         async function loginAdmin() {
             const email = document.getElementById('email').value, password = document.getElementById('password').value, btn = document.getElementById('auth-btn');
+            document.getElementById('admin-error').classList.add('hidden');
             if(!email || !password) { document.getElementById('admin-error').innerText = "CREDENTIALS MISSING."; document.getElementById('admin-error').classList.remove('hidden'); return; }
             btn.innerText = "Authenticating..."; btn.disabled = true;
             try { const { error } = await supabaseClient.auth.signInWithPassword({ email, password }); if(error) throw error; await initAdmin(); } 
@@ -364,7 +441,7 @@
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden')); document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.getElementById(`view-${tabId}`).classList.remove('hidden'); document.getElementById(`tab-btn-${tabId}`).classList.add('active');
-            if(tabId === 'overview') loadOverview(); if(tabId === 'orders') loadOrders(); if(tabId === 'catalog') loadCatalog(); if(tabId === 'coupons') loadCoupons();
+            if(tabId === 'overview') loadOverview(); if(tabId === 'orders') loadOrders(); if(tabId === 'catalog') loadCatalog(); if(tabId === 'coupons') loadCoupons(); if(tabId === 'returns') loadReturns();
             if(window.innerWidth < 768) toggleSidebar();
         }
 
@@ -373,15 +450,10 @@
             try {
                 const { data: orders } = await supabaseClient.from('orders').select('total_amount, created_at');
                 const { count: usersCount } = await supabaseClient.from('profiles').select('*', { count: 'exact', head: true });
-                const { count: couponsCount } = await supabaseClient.from('coupons').select('*', { count: 'exact', head: true }).eq('active', true);
+                const { count: returnsCount } = await supabaseClient.from('return_requests').select('*', { count: 'exact', head: true }).eq('status', 'Pending');
 
-                let totalRevenue = 0;
-                let dailyRev = {};
-                const past7Days = [...Array(7)].map((_, i) => {
-                    const d = new Date(); d.setDate(d.getDate() - i);
-                    return d.toISOString().split('T')[0];
-                }).reverse();
-                
+                let totalRevenue = 0; let dailyRev = {};
+                const past7Days = [...Array(7)].map((_, i) => { const d = new Date(); d.setDate(d.getDate() - i); return d.toISOString().split('T')[0]; }).reverse();
                 past7Days.forEach(date => dailyRev[date] = 0);
 
                 (orders || []).forEach(o => {
@@ -393,7 +465,7 @@
                 document.getElementById('stat-sales').innerText = formatINR(totalRevenue);
                 document.getElementById('stat-orders').innerText = orders?.length || 0;
                 document.getElementById('stat-users').innerText = usersCount || 0;
-                document.getElementById('stat-coupons').innerText = couponsCount || 0;
+                document.getElementById('stat-returns').innerText = returnsCount || 0;
 
                 renderChart(past7Days, past7Days.map(date => dailyRev[date]));
             } catch (error) { console.error("Dashboard error:", error); }
@@ -404,10 +476,7 @@
             if(revenueChartObj) revenueChartObj.destroy();
             revenueChartObj = new Chart(ctx, {
                 type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{ label: 'Daily Revenue (₹)', data: data, borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.1)', borderWidth: 2, fill: true, tension: 0.4 }]
-                },
+                data: { labels: labels, datasets: [{ label: 'Daily Revenue (₹)', data: data, borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.1)', borderWidth: 2, fill: true, tension: 0.4 }] },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#666' } }, x: { grid: { display: false }, ticks: { color: '#666' } } } }
             });
         }
@@ -426,7 +495,7 @@
                     <td class="px-6 py-4 text-xs text-gray-300"><span class="font-bold text-white">${o.customer_name}</span><br><span class="text-[10px] text-gray-500 uppercase tracking-widest">${o.city}, ${o.pincode}</span></td>
                     <td class="px-6 py-4 font-bold text-amber-500">${formatINR(o.total_amount)}</td>
                     <td class="px-6 py-4"><span class="bg-[#050505] border border-white/10 rounded px-2 py-1 text-[9px] uppercase tracking-widest text-gray-400">${o.payment_method.split(' ')[0]}</span></td>
-                    <td class="px-6 py-4 text-right"><span class="font-bold uppercase tracking-widest text-[10px] ${o.order_status==='Pending'?'text-amber-500':(o.order_status==='Delivered'?'text-green-500':'text-blue-400')}">${o.order_status}</span></td>
+                    <td class="px-6 py-4 text-right"><span class="font-bold uppercase tracking-widest text-[10px] ${o.order_status==='Pending'?'text-amber-500':(o.order_status==='Delivered'?'text-green-500':(o.order_status==='Cancelled'||o.order_status==='Returned'?'text-red-500':'text-blue-400'))}">${o.order_status}</span></td>
                 </tr>
             `).join('');
         }
@@ -436,7 +505,6 @@
             if(error) return showToast("Error loading details", "error");
             currentEditingOrder = order;
 
-            // Details View Setup
             document.getElementById('web-order-id').innerText = `#${order.id.toUpperCase()}`;
             document.getElementById('web-customer-name').innerText = order.customer_name;
             document.getElementById('web-customer-contact').innerHTML = `${order.phone}<br>${order.customer_email}`;
@@ -455,7 +523,6 @@
             document.getElementById('web-discount').innerText = order.discount_amount > 0 ? `- ${formatINR(order.discount_amount)}` : '₹0';
             document.getElementById('web-total').innerText = formatINR(order.total_amount);
 
-            // Invoice Setup
             document.getElementById('inv-id').innerText = `#${order.id.substring(0,8).toUpperCase()}`;
             document.getElementById('inv-date').innerText = new Date(order.created_at).toLocaleString();
             document.getElementById('inv-name').innerText = order.customer_name;
@@ -479,8 +546,7 @@
 
         function toggleOrderView(view) {
             const btnInvoice = document.getElementById('btn-toggle-invoice');
-            const viewDetails = document.getElementById('order-web-view'); 
-            const viewInvoice = document.getElementById('order-invoice-view');
+            const viewDetails = document.getElementById('order-web-view'); const viewInvoice = document.getElementById('order-invoice-view');
             
             if(view === 'details') {
                 btnInvoice.innerText = "View Invoice"; btnInvoice.setAttribute('onclick', "toggleOrderView('invoice')");
@@ -508,6 +574,38 @@
                 const element = document.getElementById('invoice-content');
                 html2pdf().set({ margin: 0.5, filename: `KAEL_Order_${currentEditingOrder.id.substring(0,8)}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } }).from(element).save();
             }, 300);
+        }
+
+        // 1.5 RETURNS DASHBOARD
+        async function loadReturns() {
+            const tbody = document.getElementById('returns-tbody'); tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-10 text-center text-xs text-gray-500 animate-pulse">Loading returns...</td></tr>`;
+            const { data: reqs, error } = await supabaseClient.from('return_requests').select('*, orders(customer_name, customer_email)').order('created_at', { ascending: false });
+            if(error || !reqs || reqs.length === 0) return tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-10 text-center text-xs text-gray-500">No return requests found.</td></tr>`;
+            
+            tbody.innerHTML = reqs.map(r => `
+                <tr class="hover:bg-[#111] transition-colors border-b border-white/5">
+                    <td class="px-6 py-4 text-gray-500">${new Date(r.created_at).toLocaleDateString()}</td>
+                    <td class="px-6 py-4 font-bold text-white text-sm cursor-pointer hover:text-amber-500" onclick="openOrderModal('${r.order_id}')">#${r.order_id.substring(0,8)}</td>
+                    <td class="px-6 py-4 text-xs text-gray-300"><span class="font-bold text-white">${r.orders?.customer_name}</span><br><span class="text-[10px] text-gray-500">${r.orders?.customer_email}</span></td>
+                    <td class="px-6 py-4 text-xs text-gray-400 max-w-xs truncate" title="${r.issue_details}">${r.issue_details}</td>
+                    <td class="px-6 py-4"><span class="font-bold uppercase tracking-widest text-[10px] ${r.status==='Pending'?'text-amber-500':(r.status==='Approved'?'text-green-500':'text-red-500')}">${r.status}</span></td>
+                    <td class="px-6 py-4 text-right space-x-2">
+                        ${r.status === 'Pending' ? `
+                        <button onclick="updateReturnStatus('${r.id}', '${r.order_id}', 'Approved')" class="bg-green-500/10 text-green-500 hover:bg-green-500 hover:text-white px-3 py-1.5 rounded text-[10px] font-bold uppercase transition-colors">Approve</button>
+                        <button onclick="updateReturnStatus('${r.id}', '${r.order_id}', 'Denied')" class="bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white px-3 py-1.5 rounded text-[10px] font-bold uppercase transition-colors">Deny</button>
+                        ` : '-'}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function updateReturnStatus(reqId, orderId, newStatus) {
+            try {
+                await supabaseClient.from('return_requests').update({ status: newStatus }).eq('id', reqId);
+                if(newStatus === 'Approved') await supabaseClient.from('orders').update({ order_status: 'Returned' }).eq('id', orderId);
+                showToast(`Request ${newStatus}`);
+                loadReturns(); loadOverview();
+            } catch(e) { showToast("Action failed", "error"); }
         }
 
         // 2. CATALOG & VARIATIONS MODULE
@@ -601,10 +699,15 @@
                 document.getElementById('social-ig').value = config.social_instagram || ''; document.getElementById('social-wa').value = config.social_whatsapp || '';
                 document.getElementById('rzp-enable').checked = config.razorpay_enabled; document.getElementById('rzp-key').value = config.razorpay_key_id || '';
                 document.getElementById('conf-allow-all').checked = config.allow_all_pins; localPincodes = config.allowed_pins || [];
+                document.getElementById('conf-cancel-stage').value = config.cancellation_max_stage || 'Processing';
                 togglePincodeMode(true);
             }
             const { data: secure } = await supabaseClient.from('secure_settings').select('razorpay_key_secret').eq('id', 1).maybeSingle();
             if(secure) document.getElementById('rzp-secret').value = secure.razorpay_key_secret || '';
+        }
+        async function saveOrderRules() {
+            await supabaseClient.from('store_settings').update({ cancellation_max_stage: document.getElementById('conf-cancel-stage').value }).eq('id', 1);
+            showToast("Order Rules Updated.");
         }
         function togglePincodeMode(initialLoad = false) {
             const isAll = document.getElementById('conf-allow-all').checked; const manager = document.getElementById('pincode-manager');
