@@ -7,122 +7,261 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: monospace; background-color: #000; color: #fff; }
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #030303; color: #F5F5F5; }
+        .serif-title { font-family: 'Cormorant Garamond', serif; }
+        
+        /* Custom Scrollbar for tables/modals */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+        
+        .nav-item.active { background-color: rgba(245, 158, 11, 0.1); color: #f59e0b; border-right: 2px solid #f59e0b; }
     </style>
 </head>
-<body class="p-8">
+<body class="overflow-hidden h-screen flex">
 
-    <div id="login-view" class="max-w-md mx-auto mt-32 p-8 border border-white/10 bg-[#0a0a0a]">
-        <h1 class="text-2xl font-bold mb-2">SYSTEM ACCESS</h1>
-        <p class="text-gray-500 text-xs mb-8">Admin Level Clearance Required</p>
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="fixed top-6 right-6 z-[100] flex flex-col space-y-3 pointer-events-none"></div>
+
+    <!-- LOGIN VIEW -->
+    <div id="login-view" class="fixed inset-0 bg-[#050505] z-50 flex items-center justify-center">
+        <div class="max-w-md w-full p-10 border border-white/10 bg-[#0a0a0a] shadow-2xl">
+            <div class="text-center mb-10">
+                <img src="https://ejjcjskseatjqdoxabhm.supabase.co/storage/v1/object/public/store-assets/kael_weblogo.png" class="h-6 mx-auto mb-6 opacity-80" alt="KAEL">
+                <h1 class="text-xl tracking-widest uppercase font-bold text-white mb-2">System Access</h1>
+                <p class="text-gray-500 text-[10px] tracking-widest uppercase">Admin Clearance Required</p>
+            </div>
+            <input type="email" id="email" placeholder="Administrator Email" class="w-full bg-[#111] border border-white/10 p-3.5 mb-4 text-xs font-mono text-white focus:outline-none focus:border-amber-500 transition-colors">
+            <input type="password" id="password" placeholder="Passkey" class="w-full bg-[#111] border border-white/10 p-3.5 mb-8 text-xs font-mono text-white focus:outline-none focus:border-amber-500 transition-colors">
+            <button id="auth-btn" onclick="loginAdmin()" class="w-full bg-white text-black py-3.5 font-bold text-[11px] tracking-widest uppercase hover:bg-amber-500 transition-colors">Authenticate</button>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD -->
+    <div id="dashboard-view" class="hidden w-full h-full flex">
         
-        <!-- Error Display Box -->
-        <div id="admin-error" class="hidden bg-red-500/10 border border-red-500/50 text-red-500 text-[10px] uppercase tracking-widest p-4 mb-6"></div>
-
-        <input type="email" id="email" placeholder="Admin Email" class="w-full bg-[#111] border border-white/10 p-3 mb-4 text-sm focus:outline-none focus:border-amber-500">
-        <input type="password" id="password" placeholder="Password" class="w-full bg-[#111] border border-white/10 p-3 mb-6 text-sm focus:outline-none focus:border-amber-500">
-        <button id="auth-btn" onclick="loginAdmin()" class="w-full bg-white text-black py-3 font-bold text-xs tracking-widest hover:bg-amber-500 transition-colors">AUTHENTICATE</button>
-    </div>
-
-    <div id="dashboard-view" class="hidden max-w-6xl mx-auto">
-        <header class="flex justify-between items-end border-b border-white/10 pb-6 mb-10">
+        <!-- SIDEBAR -->
+        <aside class="w-64 bg-[#0a0a0a] border-r border-white/5 flex flex-col justify-between flex-shrink-0">
             <div>
-                <h1 class="text-3xl font-bold text-amber-500">KAEL CONTROL CENTER</h1>
-                <p id="admin-email" class="text-gray-500 text-xs mt-2"></p>
+                <div class="h-20 flex items-center justify-center border-b border-white/5">
+                    <img src="https://ejjcjskseatjqdoxabhm.supabase.co/storage/v1/object/public/store-assets/kael_weblogo.png" class="h-5 opacity-80" alt="KAEL">
+                </div>
+                <nav class="mt-6 flex flex-col">
+                    <button onclick="switchTab('orders')" id="tab-btn-orders" class="nav-item active text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white transition-colors">Fulfillment</button>
+                    <button onclick="switchTab('catalog')" id="tab-btn-catalog" class="nav-item text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white transition-colors">Catalog</button>
+                    <button onclick="switchTab('logistics')" id="tab-btn-logistics" class="nav-item text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white transition-colors">Logistics</button>
+                    <button onclick="switchTab('content')" id="tab-btn-content" class="nav-item text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white transition-colors">Content & Legal</button>
+                </nav>
             </div>
-            <button onclick="logoutAdmin()" class="text-xs tracking-widest border border-white/20 px-4 py-2 hover:bg-red-500 hover:text-white transition-colors">TERMINATE SESSION</button>
-        </header>
+            <div class="p-6 border-t border-white/5 text-center">
+                <p id="admin-email" class="text-[9px] text-gray-500 font-mono break-all mb-4"></p>
+                <button onclick="logoutAdmin()" class="text-[10px] tracking-widest uppercase font-bold text-red-500 hover:text-red-400 transition-colors">Terminate Session</button>
+            </div>
+        </aside>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 h-full overflow-y-auto bg-[#050505] p-10">
             
-            <!-- STORE CONFIGURATION PANEL -->
-            <div class="bg-[#0a0a0a] p-6 border border-white/10">
-                <h2 class="text-lg font-bold mb-6 border-b border-white/10 pb-4">Global Configuration</h2>
+            <!-- VIEW: ORDERS -->
+            <div id="view-orders" class="tab-content block">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="serif-title text-3xl text-white">Order Fulfillment</h2>
+                    <button onclick="loadOrders()" class="text-xs border border-white/10 px-4 py-2 hover:bg-white/5 transition-colors">⟳ Refresh</button>
+                </div>
+                <div class="bg-[#0a0a0a] border border-white/5 rounded-sm overflow-hidden">
+                    <table class="w-full text-left text-xs font-mono text-gray-400">
+                        <thead class="bg-[#111] text-[10px] uppercase tracking-widest text-gray-500 border-b border-white/5">
+                            <tr>
+                                <th class="px-6 py-4">Order ID</th>
+                                <th class="px-6 py-4">Date</th>
+                                <th class="px-6 py-4">Customer</th>
+                                <th class="px-6 py-4">Total</th>
+                                <th class="px-6 py-4">Method</th>
+                                <th class="px-6 py-4">Status & Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-tbody" class="divide-y divide-white/5">
+                            <!-- Injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- VIEW: CATALOG -->
+            <div id="view-catalog" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="serif-title text-3xl text-white">Product Catalog</h2>
+                    <button onclick="openProductModal()" class="bg-amber-500 text-black text-[10px] font-bold tracking-widest uppercase px-6 py-2.5 hover:bg-amber-400 transition-colors">Add Product</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="catalog-grid">
+                    <!-- Injected by JS -->
+                </div>
+            </div>
+
+            <!-- VIEW: LOGISTICS & SETTINGS -->
+            <div id="view-logistics" class="tab-content hidden">
+                <h2 class="serif-title text-3xl text-white mb-8">Logistics & Systems</h2>
                 
-                <div class="space-y-4 mb-8">
-                    <h3 class="text-xs text-gray-500 uppercase tracking-widest">Contact Infrastructure</h3>
-                    <input type="text" id="conf-email" placeholder="Support Email" class="w-full bg-[#111] border border-white/10 p-2 text-xs">
-                    <input type="text" id="conf-phone" placeholder="Support Phone" class="w-full bg-[#111] border border-white/10 p-2 text-xs">
-                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                    <!-- PINCODES -->
+                    <div class="bg-[#0a0a0a] p-8 border border-white/5">
+                        <h3 class="text-xs uppercase tracking-widest font-bold text-white mb-6 border-b border-white/5 pb-4">Serviceable Pincodes</h3>
+                        
+                        <div class="flex items-center space-x-3 mb-6 p-4 bg-[#111] border border-white/5">
+                            <input type="checkbox" id="conf-allow-all" onchange="togglePincodeMode()" class="accent-amber-500 w-4 h-4">
+                            <label class="text-xs font-medium">Enable All India Delivery (Ignores Pincode List)</label>
+                        </div>
 
-                <div class="space-y-4 mb-8">
-                    <h3 class="text-xs text-gray-500 uppercase tracking-widest">Logistics (Serviceable Pincodes)</h3>
-                    <div class="flex items-center space-x-2 mb-2">
-                        <input type="checkbox" id="conf-allow-all" class="accent-amber-500 w-4 h-4">
-                        <label class="text-xs">Allow All India Delivery</label>
+                        <div id="pincode-manager">
+                            <div class="flex space-x-2 mb-6">
+                                <input type="text" id="new-pin-input" placeholder="Enter Pincode (e.g. 700001)" class="flex-1 bg-[#111] border border-white/10 px-4 py-2 text-xs text-white focus:outline-none focus:border-amber-500">
+                                <button onclick="addPincode()" class="bg-white text-black px-6 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-amber-400 transition-colors">Add</button>
+                            </div>
+                            <div id="pin-chips" class="flex flex-wrap gap-2 max-h-64 overflow-y-auto pr-2">
+                                <!-- Chips injected here -->
+                            </div>
+                        </div>
                     </div>
-                    <textarea id="conf-pins" rows="2" placeholder="Comma separated pins (e.g. 721101, 700001)" class="w-full bg-[#111] border border-white/10 p-2 text-xs"></textarea>
-                </div>
 
-                <button onclick="saveStoreConfig()" class="w-full bg-white text-black py-2 text-xs font-bold hover:bg-amber-500 tracking-widest">SYNC CONFIGURATION</button>
+                    <!-- PAYMENT & CONTACT -->
+                    <div class="space-y-10">
+                        <div class="bg-[#0a0a0a] p-8 border border-amber-500/20 relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
+                            <h3 class="text-xs uppercase tracking-widest font-bold text-amber-500 mb-6 border-b border-white/5 pb-4">Razorpay Gateway</h3>
+                            <div class="flex items-center space-x-3 mb-6">
+                                <input type="checkbox" id="rzp-enable" class="accent-amber-500 w-4 h-4">
+                                <label class="text-xs font-medium text-white">Enable Online Payments</label>
+                            </div>
+                            <div class="space-y-4 mb-6">
+                                <div><label class="text-[10px] text-gray-500 uppercase tracking-widest block mb-1">Key ID (Public)</label><input type="text" id="rzp-key" class="w-full bg-[#111] border border-white/10 px-3 py-2 text-xs text-white"></div>
+                                <div><label class="text-[10px] text-red-400 uppercase tracking-widest block mb-1">Key Secret (Classified)</label><input type="password" id="rzp-secret" class="w-full bg-[#111] border border-red-500/30 px-3 py-2 text-xs text-amber-400"></div>
+                            </div>
+                            <button onclick="saveRazorpayConfig()" class="w-full bg-amber-500 text-black py-2.5 text-[10px] font-bold uppercase tracking-widest hover:bg-amber-400 transition-colors">Update Credentials</button>
+                        </div>
+
+                        <div class="bg-[#0a0a0a] p-8 border border-white/5">
+                            <h3 class="text-xs uppercase tracking-widest font-bold text-white mb-6 border-b border-white/5 pb-4">Contact Infrastructure</h3>
+                            <div class="space-y-4 mb-6">
+                                <div><label class="text-[10px] text-gray-500 uppercase tracking-widest block mb-1">Support Email</label><input type="text" id="conf-email" class="w-full bg-[#111] border border-white/10 px-3 py-2 text-xs text-white"></div>
+                                <div><label class="text-[10px] text-gray-500 uppercase tracking-widest block mb-1">Support Phone</label><input type="text" id="conf-phone" class="w-full bg-[#111] border border-white/10 px-3 py-2 text-xs text-white"></div>
+                            </div>
+                            <button onclick="saveContactConfig()" class="w-full border border-white/20 text-white py-2.5 text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors">Save Details</button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- PAYMENT GATEWAY PANEL -->
-            <div class="bg-[#0a0a0a] p-6 border border-amber-500/30">
-                <h2 class="text-lg font-bold text-amber-500 mb-6 border-b border-white/10 pb-4">Razorpay Gateway</h2>
-                
-                <div class="flex items-center space-x-2 mb-6 p-4 bg-amber-500/10 border border-amber-500/20">
-                    <input type="checkbox" id="rzp-enable" class="accent-amber-500 w-5 h-5">
-                    <label class="text-sm font-bold text-white tracking-widest uppercase">Enable Online Payments</label>
-                </div>
-
-                <div class="space-y-4 mb-8">
-                    <div>
-                        <label class="text-xs text-gray-500 block mb-1 uppercase tracking-widest">Key ID (Public)</label>
-                        <input type="text" id="rzp-key" class="w-full bg-[#111] border border-white/10 p-2 text-xs">
+            <!-- VIEW: CONTENT -->
+            <div id="view-content-tab" class="tab-content hidden max-w-4xl">
+                <h2 class="serif-title text-3xl text-white mb-8">Content & Legal Pages</h2>
+                <div class="bg-[#0a0a0a] p-8 border border-white/5">
+                    <div class="mb-8">
+                        <label class="text-[10px] text-gray-500 uppercase tracking-widest block mb-2">Select Document to Edit</label>
+                        <select id="policy-select" onchange="loadSelectedPolicy()" class="w-full bg-[#111] border border-white/10 px-4 py-3 text-xs text-white focus:outline-none focus:border-amber-500">
+                            <!-- Injected by JS -->
+                        </select>
                     </div>
-                    <div>
-                        <label class="text-xs text-red-400 block mb-1 uppercase tracking-widest">Key Secret (Classified)</label>
-                        <input type="password" id="rzp-secret" class="w-full bg-[#111] border border-red-500/30 p-2 text-xs text-amber-400">
+                    <div id="policy-editor" class="hidden space-y-6">
+                        <input type="hidden" id="policy-id">
+                        <div>
+                            <label class="text-[10px] text-gray-500 uppercase tracking-widest block mb-2">Document Title</label>
+                            <input type="text" id="policy-title" class="w-full bg-[#111] border border-white/10 px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-500">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-gray-500 uppercase tracking-widest block mb-2">Content (Supports Line Breaks)</label>
+                            <textarea id="policy-content" rows="15" class="w-full bg-[#111] border border-white/10 px-4 py-3 text-sm text-gray-300 leading-relaxed focus:outline-none focus:border-amber-500"></textarea>
+                        </div>
+                        <div class="flex justify-end pt-4">
+                            <button onclick="savePolicy()" class="bg-white text-black px-8 py-3 text-[11px] font-bold uppercase tracking-widest hover:bg-amber-500 transition-colors">Publish Changes</button>
+                        </div>
                     </div>
                 </div>
-
-                <button onclick="saveRazorpayConfig()" class="w-full bg-amber-500 text-black py-2 text-xs font-bold hover:bg-amber-400 tracking-widest">UPDATE PAYMENT CREDENTIALS</button>
             </div>
-            
-        </div>
 
-        <!-- RECENT ORDERS PANEL -->
-        <div class="mt-12 bg-[#0a0a0a] p-6 border border-white/10">
-            <h2 class="text-lg font-bold mb-6 border-b border-white/10 pb-4">Recent Fulfillment Intel</h2>
-            <div id="orders-container" class="space-y-2">
-                <!-- Orders inject here -->
-            </div>
-        </div>
-
+        </main>
     </div>
 
+    <!-- PRODUCT MODAL -->
+    <div id="product-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-[#0A0A0A] border border-white/10 w-full max-w-3xl max-h-[90vh] flex flex-col shadow-2xl">
+            <div class="flex justify-between items-center p-6 border-b border-white/5">
+                <h3 class="text-sm uppercase tracking-widest font-semibold text-white" id="pm-title">Add/Edit Product</h3>
+                <button onclick="closeProductModal()" class="text-gray-500 hover:text-white transition-colors">✕</button>
+            </div>
+            <div class="p-6 overflow-y-auto flex-1 space-y-6">
+                <input type="hidden" id="pm-id">
+                <div class="grid grid-cols-2 gap-6">
+                    <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Product Name</label><input type="text" id="pm-name" class="w-full bg-[#111] border border-white/10 p-2 text-xs text-white"></div>
+                    <div><label class="text-[10px] uppercase text-gray-500 block mb-1">URL Slug</label><input type="text" id="pm-slug" class="w-full bg-[#111] border border-white/10 p-2 text-xs text-white"></div>
+                    <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Price (₹)</label><input type="number" id="pm-price" class="w-full bg-[#111] border border-white/10 p-2 text-xs text-white"></div>
+                    <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Original Price (₹) [Optional]</label><input type="number" id="pm-original-price" class="w-full bg-[#111] border border-white/10 p-2 text-xs text-white"></div>
+                    <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Volume (ML)</label><input type="number" id="pm-volume" value="50" class="w-full bg-[#111] border border-white/10 p-2 text-xs text-white"></div>
+                    <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Image URL</label><input type="text" id="pm-image" class="w-full bg-[#111] border border-white/10 p-2 text-xs text-white"></div>
+                </div>
+                <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Tagline</label><input type="text" id="pm-tagline" class="w-full bg-[#111] border border-white/10 p-2 text-xs text-white"></div>
+                <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Description</label><textarea id="pm-description" rows="3" class="w-full bg-[#111] border border-white/10 p-2 text-xs text-white leading-relaxed"></textarea></div>
+                <div class="grid grid-cols-3 gap-4 border-t border-white/5 pt-6">
+                    <div><label class="text-[10px] uppercase text-amber-500 block mb-1">Top Notes (Comma separated)</label><input type="text" id="pm-top" class="w-full bg-[#111] border border-white/10 p-2 text-xs text-white"></div>
+                    <div><label class="text-[10px] uppercase text-amber-500 block mb-1">Heart Notes</label><input type="text" id="pm-heart" class="w-full bg-[#111] border border-white/10 p-2 text-xs text-white"></div>
+                    <div><label class="text-[10px] uppercase text-amber-500 block mb-1">Base Notes</label><input type="text" id="pm-base" class="w-full bg-[#111] border border-white/10 p-2 text-xs text-white"></div>
+                </div>
+            </div>
+            <div class="p-6 border-t border-white/5 flex justify-end">
+                <button onclick="saveProduct()" class="bg-amber-500 text-black px-8 py-2.5 text-[11px] font-bold uppercase tracking-widest hover:bg-amber-400">Save Product</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CORE LOGIC -->
     <script>
         const SUPABASE_URL = "https://ejjcjskseatjqdoxabhm.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqamNqc2tzZWF0anFkb3hhYmhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NjY0ODMsImV4cCI6MjA5NjQ0MjQ4M30.tCxYq9BWtU48m4mDI30Bf3-2temFzLW7qnpCG25nKBk";
-        
-        // FIXED: Renamed to supabaseClient to prevent collision with CDN globals
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        function showError(message) {
-            const box = document.getElementById('admin-error');
-            box.innerText = message;
-            box.classList.remove('hidden');
+        // State
+        let adminUser = null;
+        let localPincodes = [];
+        let allProducts = [];
+        let allPolicies = [];
+
+        // Formatting & Utils
+        const formatINR = (amount) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
+        
+        function showToast(message, type = 'success') {
+            let container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const borderColor = type === 'success' ? 'border-amber-500/50' : 'border-red-500/50';
+            const iconColor = type === 'success' ? 'text-amber-400' : 'text-red-400';
+            toast.className = `flex items-center space-x-3 p-4 bg-[#0A0A0A] border ${borderColor} text-white text-xs font-mono shadow-2xl transform transition-all duration-300 translate-x-full pointer-events-auto`;
+            toast.innerHTML = `<span class="${iconColor} text-lg">${type === 'success'?'✓':'✕'}</span><span class="leading-relaxed">${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-x-full'), 10);
+            setTimeout(() => { toast.classList.add('translate-x-full'); setTimeout(() => toast.remove(), 300); }, 4000);
         }
 
+        // INIT & AUTH
         async function initAdmin() {
             const { data: { session } } = await supabaseClient.auth.getSession();
             if(!session) return;
 
-            // Verify Admin Role
             const { data: profile, error } = await supabaseClient.from('profiles').select('role').eq('id', session.user.id).single();
-            
             if(error || !profile || profile.role !== 'admin') {
-                showError("ACCESS DENIED: ACCOUNT LACKS ADMIN CLEARANCE.");
+                showToast("ACCESS DENIED: Lacking Admin Clearance.", "error");
                 await supabaseClient.auth.signOut();
                 return;
             }
 
+            adminUser = session.user;
             document.getElementById('login-view').classList.add('hidden');
             document.getElementById('dashboard-view').classList.remove('hidden');
-            document.getElementById('admin-email').innerText = session.user.email;
+            document.getElementById('admin-email').innerText = adminUser.email;
 
-            loadAdminData();
+            // Load initial view
+            switchTab('orders');
+            loadLogisticsConfig();
+            loadPolicies();
         }
 
         async function loginAdmin() {
@@ -130,101 +269,278 @@
             const password = document.getElementById('password').value;
             const btn = document.getElementById('auth-btn');
             
-            document.getElementById('admin-error').classList.add('hidden');
-            
-            if(!email || !password) return showError("CREDENTIALS MISSING.");
-            
-            btn.innerText = "AUTHENTICATING...";
-            btn.disabled = true;
+            if(!email || !password) return showToast("Credentials required.", "error");
+            btn.innerText = "AUTHENTICATING..."; btn.disabled = true;
 
             try {
                 const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
                 if(error) throw error;
                 await initAdmin();
-            } catch(e) {
-                showError(e.message);
-            } finally {
-                btn.innerText = "AUTHENTICATE";
-                btn.disabled = false;
-            }
+            } catch(e) { showToast(e.message, "error"); } 
+            finally { btn.innerText = "AUTHENTICATE"; btn.disabled = false; }
         }
 
-        async function logoutAdmin() {
-            await supabaseClient.auth.signOut();
-            window.location.reload();
+        async function logoutAdmin() { await supabaseClient.auth.signOut(); window.location.reload(); }
+
+        // NAVIGATION
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(`view-${tabId}${tabId === 'content' ? '-tab' : ''}`).classList.remove('hidden');
+            document.getElementById(`tab-btn-${tabId}`).classList.add('active');
+
+            if(tabId === 'orders') loadOrders();
+            if(tabId === 'catalog') loadCatalog();
         }
 
-        async function loadAdminData() {
-            // Load Public Config
+        // 1. ORDERS MODULE
+        async function loadOrders() {
+            const tbody = document.getElementById('orders-tbody');
+            tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-xs">Fetching Intel...</td></tr>`;
+            
+            const { data: orders } = await supabaseClient.from('orders').select('*').order('created_at', { ascending: false });
+            if(!orders || orders.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-xs">No records found.</td></tr>`; return; }
+
+            const statusOptions = ['Pending', 'Processing', 'Shipped', 'Delivered'];
+            
+            tbody.innerHTML = orders.map(o => {
+                let selectHtml = `<select onchange="updateOrderStatus('${o.id}', this.value, '${o.customer_email}', '${o.customer_name}')" class="bg-[#111] border border-white/10 px-2 py-1 text-xs text-white focus:outline-none focus:border-amber-500">`;
+                statusOptions.forEach(s => { selectHtml += `<option value="${s}" ${o.order_status === s ? 'selected' : ''}>${s}</option>`; });
+                selectHtml += `</select>`;
+
+                return `
+                <tr class="hover:bg-white/5 transition-colors">
+                    <td class="px-6 py-4 font-bold text-white">#${o.id.substring(0,8)}</td>
+                    <td class="px-6 py-4">${new Date(o.created_at).toLocaleDateString()}</td>
+                    <td class="px-6 py-4 text-xs font-sans text-gray-300">
+                        ${o.customer_name}<br>
+                        <span class="text-[10px] text-gray-500">${o.city}, ${o.pincode}</span>
+                    </td>
+                    <td class="px-6 py-4 text-amber-500">${formatINR(o.total_amount)}</td>
+                    <td class="px-6 py-4"><span class="bg-[#111] px-2 py-1 text-[9px] uppercase tracking-widest">${o.payment_method.replace(' (COD)','').replace(' (Pre-paid)','')}</span></td>
+                    <td class="px-6 py-4">${selectHtml}</td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        async function updateOrderStatus(orderId, newStatus, customerEmail, customerName) {
+            try {
+                // Update DB
+                await supabaseClient.from('orders').update({ order_status: newStatus }).eq('id', orderId);
+                showToast(`Order #${orderId.substring(0,8)} updated to ${newStatus}`);
+                
+                // Trigger Vercel Email
+                fetch('/api/update-status', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ customerEmail, customerName, orderId: orderId.substring(0,8), newStatus })
+                });
+            } catch(e) { showToast("Failed to update status", "error"); }
+        }
+
+        // 2. CATALOG MODULE
+        async function loadCatalog() {
+            const { data } = await supabaseClient.from('products').select('*');
+            allProducts = data || [];
+            
+            const grid = document.getElementById('catalog-grid');
+            if(allProducts.length === 0) { grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500 text-xs">Catalog is empty.</div>`; return; }
+
+            grid.innerHTML = allProducts.map(p => `
+                <div class="bg-[#0a0a0a] border border-white/5 p-4 flex flex-col justify-between group">
+                    <div class="flex items-center space-x-4 mb-4">
+                        <div class="w-16 h-16 bg-[#111] p-2 flex items-center justify-center flex-shrink-0"><img src="${p.image_url}" class="max-h-full"></div>
+                        <div>
+                            <h4 class="text-sm text-white font-serif">${p.name}</h4>
+                            <span class="text-[10px] font-mono text-gray-500">${formatINR(p.price)} • ${p.volume_ml} ML</span>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2 border-t border-white/5 pt-4 opacity-50 group-hover:opacity-100 transition-opacity">
+                        <button onclick="openProductModal('${p.id}')" class="flex-1 bg-white/5 hover:bg-white text-gray-400 hover:text-black py-1.5 text-[9px] uppercase tracking-widest font-bold transition-colors">Edit</button>
+                        <button onclick="deleteProduct('${p.id}')" class="flex-1 border border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white py-1.5 text-[9px] uppercase tracking-widest font-bold transition-colors">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openProductModal(id = null) {
+            document.getElementById('product-modal').classList.remove('hidden');
+            const p = id ? allProducts.find(x => x.id === id) : null;
+            
+            document.getElementById('pm-title').innerText = p ? "Edit Product" : "New Product";
+            document.getElementById('pm-id').value = p ? p.id : '';
+            document.getElementById('pm-name').value = p ? p.name : '';
+            document.getElementById('pm-slug').value = p ? p.slug : '';
+            document.getElementById('pm-price').value = p ? p.price : '';
+            document.getElementById('pm-original-price').value = p ? (p.original_price || '') : '';
+            document.getElementById('pm-volume').value = p ? p.volume_ml : '50';
+            document.getElementById('pm-image').value = p ? p.image_url : '';
+            document.getElementById('pm-tagline').value = p ? (p.tagline || '') : '';
+            document.getElementById('pm-description').value = p ? p.description : '';
+            
+            document.getElementById('pm-top').value = p && p.top_notes ? p.top_notes.join(', ') : '';
+            document.getElementById('pm-heart').value = p && p.heart_notes ? p.heart_notes.join(', ') : '';
+            document.getElementById('pm-base').value = p && p.base_notes ? p.base_notes.join(', ') : '';
+        }
+
+        function closeProductModal() { document.getElementById('product-modal').classList.add('hidden'); }
+
+        async function saveProduct() {
+            const id = document.getElementById('pm-id').value;
+            const parseNotes = (str) => str.split(',').map(s => s.trim()).filter(s => s);
+            
+            const payload = {
+                name: document.getElementById('pm-name').value,
+                slug: document.getElementById('pm-slug').value,
+                price: parseFloat(document.getElementById('pm-price').value),
+                original_price: document.getElementById('pm-original-price').value ? parseFloat(document.getElementById('pm-original-price').value) : null,
+                volume_ml: parseInt(document.getElementById('pm-volume').value),
+                image_url: document.getElementById('pm-image').value,
+                tagline: document.getElementById('pm-tagline').value,
+                description: document.getElementById('pm-description').value,
+                top_notes: parseNotes(document.getElementById('pm-top').value),
+                heart_notes: parseNotes(document.getElementById('pm-heart').value),
+                base_notes: parseNotes(document.getElementById('pm-base').value),
+            };
+
+            try {
+                if(id) await supabaseClient.from('products').update(payload).eq('id', id);
+                else await supabaseClient.from('products').insert([payload]);
+                
+                showToast("Product saved successfully");
+                closeProductModal();
+                loadCatalog();
+            } catch(e) { showToast("Error saving product", "error"); }
+        }
+
+        async function deleteProduct(id) {
+            if(!confirm("Are you sure you want to delete this product?")) return;
+            await supabaseClient.from('products').delete().eq('id', id);
+            showToast("Product deleted");
+            loadCatalog();
+        }
+
+        // 3. LOGISTICS & PINCODES
+        async function loadLogisticsConfig() {
             const { data: config } = await supabaseClient.from('store_settings').select('*').eq('id', 1).single();
             if(config) {
                 document.getElementById('conf-email').value = config.support_email || '';
                 document.getElementById('conf-phone').value = config.support_phone || '';
-                document.getElementById('conf-allow-all').checked = config.allow_all_pins;
-                document.getElementById('conf-pins').value = config.allowed_pins?.join(', ') || '';
                 
                 document.getElementById('rzp-enable').checked = config.razorpay_enabled;
                 document.getElementById('rzp-key').value = config.razorpay_key_id || '';
+
+                const allowAll = config.allow_all_pins;
+                document.getElementById('conf-allow-all').checked = allowAll;
+                localPincodes = config.allowed_pins || [];
+                
+                togglePincodeMode();
             }
 
-            // Load Secure Razorpay Secret
             const { data: secure } = await supabaseClient.from('secure_settings').select('razorpay_key_secret').eq('id', 1).maybeSingle();
             if(secure) document.getElementById('rzp-secret').value = secure.razorpay_key_secret || '';
-
-            // Load Orders
-            const { data: orders } = await supabaseClient.from('orders').select('*').order('created_at', { ascending: false }).limit(20);
-            const container = document.getElementById('orders-container');
-            container.innerHTML = '';
-            
-            if(!orders || orders.length === 0) {
-                container.innerHTML = `<p class="text-xs text-gray-500">No fulfillment data found.</p>`;
-                return;
-            }
-
-            orders.forEach(o => {
-                container.innerHTML += `
-                    <div class="flex justify-between items-center p-4 border border-white/5 hover:bg-white/5">
-                        <div>
-                            <span class="text-white font-bold">#${o.id.substring(0,8)}</span> 
-                            <span class="text-gray-500 ml-3 text-xs uppercase">${o.customer_name}</span>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-amber-500 mr-4 font-bold">₹${o.total_amount}</span>
-                            <span class="bg-[#111] px-2 py-1 text-[9px] uppercase tracking-widest">${o.payment_method}</span>
-                            <span class="${o.order_status === 'Pending' ? 'bg-amber-500 text-black' : 'bg-white/10 text-white'} px-2 py-1 text-[9px] uppercase tracking-widest ml-2 font-bold">${o.order_status}</span>
-                        </div>
-                    </div>
-                `;
-            });
         }
 
-        async function saveStoreConfig() {
-            const pins = document.getElementById('conf-pins').value.split(',').map(p => p.trim()).filter(p => p);
+        function togglePincodeMode() {
+            const isAll = document.getElementById('conf-allow-all').checked;
+            const manager = document.getElementById('pincode-manager');
+            if(isAll) manager.classList.add('opacity-30', 'pointer-events-none');
+            else manager.classList.remove('opacity-30', 'pointer-events-none');
+            renderPincodes();
+        }
+
+        function renderPincodes() {
+            const container = document.getElementById('pin-chips');
+            if(localPincodes.length === 0) { container.innerHTML = `<span class="text-xs text-gray-600 font-mono">No pins configured.</span>`; return; }
+            
+            container.innerHTML = localPincodes.map(pin => `
+                <div class="inline-flex items-center px-3 py-1 bg-white/10 text-xs font-mono text-gray-300 rounded-sm">
+                    ${pin} 
+                    <button onclick="removePincode('${pin}')" class="ml-3 text-red-400 hover:text-red-300 font-bold transition-colors">✕</button>
+                </div>
+            `).join('');
+        }
+
+        async function addPincode() {
+            const input = document.getElementById('new-pin-input');
+            const val = input.value.trim();
+            if(!val || localPincodes.includes(val)) return;
+            
+            localPincodes.push(val);
+            await syncPincodesToDB();
+            input.value = '';
+            showToast(`Added pincode ${val}`);
+        }
+
+        async function removePincode(pinToRemove) {
+            localPincodes = localPincodes.filter(p => p !== pinToRemove);
+            await syncPincodesToDB();
+            showToast(`Removed pincode ${pinToRemove}`);
+        }
+
+        async function syncPincodesToDB() {
+            await supabaseClient.from('store_settings').update({
+                allow_all_pins: document.getElementById('conf-allow-all').checked,
+                allowed_pins: localPincodes
+            }).eq('id', 1);
+            renderPincodes();
+        }
+
+        async function saveContactConfig() {
             await supabaseClient.from('store_settings').update({
                 support_email: document.getElementById('conf-email').value,
                 support_phone: document.getElementById('conf-phone').value,
-                allow_all_pins: document.getElementById('conf-allow-all').checked,
-                allowed_pins: pins
+                allow_all_pins: document.getElementById('conf-allow-all').checked
             }).eq('id', 1);
-            alert("Configuration Synced.");
+            showToast("Contact Infrastructure Synced.");
         }
 
         async function saveRazorpayConfig() {
-            // Save public parts
             await supabaseClient.from('store_settings').update({
                 razorpay_enabled: document.getElementById('rzp-enable').checked,
                 razorpay_key_id: document.getElementById('rzp-key').value
             }).eq('id', 1);
 
-            // Save classified secret
             const secret = document.getElementById('rzp-secret').value;
             if(secret && secret.length > 5) {
                 await supabaseClient.from('secure_settings').upsert({ id: 1, razorpay_key_secret: secret });
             }
-            alert("Payment Strategy Updated.");
+            showToast("Payment Engine Credentials Updated.");
         }
 
-        initAdmin();
+        // 4. CONTENT & LEGAL
+        async function loadPolicies() {
+            const { data } = await supabaseClient.from('legal_pages').select('id, title, content');
+            allPolicies = data || [];
+            
+            const select = document.getElementById('policy-select');
+            select.innerHTML = `<option value="">-- Choose Document --</option>` + allPolicies.map(p => `<option value="${p.id}">${p.title}</option>`).join('');
+        }
+
+        function loadSelectedPolicy() {
+            const id = document.getElementById('policy-select').value;
+            const editor = document.getElementById('policy-editor');
+            if(!id) { editor.classList.add('hidden'); return; }
+            
+            const p = allPolicies.find(x => x.id === id);
+            document.getElementById('policy-id').value = p.id;
+            document.getElementById('policy-title').value = p.title;
+            document.getElementById('policy-content').value = p.content;
+            editor.classList.remove('hidden');
+        }
+
+        async function savePolicy() {
+            const id = document.getElementById('policy-id').value;
+            const title = document.getElementById('policy-title').value;
+            const content = document.getElementById('policy-content').value;
+            
+            await supabaseClient.from('legal_pages').update({ title, content }).eq('id', id);
+            showToast(`Document "${title}" published.`);
+            loadPolicies();
+        }
+
+        window.addEventListener('DOMContentLoaded', initAdmin);
     </script>
 </body>
 </html>
