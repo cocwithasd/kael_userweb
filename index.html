@@ -30,7 +30,7 @@
             <a href="#" onclick="navigateTo('contact'); return false;" class="hover:text-amber-400 transition-colors">Contact</a>
         </nav>
         <div class="flex items-center space-x-5 md:space-x-6">
-            <button id="auth-btn-desktop" onclick="handleAuthClick()" class="hidden md:block text-[11px] font-bold tracking-widest uppercase border border-white/20 px-5 py-2 rounded hover:bg-white hover:text-black transition-all">Sign In</button>
+            <button id="auth-btn-desktop" onclick="handleAuthClick()" class="hidden md:block text-[11px] font-bold tracking-widest uppercase border border-white/20 px-5 py-2 rounded hover:bg-white hover:text-black transition-all">Login</button>
             <button id="auth-btn-mobile" onclick="handleAuthClick()" class="md:hidden p-1 text-gray-300 hover:text-amber-400 transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></button>
             <button onclick="toggleCart()" class="relative p-1 text-gray-300 hover:text-amber-400 transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
@@ -90,6 +90,7 @@
         <div id="dyn-copyright" class="max-w-7xl mx-auto text-center border-t border-white/5 mt-16 pt-8 text-[10px] uppercase text-gray-600 tracking-widest"></div>
     </footer>
 
+    <!-- CART -->
     <div id="cart-drawer" class="fixed inset-y-0 right-0 w-full max-w-md bg-[#080808] border-l border-white/5 z-50 transform translate-x-full transition-transform duration-300 p-6 flex flex-col justify-between hidden shadow-2xl">
         <div>
             <div class="flex justify-between items-center mb-8 pb-4 border-b border-white/5">
@@ -100,13 +101,14 @@
         </div>
         <div class="border-t border-white/5 pt-6">
             <div class="flex justify-between mb-6 text-sm font-medium">
-                <span class="text-gray-400 text-xs uppercase tracking-widest">Order Total</span>
+                <span class="text-gray-400 text-xs uppercase tracking-widest">Subtotal</span>
                 <span id="cart-total" class="font-mono text-white tracking-wide">₹0</span>
             </div>
-            <button onclick="handleCheckoutInit()" class="w-full bg-white text-black py-4 uppercase text-[11px] font-bold tracking-widest hover:bg-amber-400 transition-colors">Proceed to Checkout</button>
+            <button onclick="handleCheckoutInit()" class="w-full bg-white text-black py-4 uppercase text-[11px] font-bold tracking-widest hover:bg-amber-400 transition-colors">Checkout</button>
         </div>
     </div>
 
+    <!-- AUTHENTICATION DIALOG -->
     <div id="auth-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-[#0A0A0A] border border-white/10 max-w-sm w-full p-8 rounded-sm relative shadow-2xl">
             <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path></svg></button>
@@ -114,30 +116,28 @@
                 <h3 class="text-sm uppercase tracking-widest mb-2 font-semibold text-center text-white" id="auth-title">Account Login</h3>
                 <div class="space-y-5 mt-6">
                     <div id="signup-fields" class="hidden space-y-5">
-                        <div><label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Full Name</label><input type="text" id="auth-name" class="w-full bg-[#111] border border-white/10 rounded-sm px-4 py-2.5 text-sm text-white outline-none focus:border-amber-400"></div>
-                        <div><label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Phone Number</label><input type="tel" id="auth-phone" class="w-full bg-[#111] border border-white/10 rounded-sm px-4 py-2.5 text-sm text-white outline-none focus:border-amber-400"></div>
+                        <div><label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Full Name</label><input type="text" id="auth-name" class="w-full bg-[#111] border border-white/10 rounded px-4 py-2.5 text-sm text-white outline-none focus:border-amber-400"></div>
+                        <div><label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Phone Number</label><input type="tel" id="auth-phone" class="w-full bg-[#111] border border-white/10 rounded px-4 py-2.5 text-sm text-white outline-none focus:border-amber-400"></div>
                     </div>
-                    <div id="email-field"><label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Email Address</label><input type="email" id="auth-email" class="w-full bg-[#111] border border-white/10 rounded-sm px-4 py-2.5 text-sm text-white outline-none focus:border-amber-400"></div>
-                    <div id="pw-field"><label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Password</label><input type="password" id="auth-password" class="w-full bg-[#111] border border-white/10 rounded-sm px-4 py-2.5 text-sm text-white outline-none focus:border-amber-400"></div>
-                    <button onclick="handleAuthAction()" id="submit-auth-btn" class="w-full bg-white text-black py-3 rounded-sm text-[11px] font-bold uppercase tracking-widest hover:bg-amber-400 mt-2">Sign In</button>
+                    <div id="email-field"><label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Email Address</label><input type="email" id="auth-email" class="w-full bg-[#111] border border-white/10 rounded px-4 py-2.5 text-sm text-white outline-none focus:border-amber-400"></div>
+                    <div id="pw-field"><label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Password</label><input type="password" id="auth-password" class="w-full bg-[#111] border border-white/10 rounded px-4 py-2.5 text-sm text-white outline-none focus:border-amber-400"></div>
+                    <button onclick="handleAuthAction()" id="submit-auth-btn" class="w-full bg-white text-black py-3 rounded text-[11px] font-bold uppercase tracking-widest hover:bg-amber-400 mt-2">Login</button>
                     <div id="auth-switch-wrapper" class="text-center text-[11px] text-gray-500 pt-4 border-t border-white/5">
-                        <span id="auth-switch-text">Don't have an account?</span><button onclick="setAuthMode('signup')" id="auth-switch-btn" class="text-white hover:text-amber-400 ml-2 uppercase tracking-wider font-semibold">Register</button>
+                        <span id="auth-switch-text">New to KAEL?</span><button onclick="setAuthMode('signup')" id="auth-switch-btn" class="text-white hover:text-amber-400 ml-2 uppercase tracking-wider font-semibold">Create Account</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- CORE LOGIC -->
     <script>
         const SUPABASE_URL = "https://ejjcjskseatjqdoxabhm.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqamNqc2tzZWF0anFkb3hhYmhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NjY0ODMsImV4cCI6MjA5NjQ0MjQ4M30.tCxYq9BWtU48m4mDI30Bf3-2temFzLW7qnpCG25nKBk";
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let globalProducts = [], heroSlidesData = [], userSavedAddresses = [], shoppingCart = [], storeConfig = {}, generalConfig = {};
-        let currentUser = null, isSignUpMode = false, sliderInterval = null, pendingCheckout = false, authMode = 'login';
-        
-        // Active Coupon State
-        let activeCoupon = null;
+        let currentUser = null, isSignUpMode = false, sliderInterval = null, pendingCheckout = false, authMode = 'login', activeCoupon = null;
 
         const loaderHTML = `<div class="flex flex-col items-center justify-center py-48 w-full"><img src="https://ejjcjskseatjqdoxabhm.supabase.co/storage/v1/object/public/store-assets/kael_weblogo.png" class="h-6 animate-[pulse_2s_ease-in-out_infinite] opacity-60"></div>`;
         const formatINR = (amount) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
@@ -152,7 +152,7 @@
             const toast = document.createElement('div');
             const borderColor = type === 'success' ? 'border-amber-500/50' : 'border-red-500/50';
             const iconColor = type === 'success' ? 'text-amber-400' : 'text-red-400';
-            toast.className = `flex items-center space-x-3 p-4 bg-[#0A0A0A] border ${borderColor} text-white text-xs font-mono shadow-2xl transform transition-all duration-300 translate-x-full pointer-events-auto`;
+            toast.className = `flex items-center space-x-3 p-4 bg-[#0A0A0A] border ${borderColor} rounded text-white text-xs font-mono shadow-2xl transform transition-all duration-300 translate-x-full pointer-events-auto`;
             toast.innerHTML = `<span class="${iconColor} text-lg">${type==='success'?'✓':'✕'}</span><span class="leading-relaxed">${message}</span>`;
             container.appendChild(toast);
             setTimeout(() => toast.classList.remove('translate-x-full'), 10);
@@ -171,15 +171,12 @@
                 supabaseClient.from('store_settings').select('*').eq('id', 1).single(),
                 supabaseClient.from('general_settings').select('*').eq('id', 1).single()
             ]);
-            storeConfig = store || {};
-            generalConfig = gen || {};
+            storeConfig = store || {}; generalConfig = gen || {};
 
-            // Apply General Settings to UI
             document.getElementById('dyn-footer-desc').innerText = generalConfig.footer_description || '';
             document.getElementById('dyn-secure-text').innerText = generalConfig.secure_systems_text || '';
             document.getElementById('dyn-copyright').innerText = generalConfig.copyright_text || '';
 
-            // Apply Socials
             let socialsHtml = '';
             if(storeConfig.social_facebook) socialsHtml += `<a href="${storeConfig.social_facebook}" class="text-gray-500 hover:text-amber-400 transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg></a>`;
             if(storeConfig.social_instagram) socialsHtml += `<a href="${storeConfig.social_instagram}" class="text-gray-500 hover:text-amber-400 transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd"/></svg></a>`;
@@ -197,7 +194,7 @@
         function updateAuthUI(user) {
             currentUser = user;
             const btnDesktop = document.getElementById('auth-btn-desktop');
-            if(user) { btnDesktop.innerText = "My Account"; } else { btnDesktop.innerText = "Sign In"; }
+            if(user) { btnDesktop.innerText = "My Account"; } else { btnDesktop.innerText = "Login"; }
         }
 
         function handleAuthClick() { if(currentUser) navigateTo('account'); else { setAuthMode('login'); openAuthModal(); } }
@@ -213,8 +210,8 @@
             else if (view === 'product') renderProductPage(container, param);
             else if (view === 'account') renderAccountPage(container);
             else if (view.startsWith('policy-')) renderPolicyPage(container, view.replace('policy-', ''));
-            else if (view === 'about') renderStatic(container, 'Our Story', 'KAEL designs structural olfactive memories. Established under architectural design principles, we prioritize rare components, minimalist concrete visual designs, and dynamic olfactory profiles.');
-            else if (view === 'contact') renderStatic(container, 'Client Services', `For inquiries regarding formulation extraction, batch distributions, or shipping configurations:<br><br><div class="bg-[#111] p-6 border border-white/5 font-mono text-sm text-gray-400"><p>Email: ${storeConfig.support_email||'concierge@kaelparfums.com'}</p><p>Phone: ${storeConfig.support_phone||'-'}</p></div>`);
+            else if (view === 'about') renderStatic(container, 'About Us', 'KAEL designs structural olfactive memories. Established under architectural design principles, we prioritize rare components, minimalist concrete visual designs, and dynamic olfactory profiles.');
+            else if (view === 'contact') renderStatic(container, 'Contact Us', `For inquiries regarding your orders or shipping:<br><br><div class="bg-[#111] p-6 border border-white/5 font-mono text-sm text-gray-400 rounded"><p>Email: ${storeConfig.support_email||'support@kaelparfums.com'}</p><p>Phone: ${storeConfig.support_phone||'-'}</p></div>`);
         }
 
         function renderStatic(target, title, content) {
@@ -242,14 +239,15 @@
 
             let gridHTML = `<section class="max-w-7xl mx-auto px-6"><h2 class="serif-title text-3xl tracking-widest uppercase mb-12 text-white text-center">The Collection</h2><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">`;
             globalProducts.forEach(prod => {
-                const offerPrice = formatINR(prod.price);
-                const originalPrice = prod.original_price ? formatINR(prod.original_price) : '';
-                const priceHtml = prod.original_price ? `<span class="text-[11px] text-gray-500 line-through mr-3">${originalPrice}</span><span class="font-mono text-sm tracking-wider text-white">${offerPrice}</span>` : `<span class="font-mono text-sm tracking-wider text-white">${offerPrice}</span>`;
+                const vars = prod.variations || [];
+                const basePrice = vars.length > 0 ? vars[0].price : 0;
+                const baseOrig = vars.length > 0 ? vars[0].original_price : null;
+                const priceHtml = baseOrig ? `<span class="text-[11px] text-gray-500 line-through mr-3">${formatINR(baseOrig)}</span><span class="font-mono text-sm tracking-wider text-white">From ${formatINR(basePrice)}</span>` : `<span class="font-mono text-sm tracking-wider text-white">From ${formatINR(basePrice)}</span>`;
                 gridHTML += `
-                    <div class="group bg-[#0A0A0A] border border-white/5 hover:border-white/20 transition-all p-8 flex flex-col justify-between cursor-pointer shadow-lg" onclick="navigateTo('product', '${prod.slug}')">
-                        <div class="aspect-[4/5] bg-[#111] mb-8 overflow-hidden relative flex items-center justify-center p-6"><img src="${prod.image_url}" class="max-h-full max-w-full object-contain transform group-hover:scale-105 transition-transform duration-700 ease-out"></div>
+                    <div class="group bg-[#0A0A0A] border border-white/5 hover:border-white/20 transition-all p-8 flex flex-col justify-between cursor-pointer shadow-lg rounded" onclick="navigateTo('product', '${prod.slug}')">
+                        <div class="aspect-[4/5] bg-[#111] mb-8 overflow-hidden relative flex items-center justify-center p-6 rounded"><img src="${prod.image_url}" class="max-h-full max-w-full object-contain transform group-hover:scale-105 transition-transform duration-700 ease-out"></div>
                         <div>
-                            <div class="flex justify-between items-center mb-2"><span class="text-[9px] uppercase tracking-widest text-amber-500 font-bold">Extrait de Parfum</span><span class="text-[9px] font-mono text-gray-500 tracking-widest">${prod.volume_ml || 50} ML</span></div>
+                            <div class="flex justify-between items-center mb-2"><span class="text-[9px] uppercase tracking-widest text-amber-500 font-bold">Extrait de Parfum</span></div>
                             <h3 class="serif-title text-2xl text-white group-hover:text-amber-400 transition-colors">${prod.name}</h3>
                             <p class="text-xs text-gray-500 mt-3 line-clamp-2 leading-relaxed">${prod.tagline || ''}</p>
                             <div class="flex justify-between items-center mt-8 pt-5 border-t border-white/5"><div>${priceHtml}</div><span class="text-[10px] font-bold uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors">View Product →</span></div>
@@ -269,35 +267,91 @@
             }
         }
 
+        // Global variable for current product view
+        let currentProductView = null;
+
         function renderProductPage(target, slug) {
             const product = globalProducts.find(p => p.slug === slug); if (!product) return;
-            const offerPrice = formatINR(product.price);
-            const originalPrice = product.original_price ? formatINR(product.original_price) : '';
-            const priceHtml = product.original_price ? `<span class="text-lg text-gray-500 line-through mr-4">${originalPrice}</span><span class="text-3xl font-mono tracking-wide text-white">${offerPrice}</span>` : `<span class="text-3xl font-mono tracking-wide text-white">${offerPrice}</span>`;
+            currentProductView = product;
+            
+            const vars = product.variations || [];
+            let optionsHtml = '';
+            vars.forEach((v, idx) => { optionsHtml += `<option value="${idx}">${v.size}</option>`; });
 
             target.innerHTML = `
                 <div class="max-w-7xl mx-auto px-6 py-28">
                     <button onclick="navigateTo('home')" class="text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-white mb-12 flex items-center transition-colors">← Back to Collection</button>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-16 lg:gap-24">
-                        <div class="bg-[#0A0A0A] p-12 border border-white/5 flex items-center justify-center aspect-square shadow-2xl"><img src="${product.image_url}" class="max-h-full object-contain"></div>
+                        <div class="bg-[#0A0A0A] p-12 border border-white/5 rounded-xl flex items-center justify-center aspect-square shadow-2xl"><img src="${product.image_url}" class="max-h-full object-contain"></div>
                         <div class="flex flex-col justify-center">
-                            <div class="flex items-center space-x-3 mb-4"><span class="text-[10px] font-bold uppercase tracking-widest text-amber-500">Extrait de Parfum</span><span class="text-gray-600">|</span><span class="text-[10px] font-mono tracking-widest text-gray-400">${product.volume_ml || 50} ML</span></div>
                             <h1 class="serif-title text-4xl md:text-6xl text-white mb-4 leading-tight">${product.name}</h1>
                             <p class="text-sm italic text-gray-400 mb-8 font-light">${product.tagline || ''}</p>
-                            <div class="mb-10 flex items-end">${priceHtml}</div>
+                            
+                            <div class="mb-10 flex items-end" id="prod-price-display">
+                                <!-- Price injected by updateProductPrice -->
+                            </div>
+                            
+                            <div class="mb-8">
+                                <label class="text-[10px] uppercase tracking-widest text-gray-500 block mb-2 font-bold">Select Size / Variation</label>
+                                <select id="prod-variation-select" onchange="updateProductPrice()" class="w-full bg-[#111] border border-white/10 rounded px-4 py-3 text-sm text-white outline-none focus:border-amber-400 cursor-pointer">
+                                    ${optionsHtml}
+                                </select>
+                            </div>
+
                             <p class="text-sm text-gray-400 leading-loose mb-10">${product.description}</p>
+                            
                             <div class="border-t border-b border-white/5 py-8 mb-10">
-                                <h3 class="text-[11px] uppercase tracking-widest text-white mb-5 font-semibold">Olfactory Matrix</h3>
+                                <h3 class="text-[11px] uppercase tracking-widest text-white mb-5 font-semibold">Fragrance Notes</h3>
                                 <div class="grid grid-cols-3 gap-4 text-xs font-mono text-gray-400">
                                     <div><span class="text-amber-500 block mb-1">TOP</span> ${product.top_notes?.join(', ') || 'N/A'}</div>
                                     <div><span class="text-amber-500 block mb-1">HEART</span> ${product.heart_notes?.join(', ') || 'N/A'}</div>
                                     <div><span class="text-amber-500 block mb-1">BASE</span> ${product.base_notes?.join(', ') || 'N/A'}</div>
                                 </div>
                             </div>
-                            <button onclick="addToCart('${product.id}')" class="w-full bg-white text-black py-4 uppercase text-[11px] font-bold tracking-widest hover:bg-amber-400 transition-all shadow-lg">Add to Cart</button>
+                            <button onclick="addVariationToCart()" class="w-full bg-amber-500 text-black py-4 rounded uppercase text-[11px] font-bold tracking-widest hover:bg-amber-400 transition-all shadow-[0_0_15px_rgba(245,158,11,0.2)]">Add to Cart</button>
                         </div>
                     </div>
                 </div>`;
+            
+            // Trigger initial price display
+            updateProductPrice();
+        }
+
+        function updateProductPrice() {
+            const idx = document.getElementById('prod-variation-select').value;
+            const v = currentProductView.variations[idx];
+            const display = document.getElementById('prod-price-display');
+            if(v.original_price) {
+                display.innerHTML = `<span class="text-lg text-gray-500 line-through mr-4">${formatINR(v.original_price)}</span><span class="text-3xl font-mono tracking-wide text-white font-bold">${formatINR(v.price)}</span>`;
+            } else {
+                display.innerHTML = `<span class="text-3xl font-mono tracking-wide text-white font-bold">${formatINR(v.price)}</span>`;
+            }
+        }
+
+        function addVariationToCart() {
+            if(!currentProductView) return;
+            const idx = document.getElementById('prod-variation-select').value;
+            const v = currentProductView.variations[idx];
+            
+            // Create a unique cart item based on product ID AND variation ID
+            const cartItemId = `${currentProductView.id}_${v.id}`;
+            const existingItem = shoppingCart.find(item => item.cartItemId === cartItemId);
+            
+            if(existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                shoppingCart.push({
+                    cartItemId: cartItemId,
+                    product_id: currentProductView.id, // for DB
+                    variation_id: v.id,
+                    name: currentProductView.name,
+                    variation_name: v.size,
+                    price: v.price,
+                    image_url: currentProductView.image_url,
+                    quantity: 1
+                });
+            }
+            updateCartCount(); toggleCart(); showToast("Added to Cart.");
         }
 
         async function renderPolicyPage(target, policyId) {
@@ -305,7 +359,7 @@
             try {
                 const { data } = await supabaseClient.from('legal_pages').select('*').eq('id', policyId).single();
                 if (!data) throw new Error();
-                target.innerHTML = `<div class="max-w-3xl mx-auto px-6 py-32"><h1 class="serif-title text-4xl mb-4 text-white">${data.title}</h1><p class="text-[10px] uppercase tracking-widest font-mono text-gray-600 mb-12">Updated: ${new Date(data.updated_at).toLocaleDateString()}</p><div class="text-gray-400 leading-relaxed text-sm space-y-6 whitespace-pre-line border-t border-white/5 pt-10">${data.content}</div></div>`;
+                target.innerHTML = `<div class="max-w-3xl mx-auto px-6 py-32"><h1 class="serif-title text-4xl mb-4 text-white">${data.title}</h1><div class="text-gray-400 leading-relaxed text-sm space-y-6 whitespace-pre-line border-t border-white/5 pt-10">${data.content}</div></div>`;
             } catch(e) { target.innerHTML = `<div class="text-center py-40 text-red-500 font-mono text-xs">Document unavailable.</div>`; }
         }
 
@@ -319,11 +373,11 @@
                 let html = `
                     <div class="max-w-6xl mx-auto px-6 py-28">
                         <div class="flex justify-between items-end border-b border-white/5 pb-8 mb-12">
-                            <div><h1 class="serif-title text-4xl text-white mb-2">Client Portal</h1><p class="text-xs font-mono text-gray-500">${currentUser.email}</p></div>
-                            <button onclick="handleSignOut()" class="text-[10px] uppercase font-bold tracking-widest border border-white/10 text-gray-400 px-5 py-2 hover:bg-white hover:text-black transition-all">Sign Out</button>
+                            <div><h1 class="serif-title text-4xl text-white mb-2">My Account</h1><p class="text-xs font-mono text-gray-500">${currentUser.email}</p></div>
+                            <button onclick="handleSignOut()" class="text-[10px] uppercase font-bold tracking-widest border border-white/10 text-gray-400 px-5 py-2 hover:bg-white hover:text-black rounded transition-all">Logout</button>
                         </div>
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                            <div class="bg-[#0A0A0A] p-8 border border-white/5 h-fit">
+                            <div class="bg-[#0A0A0A] p-8 border border-white/5 rounded-xl h-fit">
                                 <h2 class="uppercase tracking-widest text-[11px] font-semibold text-white mb-6">Profile Details</h2>
                                 <div class="space-y-5 text-sm font-mono text-gray-400">
                                     <div><span class="block text-[10px] text-gray-600 uppercase mb-1">Name</span> <span class="text-white">${profile?.full_name || '-'}</span></div>
@@ -332,25 +386,19 @@
                             </div>
                             <div class="lg:col-span-2">
                                 <h2 class="uppercase tracking-widest text-[11px] font-semibold text-white mb-6">Order History</h2>`;
-                if(!orders || orders.length === 0) html += `<div class="bg-[#0A0A0A] p-8 border border-white/5 text-center text-xs text-gray-600 font-mono">No transactions found.</div>`;
+                if(!orders || orders.length === 0) html += `<div class="bg-[#0A0A0A] p-8 border border-white/5 rounded-xl text-center text-xs text-gray-600 font-mono">No transactions found.</div>`;
                 else {
                     orders.forEach(order => {
-                        html += `<div class="bg-[#0A0A0A] border border-white/5 p-6 mb-4 flex justify-between items-center hover:border-white/10 transition-colors"><div><div class="text-white text-sm font-mono mb-2">#${order.id.substring(0,8)}</div><div class="text-gray-500 text-[11px] uppercase tracking-wider">${new Date(order.created_at).toLocaleDateString()}</div></div><div class="text-right"><div class="text-white text-lg font-mono mb-2">${formatINR(order.total_amount)}</div><span class="inline-block px-3 py-1 text-[9px] bg-white/5 text-gray-300 font-bold uppercase tracking-widest">${order.order_status}</span></div></div>`;
+                        html += `<div class="bg-[#0A0A0A] border border-white/5 rounded-xl p-6 mb-4 flex justify-between items-center hover:border-white/10 transition-colors"><div><div class="text-white text-sm font-mono font-bold mb-2">#${order.id.substring(0,8)}</div><div class="text-gray-500 text-[11px] uppercase tracking-wider">${new Date(order.created_at).toLocaleDateString()}</div></div><div class="text-right"><div class="text-amber-500 font-bold text-lg font-mono mb-2">${formatINR(order.total_amount)}</div><span class="inline-block px-3 py-1 rounded text-[9px] bg-[#111] text-gray-300 font-bold uppercase tracking-widest">${order.order_status}</span></div></div>`;
                     });
                 }
                 html += `</div></div></div>`; target.innerHTML = html;
             } catch(e) { target.innerHTML = `<div class="text-center py-40 text-red-500 font-mono text-xs">Error rendering data.</div>`; }
         }
 
-        // CART & UI LOGIC
+        // CART UI
         function toggleCart() { const el = document.getElementById('cart-drawer'); el.classList.toggle('hidden'); setTimeout(() => el.classList.toggle('translate-x-full'), 10); renderCartItems(); }
         function toggleMobileMenu() { const menu = document.getElementById('mobile-menu'); menu.classList.toggle('hidden'); setTimeout(() => menu.classList.toggle('translate-x-full'), 10); }
-        function addToCart(productId) {
-            const product = globalProducts.find(p => p.id === productId); if (!product) return;
-            const baseItem = shoppingCart.find(item => item.id === productId);
-            if(baseItem) baseItem.quantity += 1; else shoppingCart.push({ ...product, quantity: 1 });
-            updateCartCount(); toggleCart(); showToast("Item added to selection.");
-        }
         function updateCartCount() {
             const cnt = shoppingCart.reduce((acc, item) => acc + item.quantity, 0); const badge = document.getElementById('cart-count');
             if(cnt > 0) { badge.innerText = cnt; badge.classList.remove('hidden'); } else badge.classList.add('hidden');
@@ -361,11 +409,11 @@
             let html = '', total = 0;
             shoppingCart.forEach(item => {
                 total += item.price * item.quantity;
-                html += `<div class="flex items-center justify-between border-b border-white/5 pb-5 pt-3"><div class="flex items-center space-x-4"><div class="w-16 h-16 bg-[#111] p-2 flex items-center justify-center"><img src="${item.image_url}" class="max-h-full"></div><div><h4 class="text-sm text-white font-medium">${item.name}</h4><span class="text-xs text-gray-500 font-mono block mt-1">${formatINR(item.price)} x ${item.quantity}</span></div></div><button onclick="removeFromCart('${item.id}')" class="text-[10px] text-gray-500 hover:text-white font-bold uppercase tracking-widest transition-colors">Remove</button></div>`;
+                html += `<div class="flex items-center justify-between border-b border-white/5 pb-5 pt-3"><div class="flex items-center space-x-4"><div class="w-16 h-16 bg-[#111] rounded p-2 flex items-center justify-center"><img src="${item.image_url}" class="max-h-full"></div><div><h4 class="text-sm text-white font-medium">${item.name}</h4><span class="text-[9px] text-gray-500 block">${item.variation_name}</span><span class="text-xs text-amber-500 font-bold font-mono block mt-1">${formatINR(item.price)} x ${item.quantity}</span></div></div><button onclick="removeFromCart('${item.cartItemId}')" class="text-[10px] text-gray-500 hover:text-white font-bold uppercase tracking-widest transition-colors">Remove</button></div>`;
             });
             container.innerHTML = html; totalEl.innerText = formatINR(total);
         }
-        function removeFromCart(id) { shoppingCart = shoppingCart.filter(item => item.id !== id); updateCartCount(); renderCartItems(); }
+        function removeFromCart(cartItemId) { shoppingCart = shoppingCart.filter(item => item.cartItemId !== cartItemId); updateCartCount(); renderCartItems(); }
 
         // AUTH
         function openAuthModal() { document.getElementById('auth-modal').classList.remove('hidden'); }
@@ -379,14 +427,14 @@
             signupFields.classList.add('hidden'); emailField.classList.remove('hidden'); pwField.classList.remove('hidden'); switchWrapper.classList.remove('hidden');
 
             if(mode === 'login') {
-                title.innerText = "Account Login"; btn.innerText = "Sign In";
-                document.getElementById('auth-switch-text').innerText = "New to the house?";
+                title.innerText = "Account Login"; btn.innerText = "Login";
+                document.getElementById('auth-switch-text').innerText = "New to KAEL?";
                 document.getElementById('auth-switch-btn').innerText = "Create Account"; document.getElementById('auth-switch-btn').onclick = () => setAuthMode('signup');
             } else if(mode === 'signup') {
                 title.innerText = "Create Account"; btn.innerText = "Register";
                 signupFields.classList.remove('hidden');
                 document.getElementById('auth-switch-text').innerText = "Already verified?";
-                document.getElementById('auth-switch-btn').innerText = "Sign In"; document.getElementById('auth-switch-btn').onclick = () => setAuthMode('login');
+                document.getElementById('auth-switch-btn').innerText = "Login"; document.getElementById('auth-switch-btn').onclick = () => setAuthMode('login');
             }
         }
         async function handleAuthAction() {
@@ -432,15 +480,15 @@
             let addressOptions = `<option value="">-- Enter New Address --</option>`;
             userSavedAddresses.forEach((addr, idx) => { addressOptions += `<option value="${idx}">${addr.street_address}, ${addr.city} - ${addr.pincode}</option>`; });
 
-            let paymentHTML = `<div class="flex items-center space-x-3 p-4 border border-amber-500/50 bg-amber-500/5"><input type="radio" name="payment_method" value="COD" id="pay-cod" checked class="accent-amber-500 w-4 h-4"><label for="pay-cod" class="text-xs font-mono text-white w-full">Cash On Delivery (COD)</label></div>`;
-            if (storeConfig.razorpay_enabled) { paymentHTML += `<div class="flex items-center space-x-3 p-4 border border-white/10 bg-[#111] mt-3"><input type="radio" name="payment_method" value="ONLINE" id="pay-online" class="accent-amber-500 w-4 h-4"><label for="pay-online" class="text-xs font-mono text-white w-full flex justify-between"><span>Pay Online (Cards/UPI)</span><span class="text-amber-400">Razorpay</span></label></div>`; }
+            let paymentHTML = `<div class="flex items-center space-x-3 p-4 border border-amber-500/50 bg-amber-500/5 rounded"><input type="radio" name="payment_method" value="COD" id="pay-cod" checked class="accent-amber-500 w-4 h-4"><label for="pay-cod" class="text-xs font-bold text-white w-full">Cash On Delivery (COD)</label></div>`;
+            if (storeConfig.razorpay_enabled) { paymentHTML += `<div class="flex items-center space-x-3 p-4 border border-white/10 bg-[#111] mt-3 rounded hover:border-white/30 transition-colors"><input type="radio" name="payment_method" value="ONLINE" id="pay-online" class="accent-amber-500 w-4 h-4"><label for="pay-online" class="text-xs font-bold text-white w-full flex justify-between"><span>Pay Online (Cards/UPI)</span><span class="text-amber-400">Razorpay</span></label></div>`; }
 
             container.innerHTML = `
-                <div class="max-w-3xl mx-auto px-6 py-24 flex flex-col lg:flex-row gap-12">
+                <div class="max-w-4xl mx-auto px-6 py-24 flex flex-col lg:flex-row gap-12">
                     <div class="flex-1">
                         <h1 class="serif-title text-4xl mb-8 text-white border-b border-white/5 pb-6">Secure Checkout</h1>
                         <form id="checkoutForm" onsubmit="processOrder(event)" class="space-y-6">
-                            ${userSavedAddresses.length > 0 ? `<div class="mb-8 p-4 bg-[#111] border border-white/10"><label class="block text-[10px] uppercase tracking-widest text-amber-400 mb-2 font-bold">Use Saved Address</label><select onchange="autoFillAddress(this.value)" class="w-full bg-[#0A0A0A] border border-white/10 rounded-sm px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400">${addressOptions}</select></div>` : ''}
+                            ${userSavedAddresses.length > 0 ? `<div class="mb-8 p-6 bg-[#111] border border-white/5 rounded-xl"><label class="block text-[10px] uppercase tracking-widest text-amber-500 mb-4 font-bold">Use Saved Address</label><select onchange="autoFillAddress(this.value)" class="w-full bg-[#050505] border border-white/10 rounded px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400">${addressOptions}</select></div>` : ''}
                             
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div><label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Full Name</label><input type="text" id="ship-name" required class="w-full bg-[#0A0A0A] border border-white/10 rounded px-4 py-3 text-sm text-white outline-none focus:border-amber-400"></div>
@@ -448,8 +496,8 @@
                             </div>
                             <div><label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Email Address</label><input type="email" id="ship-email" value="${currentUser?.email || ''}" required class="w-full bg-[#0A0A0A] border border-white/10 rounded px-4 py-3 text-sm text-white outline-none focus:border-amber-400"></div>
                             
-                            <div class="pt-4 border-t border-white/5">
-                                <h3 class="text-[11px] uppercase tracking-widest text-white mb-4 font-semibold">Delivery Address</h3>
+                            <div class="pt-6 border-t border-white/5">
+                                <h3 class="text-[11px] uppercase tracking-widest text-white mb-6 font-semibold">Delivery Address</h3>
                                 <div class="space-y-6">
                                     <div><label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Street Address</label><input type="text" id="ship-address" required class="w-full bg-[#0A0A0A] border border-white/10 rounded px-4 py-3 text-sm text-white outline-none focus:border-amber-400"></div>
                                     <div class="grid grid-cols-2 gap-6">
@@ -461,40 +509,42 @@
                                 </div>
                             </div>
 
-                            <div class="pt-6 border-t border-white/5"><h3 class="text-[11px] uppercase tracking-widest text-white mb-4 font-semibold">Payment Strategy</h3>${paymentHTML}</div>
+                            <div class="pt-8 border-t border-white/5"><h3 class="text-[11px] uppercase tracking-widest text-white mb-6 font-semibold">Payment Method</h3>${paymentHTML}</div>
                         </form>
                     </div>
 
+                    <!-- Checkout Summary Widget -->
                     <div class="lg:w-80 flex-shrink-0">
-                        <div class="bg-[#0A0A0A] border border-white/5 p-6 sticky top-24 shadow-2xl">
+                        <div class="bg-[#0A0A0A] border border-white/5 p-8 rounded-xl sticky top-24 shadow-2xl">
                             <h3 class="text-[11px] uppercase tracking-widest text-white mb-6 font-semibold border-b border-white/5 pb-4">Order Summary</h3>
                             
-                            <div class="space-y-3 text-sm mb-6 pb-6 border-b border-white/5" id="summary-items">
-                                </div>
+                            <div class="space-y-4 text-sm mb-6 pb-6 border-b border-white/5" id="summary-items">
+                                <!-- Populated dynamically -->
+                            </div>
 
+                            <!-- Coupon Input -->
                             <div class="mb-6 pb-6 border-b border-white/5">
                                 <label class="block text-[9px] uppercase tracking-widest text-gray-500 mb-2">Promo Code</label>
                                 <div class="flex space-x-2">
                                     <input type="text" id="coupon-input" class="w-full bg-[#111] border border-white/10 rounded px-3 py-2 text-xs font-mono uppercase text-white outline-none">
                                     <button type="button" onclick="applyCoupon()" class="bg-white text-black px-4 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-amber-400 transition-colors rounded">Apply</button>
                                 </div>
-                                <p id="coupon-msg" class="text-[10px] font-mono mt-2 hidden"></p>
+                                <p id="coupon-msg" class="text-[10px] font-mono mt-3 hidden"></p>
                             </div>
 
                             <div class="space-y-3 text-sm font-mono mb-8">
                                 <div class="flex justify-between text-gray-400"><span>Subtotal</span><span id="summ-subtotal">${formatINR(cartBaseTotal)}</span></div>
                                 <div id="summ-discount-row" class="flex justify-between text-green-500 hidden"><span>Discount</span><span id="summ-discount">- ₹0</span></div>
-                                <div class="flex justify-between text-white font-bold text-lg pt-4 border-t border-white/5 mt-4"><span>Total</span><span id="summ-total">${formatINR(cartBaseTotal)}</span></div>
+                                <div class="flex justify-between text-white font-bold text-xl pt-4 border-t border-white/5 mt-4"><span>Total</span><span id="summ-total">${formatINR(cartBaseTotal)}</span></div>
                             </div>
 
-                            <button type="button" onclick="document.getElementById('checkoutForm').requestSubmit()" id="checkout-btn" class="w-full bg-amber-500 text-black py-4 uppercase text-[11px] font-bold tracking-widest hover:bg-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.2)] rounded">Confirm & Pay</button>
+                            <button type="button" onclick="document.getElementById('checkoutForm').requestSubmit()" id="checkout-btn" class="w-full bg-amber-500 text-black py-4 uppercase text-[11px] font-bold tracking-widest hover:bg-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.2)] rounded transition-all">Confirm Order</button>
                         </div>
                     </div>
                 </div>
             `;
             
-            // Render small list of items
-            document.getElementById('summary-items').innerHTML = shoppingCart.map(i => `<div class="flex justify-between text-gray-400"><span>${i.name} <span class="text-[9px]">x${i.quantity}</span></span><span>${formatINR(i.price * i.quantity)}</span></div>`).join('');
+            document.getElementById('summary-items').innerHTML = shoppingCart.map(i => `<div class="flex justify-between items-start text-gray-300 font-medium"><div><span class="block">${i.name} <span class="text-[9px] text-amber-500 ml-1">x${i.quantity}</span></span><span class="text-[9px] text-gray-500 uppercase tracking-widest block">${i.variation_name}</span></div><span class="font-mono text-white">${formatINR(i.price * i.quantity)}</span></div>`).join('');
         }
 
         async function applyCoupon() {
@@ -505,34 +555,21 @@
             if(!code) { msgEl.innerText = "Please enter a code."; msgEl.classList.add('text-red-500'); return; }
 
             const { data: coupon, error } = await supabaseClient.from('coupons').select('*').eq('code', code).single();
-            
             if (error || !coupon || !coupon.active) { msgEl.innerText = "Invalid or inactive code."; msgEl.classList.add('text-red-500'); return; }
             
-            // Check Dates
             const now = new Date();
             if(coupon.valid_until && new Date(coupon.valid_until) < now) { msgEl.innerText = "Code has expired."; msgEl.classList.add('text-red-500'); return; }
-            
-            // Check Total Usage
             if(coupon.max_uses_total && coupon.times_used >= coupon.max_uses_total) { msgEl.innerText = "Coupon usage limit reached."; msgEl.classList.add('text-red-500'); return; }
 
-            // Check User Usage
             const { count: userUses } = await supabaseClient.from('coupon_usage').select('*', { count: 'exact', head: true }).eq('coupon_id', coupon.id).eq('user_id', currentUser.id);
             if(userUses >= coupon.max_uses_per_user) { msgEl.innerText = "You have reached the max uses for this code."; msgEl.classList.add('text-red-500'); return; }
 
-            // Apply Math
             let cartBaseTotal = shoppingCart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-            let discountAmt = 0;
-
-            if(coupon.discount_type === 'FLAT') {
-                discountAmt = coupon.discount_value;
-                if(discountAmt > cartBaseTotal) discountAmt = cartBaseTotal;
-            } else {
-                discountAmt = cartBaseTotal * (coupon.discount_value / 100);
-            }
+            let discountAmt = coupon.discount_type === 'FLAT' ? coupon.discount_value : cartBaseTotal * (coupon.discount_value / 100);
+            if(discountAmt > cartBaseTotal) discountAmt = cartBaseTotal;
 
             activeCoupon = { ...coupon, calculated_discount: discountAmt };
 
-            // Update UI
             msgEl.innerText = `Code applied!`; msgEl.classList.add('text-green-500');
             document.getElementById('summ-discount-row').classList.remove('hidden');
             document.getElementById('summ-discount').innerText = `- ${formatINR(discountAmt)}`;
@@ -559,7 +596,7 @@
             try {
                 if(!storeConfig.allow_all_pins && !storeConfig.allowed_pins.includes(pincode)) {
                     pinError.innerText = `Sorry, delivery to pincode ${pincode} is currently unavailable.`;
-                    pinError.classList.remove('hidden'); btn.innerText = "Confirm & Pay"; btn.disabled = false; return;
+                    pinError.classList.remove('hidden'); btn.innerText = "Confirm Order"; btn.disabled = false; return;
                 }
 
                 let cartBaseTotal = shoppingCart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
@@ -579,12 +616,12 @@
                         prefill: { name: document.getElementById('ship-name').value, email: document.getElementById('ship-email').value, contact: document.getElementById('ship-phone').value }
                     };
                     const rzp = new Razorpay(options);
-                    rzp.on('payment.failed', function (response){ showToast("Payment failed.", "error"); btn.innerText = "Confirm & Pay"; btn.disabled = false; });
+                    rzp.on('payment.failed', function (response){ showToast("Payment failed.", "error"); btn.innerText = "Confirm Order"; btn.disabled = false; });
                     rzp.open();
                 } else {
                     await finalizeOrderPlacement(final_total, 'Cash On Delivery (COD)');
                 }
-            } catch(err) { showToast(err.message || "Checkout error.", "error"); btn.innerText = "Confirm & Pay"; btn.disabled = false; }
+            } catch(err) { showToast(err.message || "Checkout error.", "error"); btn.innerText = "Confirm Order"; btn.disabled = false; }
         }
 
         async function finalizeOrderPlacement(final_total, payment_method) {
@@ -603,10 +640,9 @@
 
             if (orderErr) throw orderErr;
 
-            // Log usage if coupon applied
             if(activeCoupon) await supabaseClient.from('coupon_usage').insert([{ coupon_id: activeCoupon.id, user_id: currentUser.id, order_id: order.id }]);
 
-            const itemsPayload = shoppingCart.map(item => ({ order_id: order.id, product_id: item.id, quantity: item.quantity, price_at_purchase: item.price }));
+            const itemsPayload = shoppingCart.map(item => ({ order_id: order.id, product_id: item.product_id, quantity: item.quantity, price_at_purchase: item.price, variation_name: item.variation_name }));
             await supabaseClient.from('order_items').insert(itemsPayload);
 
             fetch('/api/send-email', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customerEmail: document.getElementById('ship-email').value, customerName: document.getElementById('ship-name').value, orderId: order.id.substring(0,8), totalAmount: formatINR(final_total) }) });
