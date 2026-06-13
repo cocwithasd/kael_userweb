@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #030303; color: #F5F5F5; }
@@ -21,7 +22,7 @@
         select option { background-color: #0a0a0a; color: #f5f5f5; padding: 10px; }
     </style>
 </head>
-<body class="overflow-hidden h-screen flex flex-col md:flex-row text-sm">
+<body class="overflow-hidden h-screen flex text-sm">
 
     <div id="toast-container" class="fixed top-6 right-6 z-[100] flex flex-col space-y-3 pointer-events-none"></div>
 
@@ -42,14 +43,14 @@
             <span class="font-bold tracking-widest uppercase text-white">KAEL ADMIN</span>
             <button onclick="toggleSidebar()" class="text-white p-2 focus:outline-none"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
         </div>
-
         <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/80 z-40 hidden md:hidden"></div>
 
         <aside id="admin-sidebar" class="fixed md:relative inset-y-0 left-0 w-64 bg-[#050505] border-r border-white/5 flex flex-col justify-between flex-shrink-0 z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
             <div>
                 <div class="h-16 md:h-20 flex items-center justify-center border-b border-white/5 font-bold tracking-widest text-lg uppercase text-white">KAEL ADMIN</div>
                 <nav class="mt-6 flex flex-col">
-                    <button onclick="switchTab('orders')" id="tab-btn-orders" class="nav-item active text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white">Orders</button>
+                    <button onclick="switchTab('overview')" id="tab-btn-overview" class="nav-item active text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white">Overview</button>
+                    <button onclick="switchTab('orders')" id="tab-btn-orders" class="nav-item text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white">Orders</button>
                     <button onclick="switchTab('catalog')" id="tab-btn-catalog" class="nav-item text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white">Products</button>
                     <button onclick="switchTab('coupons')" id="tab-btn-coupons" class="nav-item text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white">Coupons</button>
                     <button onclick="switchTab('general')" id="tab-btn-general" class="nav-item text-left px-8 py-4 text-xs tracking-widest uppercase font-semibold text-gray-400 hover:text-white">Settings</button>
@@ -64,10 +65,44 @@
         <main class="flex-1 h-full overflow-y-auto bg-[#030303] relative p-4 md:p-10">
             <div class="max-w-7xl mx-auto">
                 
-                <div id="view-orders" class="tab-content block">
+                <div id="view-overview" class="tab-content block">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-white/5 pb-6 gap-4">
+                        <h2 class="text-3xl text-white font-bold">Dashboard</h2>
+                        <button onclick="loadOverview()" class="text-xs bg-white/5 border border-white/10 px-5 py-2.5 rounded hover:bg-white/10 transition-colors">Refresh Data</button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-[#0a0a0a] p-6 border border-white/5 rounded-xl shadow-lg relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full blur-2xl -mr-8 -mt-8"></div>
+                            <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1 relative z-10">Total Sales</p>
+                            <h3 class="text-3xl font-bold font-mono text-white relative z-10" id="stat-sales">₹0</h3>
+                        </div>
+                        <div class="bg-[#0a0a0a] p-6 border border-white/5 rounded-xl shadow-lg">
+                            <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Total Orders</p>
+                            <h3 class="text-3xl font-bold font-mono text-white" id="stat-orders">0</h3>
+                        </div>
+                        <div class="bg-[#0a0a0a] p-6 border border-white/5 rounded-xl shadow-lg">
+                            <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Registered Users</p>
+                            <h3 class="text-3xl font-bold font-mono text-white" id="stat-users">0</h3>
+                        </div>
+                        <div class="bg-[#0a0a0a] p-6 border border-white/5 rounded-xl shadow-lg">
+                            <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Active Coupons</p>
+                            <h3 class="text-3xl font-bold font-mono text-white" id="stat-coupons">0</h3>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#0a0a0a] p-6 border border-white/5 rounded-xl shadow-lg">
+                        <h3 class="text-sm font-bold text-white mb-6 uppercase tracking-widest">Revenue Timeline (Last 7 Days)</h3>
+                        <div class="h-80 w-full relative">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-orders" class="tab-content hidden">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-white/5 pb-6 gap-4">
                         <h2 class="text-3xl text-white font-bold">Orders</h2>
-                        <button onclick="loadOrders()" class="text-xs bg-white/5 border border-white/10 px-5 py-2.5 rounded hover:bg-white/10 transition-colors w-full md:w-auto">Refresh Orders</button>
+                        <button onclick="loadOrders()" class="text-xs bg-white/5 border border-white/10 px-5 py-2.5 rounded hover:bg-white/10 transition-colors">Refresh Orders</button>
                     </div>
                     <div class="bg-[#0a0a0a] border border-white/5 rounded-xl overflow-hidden overflow-x-auto">
                         <table class="w-full text-left text-xs text-gray-400 min-w-[700px]">
@@ -82,7 +117,7 @@
                 <div id="view-catalog" class="tab-content hidden">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-white/5 pb-6 gap-4">
                         <h2 class="text-3xl text-white font-bold">Products</h2>
-                        <button onclick="openProductModal()" class="bg-amber-500 text-black text-[10px] font-bold tracking-widest uppercase px-6 py-2.5 rounded hover:bg-amber-400 w-full md:w-auto">Add Product</button>
+                        <button onclick="openProductModal()" class="bg-amber-500 text-black text-[10px] font-bold tracking-widest uppercase px-6 py-2.5 rounded hover:bg-amber-400">Add Product</button>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="catalog-grid"></div>
                 </div>
@@ -90,7 +125,7 @@
                 <div id="view-coupons" class="tab-content hidden">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-white/5 pb-6 gap-4">
                         <h2 class="text-3xl text-white font-bold">Coupons</h2>
-                        <button onclick="openCouponModal()" class="bg-amber-500 text-black text-[10px] font-bold tracking-widest uppercase px-6 py-2.5 rounded hover:bg-amber-400 w-full md:w-auto">Add Coupon</button>
+                        <button onclick="openCouponModal()" class="bg-amber-500 text-black text-[10px] font-bold tracking-widest uppercase px-6 py-2.5 rounded hover:bg-amber-400">Add Coupon</button>
                     </div>
                     <div class="bg-[#0a0a0a] border border-white/5 rounded-xl overflow-hidden overflow-x-auto">
                         <table class="w-full text-left text-xs text-gray-400 min-w-[700px]">
@@ -105,7 +140,6 @@
                 <div id="view-general" class="tab-content hidden">
                     <h2 class="text-3xl text-white font-bold mb-8 border-b border-white/5 pb-6">Settings</h2>
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        
                         <div class="bg-[#0a0a0a] p-6 md:p-8 border border-white/5 rounded-xl">
                             <h3 class="text-xs uppercase tracking-widest font-bold text-white mb-6 border-b border-white/5 pb-4">Storefront Details</h3>
                             <div class="space-y-4">
@@ -116,7 +150,6 @@
                             </div>
                             <button onclick="saveGeneralSettings()" class="mt-4 bg-white text-black px-6 py-2 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-amber-400">Save Details</button>
                         </div>
-
                         <div class="bg-[#0a0a0a] p-6 md:p-8 border border-white/5 rounded-xl">
                             <h3 class="text-xs uppercase tracking-widest font-bold text-white mb-6 border-b border-white/5 pb-4">Contact & Socials</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -127,7 +160,6 @@
                             </div>
                             <button onclick="saveContactConfig()" class="w-full border border-white/20 text-white py-2 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-black">Save Contact</button>
                         </div>
-
                         <div class="bg-[#0a0a0a] p-6 md:p-8 border border-amber-500/20 rounded-xl">
                             <h3 class="text-xs uppercase tracking-widest font-bold text-amber-500 mb-6 border-b border-white/5 pb-4">Razorpay Payments</h3>
                             <div class="flex items-center space-x-3 mb-4"><input type="checkbox" id="rzp-enable" class="accent-amber-500 w-4 h-4"><label class="text-sm font-bold text-white">Enable Razorpay</label></div>
@@ -137,7 +169,6 @@
                             </div>
                             <button onclick="saveRazorpayConfig()" class="w-full bg-amber-500 text-black py-2 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-amber-400">Save Payment Settings</button>
                         </div>
-
                         <div class="bg-[#0a0a0a] p-6 md:p-8 border border-white/5 rounded-xl">
                             <h3 class="text-xs uppercase tracking-widest font-bold text-white mb-6 border-b border-white/5 pb-4">Delivery Pincodes</h3>
                             <div class="flex items-center space-x-3 mb-4 p-3 bg-[#111] rounded border border-white/5"><input type="checkbox" id="conf-allow-all" onchange="togglePincodeMode()" class="accent-amber-500 w-4 h-4"><label class="text-xs text-white">Allow All Pincodes</label></div>
@@ -146,7 +177,6 @@
                                 <div id="pin-chips" class="flex flex-wrap gap-2 max-h-32 overflow-y-auto"></div>
                             </div>
                         </div>
-
                     </div>
                 </div>
 
@@ -174,7 +204,6 @@
     </div>
 
     <div id="order-fullscreen-view" class="fixed inset-0 bg-[#030303] z-[60] flex flex-col hidden overflow-y-auto transition-opacity">
-        
         <div class="sticky top-0 bg-[#050505] border-b border-white/5 px-6 py-4 flex justify-between items-center z-10 shadow-lg">
             <div class="flex items-center space-x-4">
                 <button onclick="closeOrderView()" class="text-gray-400 hover:text-white flex items-center bg-white/5 px-3 py-1.5 rounded transition-colors"><svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg> Back</button>
@@ -187,7 +216,6 @@
         </div>
         
         <div id="order-web-view" class="p-6 md:p-10 max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-8 block">
-            
             <div class="lg:col-span-2 space-y-8">
                 <div class="flex flex-col md:flex-row justify-between items-start bg-[#0a0a0a] p-6 rounded-xl border border-white/5 gap-6">
                     <div>
@@ -198,7 +226,6 @@
                         <p id="web-customer-contact" class="text-sm text-gray-400 mt-1"></p>
                     </div>
                 </div>
-
                 <div class="bg-[#0a0a0a] border border-white/5 rounded-xl p-6">
                     <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-4 border-b border-white/5 pb-2">Items Ordered</p>
                     <div class="overflow-x-auto">
@@ -209,7 +236,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="space-y-8">
                 <div class="bg-[#0a0a0a] p-6 rounded-xl border border-white/5">
                     <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-4 border-b border-white/5 pb-2">Order Status</p>
@@ -220,16 +246,14 @@
                         <button onclick="saveModalOrderStatus()" class="w-full bg-amber-500 text-black px-4 py-3 rounded text-xs font-bold uppercase hover:bg-amber-400 transition-colors">Update Status</button>
                     </div>
                 </div>
-
                 <div class="bg-[#0a0a0a] p-6 rounded-xl border border-white/5">
                     <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-3 border-b border-white/5 pb-2">Delivery Address</p>
                     <p id="web-shipping" class="leading-relaxed text-gray-300"></p>
                 </div>
-
                 <div class="bg-[#0a0a0a] p-6 rounded-xl border border-white/5">
                     <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-3 border-b border-white/5 pb-2">Payment Summary</p>
                     <p class="mb-4 text-sm text-gray-300">Method: <span class="font-bold text-white uppercase" id="web-payment"></span></p>
-                    <div class="flex justify-between text-gray-400 mt-4 pt-4 border-t border-white/5"><span class="text-xs">Discount Applied</span><span id="web-discount" class="text-green-500 font-mono"></span></div>
+                    <div class="flex justify-between text-gray-400 mt-4 pt-4 border-t border-white/5"><span class="text-xs">Discount</span><span id="web-discount" class="text-green-500 font-mono"></span></div>
                     <div class="flex justify-between text-white font-bold text-2xl mt-4 pt-4 border-t border-white/5"><span>Total</span><span id="web-total" class="font-mono text-amber-500"></span></div>
                 </div>
             </div>
@@ -239,7 +263,7 @@
             <div id="invoice-render-wrapper" class="bg-white p-10 w-full max-w-3xl shadow-xl h-fit">
                 <div id="invoice-content">
                     <div class="flex justify-between items-start border-b-2 border-black pb-8 mb-8">
-                        <div><h1 class="serif-title text-4xl font-bold uppercase tracking-widest mb-1">KAEL</h1><p class="text-[10px] tracking-[0.2em] font-bold text-gray-500">Haute Parfumerie</p></div>
+                        <div><h1 class="text-4xl font-bold uppercase tracking-widest mb-1">KAEL</h1><p class="text-[10px] tracking-[0.2em] font-bold text-gray-500">Haute Parfumerie</p></div>
                         <div class="text-right font-mono text-xs text-gray-600 space-y-1"><p>INVOICE</p><p class="font-bold text-black text-sm mt-1" id="inv-id"></p><p id="inv-date"></p></div>
                     </div>
                     <div class="grid grid-cols-2 gap-12 mb-12 text-sm">
@@ -271,21 +295,15 @@
             </div>
             <div class="p-6 md:p-8 overflow-y-auto flex-1 space-y-8">
                 <input type="hidden" id="pm-id">
-                
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Name</label><input type="text" id="pm-name" class="w-full glass-input rounded p-3 text-sm outline-none"></div>
                     <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Slug</label><input type="text" id="pm-slug" class="w-full glass-input rounded p-3 text-sm outline-none"></div>
                     <div class="md:col-span-2"><label class="text-[10px] uppercase text-gray-500 block mb-1">Image URL</label><input type="text" id="pm-image" class="w-full glass-input rounded p-3 text-sm outline-none"></div>
                 </div>
-
                 <div class="border-t border-white/5 pt-6 bg-[#111] p-6 rounded border border-white/5">
-                    <div class="flex justify-between items-center mb-6">
-                        <h4 class="text-xs uppercase font-bold text-amber-500">Variations (Sizes / Quantity)</h4>
-                        <button onclick="addVariationRow()" class="text-[9px] bg-white/10 px-3 py-1.5 rounded hover:bg-white hover:text-black uppercase font-bold transition-colors">+ Add Variation</button>
-                    </div>
+                    <div class="flex justify-between items-center mb-6"><h4 class="text-xs uppercase font-bold text-amber-500">Variations (Sizes / Quantity)</h4><button onclick="addVariationRow()" class="text-[9px] bg-white/10 px-3 py-1.5 rounded hover:bg-white hover:text-black uppercase font-bold transition-colors">+ Add Variation</button></div>
                     <div id="pm-variations-container" class="space-y-4"></div>
                 </div>
-
                 <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Description</label><textarea id="pm-description" rows="3" class="w-full glass-input rounded p-3 text-sm outline-none"></textarea></div>
                 <div><label class="text-[10px] uppercase text-gray-500 block mb-1">Tagline</label><input type="text" id="pm-tagline" class="w-full glass-input rounded p-3 text-sm outline-none"></div>
             </div>
@@ -296,28 +314,7 @@
     </div>
 
     <div id="coupon-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-[#0A0A0A] border border-white/10 w-full max-w-2xl flex flex-col rounded-xl shadow-2xl">
-            <div class="flex justify-between items-center p-6 border-b border-white/5">
-                <h3 class="text-sm uppercase tracking-widest font-bold text-white" id="cm-title">Configure Coupon</h3>
-                <button onclick="document.getElementById('coupon-modal').classList.add('hidden')" class="text-gray-500 hover:text-white bg-white/5 rounded-full p-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
-            </div>
-            <div class="p-6 space-y-6 overflow-y-auto max-h-[70vh]">
-                <input type="hidden" id="cm-id">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div><label class="text-[10px] text-gray-500 block mb-1">Coupon Code</label><input type="text" id="cm-code" class="w-full glass-input rounded p-3 text-sm uppercase font-mono outline-none"></div>
-                    <div><label class="text-[10px] text-gray-500 block mb-1">Status</label><select id="cm-active" class="w-full glass-input rounded p-3 text-sm outline-none"><option value="true">Active</option><option value="false">Disabled</option></select></div>
-                    <div><label class="text-[10px] text-gray-500 block mb-1">Discount Type</label><select id="cm-type" class="w-full glass-input rounded p-3 text-sm outline-none"><option value="PERCENT">Percentage (%)</option><option value="FLAT">Flat Amount (₹)</option></select></div>
-                    <div><label class="text-[10px] text-gray-500 block mb-1">Value</label><input type="number" id="cm-value" class="w-full glass-input rounded p-3 text-sm font-mono text-amber-500 outline-none"></div>
-                    <div><label class="text-[10px] text-gray-500 block mb-1">Total Uses Allowed (Blank=∞)</label><input type="number" id="cm-total-uses" class="w-full glass-input rounded p-3 text-sm outline-none"></div>
-                    <div><label class="text-[10px] text-gray-500 block mb-1">Uses Per User</label><input type="number" id="cm-per-user" value="1" class="w-full glass-input rounded p-3 text-sm outline-none"></div>
-                    <div class="md:col-span-2"><label class="text-[10px] text-gray-500 block mb-1">Valid Until</label><input type="date" id="cm-until" class="w-full glass-input rounded p-3 text-sm outline-none dark:[color-scheme:dark]"></div>
-                </div>
-            </div>
-            <div class="p-6 border-t border-white/5 flex justify-end">
-                <button onclick="saveCoupon()" class="w-full md:w-auto bg-amber-500 text-black px-8 py-2.5 rounded text-[11px] font-bold uppercase tracking-widest hover:bg-amber-400">Save</button>
-            </div>
         </div>
-    </div>
 
     <script>
         const SUPABASE_URL = "https://ejjcjskseatjqdoxabhm.supabase.co";
@@ -325,7 +322,7 @@
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let adminUser = null; let localPincodes = []; let allProducts = []; let allPolicies = []; let allCoupons = [];
-        let currentEditingOrder = null;
+        let currentEditingOrder = null; let revenueChartObj = null;
 
         const formatINR = (amount) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
         const uuidv4 = () => { return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); }); };
@@ -333,20 +330,15 @@
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container'); const toast = document.createElement('div');
             const bgClass = type === 'success' ? 'bg-[#0a0a0a]' : 'bg-[#1a0a0a]'; const borderClass = type === 'success' ? 'border-amber-500/30' : 'border-red-500/50'; const iconColor = type === 'success' ? 'text-amber-500' : 'text-red-500';
-            toast.className = `flex items-center space-x-3 p-4 ${bgClass} border ${borderClass} rounded text-white text-xs font-mono shadow-2xl transform transition-all duration-300 translate-x-[120%] pointer-events-auto`;
+            toast.className = `flex items-center space-x-3 p-4 ${bgClass} border ${borderClass} rounded text-white text-xs font-mono shadow-2xl transform transition-all duration-300 translate-x-[120%] pointer-events-auto w-80`;
             toast.innerHTML = `<div class="${iconColor} flex-shrink-0">${type==='success'?'✓':'✕'}</div><div class="leading-relaxed flex-1">${message}</div>`;
             container.appendChild(toast); setTimeout(() => { toast.classList.remove('translate-x-[120%]'); }, 50); setTimeout(() => { toast.classList.add('translate-x-[120%]'); setTimeout(() => toast.remove(), 300); }, 4000);
         }
 
-        // Mobile Sidebar Toggle
         function toggleSidebar() {
-            const sidebar = document.getElementById('admin-sidebar');
-            const overlay = document.getElementById('sidebar-overlay');
-            if (sidebar.classList.contains('-translate-x-full')) {
-                sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden');
-            } else {
-                sidebar.classList.add('-translate-x-full'); overlay.classList.add('hidden');
-            }
+            const sidebar = document.getElementById('admin-sidebar'); const overlay = document.getElementById('sidebar-overlay');
+            if (sidebar.classList.contains('-translate-x-full')) { sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden'); } 
+            else { sidebar.classList.add('-translate-x-full'); overlay.classList.add('hidden'); }
         }
 
         async function initAdmin() {
@@ -356,16 +348,15 @@
             if(error || !profile || profile.role !== 'admin') { document.getElementById('admin-error').innerText = "ACCESS DENIED"; document.getElementById('admin-error').classList.remove('hidden'); await supabaseClient.auth.signOut(); return; }
             adminUser = session.user;
             document.getElementById('login-view').classList.add('hidden'); document.getElementById('dashboard-view').classList.remove('hidden');
-            switchTab('orders'); loadLogisticsConfig(); loadGeneralSettings(); loadPolicies();
+            switchTab('overview'); loadLogisticsConfig(); loadGeneralSettings(); loadPolicies();
         }
 
         async function loginAdmin() {
             const email = document.getElementById('email').value, password = document.getElementById('password').value, btn = document.getElementById('auth-btn');
-            document.getElementById('admin-error').classList.add('hidden');
             if(!email || !password) { document.getElementById('admin-error').innerText = "CREDENTIALS MISSING."; document.getElementById('admin-error').classList.remove('hidden'); return; }
-            btn.innerText = "AUTHENTICATING..."; btn.disabled = true;
+            btn.innerText = "Authenticating..."; btn.disabled = true;
             try { const { error } = await supabaseClient.auth.signInWithPassword({ email, password }); if(error) throw error; await initAdmin(); } 
-            catch(e) { document.getElementById('admin-error').innerText = e.message; document.getElementById('admin-error').classList.remove('hidden'); } finally { btn.innerText = "LOGIN"; btn.disabled = false; }
+            catch(e) { document.getElementById('admin-error').innerText = e.message; document.getElementById('admin-error').classList.remove('hidden'); } finally { btn.innerText = "Login"; btn.disabled = false; }
         }
 
         async function logoutAdmin() { await supabaseClient.auth.signOut(); window.location.reload(); }
@@ -373,15 +364,60 @@
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden')); document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.getElementById(`view-${tabId}`).classList.remove('hidden'); document.getElementById(`tab-btn-${tabId}`).classList.add('active');
-            if(tabId === 'orders') loadOrders(); if(tabId === 'catalog') loadCatalog(); if(tabId === 'coupons') loadCoupons();
-            if(window.innerWidth < 768) toggleSidebar(); // auto close sidebar on mobile
+            if(tabId === 'overview') loadOverview(); if(tabId === 'orders') loadOrders(); if(tabId === 'catalog') loadCatalog(); if(tabId === 'coupons') loadCoupons();
+            if(window.innerWidth < 768) toggleSidebar();
         }
 
-        // 1. ORDERS MODULE (FULL SCREEN)
+        // 0. OVERVIEW DASHBOARD
+        async function loadOverview() {
+            try {
+                const { data: orders } = await supabaseClient.from('orders').select('total_amount, created_at');
+                const { count: usersCount } = await supabaseClient.from('profiles').select('*', { count: 'exact', head: true });
+                const { count: couponsCount } = await supabaseClient.from('coupons').select('*', { count: 'exact', head: true }).eq('active', true);
+
+                let totalRevenue = 0;
+                let dailyRev = {};
+                const past7Days = [...Array(7)].map((_, i) => {
+                    const d = new Date(); d.setDate(d.getDate() - i);
+                    return d.toISOString().split('T')[0];
+                }).reverse();
+                
+                past7Days.forEach(date => dailyRev[date] = 0);
+
+                (orders || []).forEach(o => {
+                    totalRevenue += o.total_amount;
+                    const dString = o.created_at.split('T')[0];
+                    if(dailyRev[dString] !== undefined) dailyRev[dString] += o.total_amount;
+                });
+
+                document.getElementById('stat-sales').innerText = formatINR(totalRevenue);
+                document.getElementById('stat-orders').innerText = orders?.length || 0;
+                document.getElementById('stat-users').innerText = usersCount || 0;
+                document.getElementById('stat-coupons').innerText = couponsCount || 0;
+
+                renderChart(past7Days, past7Days.map(date => dailyRev[date]));
+            } catch (error) { console.error("Dashboard error:", error); }
+        }
+
+        function renderChart(labels, data) {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            if(revenueChartObj) revenueChartObj.destroy();
+            revenueChartObj = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{ label: 'Daily Revenue (₹)', data: data, borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.1)', borderWidth: 2, fill: true, tension: 0.4 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#666' } }, x: { grid: { display: false }, ticks: { color: '#666' } } } }
+            });
+        }
+
+        // 1. ORDERS MODULE
         async function loadOrders() {
-            const tbody = document.getElementById('orders-tbody'); tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-10 text-center text-xs animate-pulse">Loading orders...</td></tr>`;
+            const tbody = document.getElementById('orders-tbody'); tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-10 text-center text-xs text-gray-500 animate-pulse">Loading orders...</td></tr>`;
             const { data: orders, error } = await supabaseClient.from('orders').select('*').order('created_at', { ascending: false });
-            if(error || !orders || orders.length===0) return tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-10 text-center text-xs text-gray-500">No orders found.</td></tr>`;
+            if(error) { showToast(error.message, "error"); return; }
+            if(!orders || orders.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-10 text-center text-xs text-gray-500">No orders found.</td></tr>`; return; }
             
             tbody.innerHTML = orders.map(o => `
                 <tr class="hover:bg-[#111] transition-colors cursor-pointer group border-b border-white/5" onclick="openOrderModal('${o.id}')">
@@ -396,8 +432,9 @@
         }
 
         async function openOrderModal(orderId) {
-            const { data: order } = await supabaseClient.from('orders').select('*, order_items(*, products(*))').eq('id', orderId).single();
-            if(!order) return; currentEditingOrder = order;
+            const { data: order, error } = await supabaseClient.from('orders').select('*, order_items(*, products(*))').eq('id', orderId).single();
+            if(error) return showToast("Error loading details", "error");
+            currentEditingOrder = order;
 
             // Details View Setup
             document.getElementById('web-order-id').innerText = `#${order.id.toUpperCase()}`;
@@ -418,14 +455,13 @@
             document.getElementById('web-discount').innerText = order.discount_amount > 0 ? `- ${formatINR(order.discount_amount)}` : '₹0';
             document.getElementById('web-total').innerText = formatINR(order.total_amount);
 
-            // Invoice View Setup
+            // Invoice Setup
             document.getElementById('inv-id').innerText = `#${order.id.substring(0,8).toUpperCase()}`;
             document.getElementById('inv-date').innerText = new Date(order.created_at).toLocaleString();
             document.getElementById('inv-name').innerText = order.customer_name;
             document.getElementById('inv-address').innerHTML = `${order.shipping_address}<br>${order.city}, ${order.state} - ${order.pincode}`;
             document.getElementById('inv-contact').innerHTML = `${order.phone}<br>${order.customer_email}`;
             document.getElementById('inv-method').innerText = order.payment_method;
-            
             document.getElementById('inv-items').innerHTML = order.order_items.map(item => {
                 const varName = item.variation_name ? ` (${item.variation_name})` : '';
                 return `<tr class="border-b border-gray-100"><td class="py-3 font-medium text-gray-800">${item.products?.name || 'Product'}${varName}</td><td class="py-3 text-center">${item.quantity}</td><td class="py-3 text-right font-mono text-gray-600">${formatINR(item.price_at_purchase)}</td><td class="py-3 text-right font-mono text-gray-900">${formatINR(item.price_at_purchase * item.quantity)}</td></tr>`;
@@ -439,16 +475,18 @@
         }
 
         function closeOrderView() { document.getElementById('order-fullscreen-view').classList.add('hidden'); }
+        function toggleInvoicePreview() { toggleOrderView('invoice'); }
 
         function toggleOrderView(view) {
-            const btnDetails = document.getElementById('btn-view-details'); const btnInvoice = document.getElementById('btn-toggle-invoice');
-            const viewDetails = document.getElementById('order-web-view'); const viewInvoice = document.getElementById('order-invoice-view');
+            const btnInvoice = document.getElementById('btn-toggle-invoice');
+            const viewDetails = document.getElementById('order-web-view'); 
+            const viewInvoice = document.getElementById('order-invoice-view');
             
             if(view === 'details') {
-                btnDetails.className = "text-xs bg-white/10 text-white px-4 py-2 rounded transition-colors"; btnInvoice.className = "text-xs text-gray-500 px-4 py-2 hover:text-white transition-colors";
+                btnInvoice.innerText = "View Invoice"; btnInvoice.setAttribute('onclick', "toggleOrderView('invoice')");
                 viewDetails.classList.remove('hidden'); viewInvoice.classList.add('hidden');
             } else {
-                btnInvoice.className = "text-xs bg-white/10 text-white px-4 py-2 rounded transition-colors"; btnDetails.className = "text-xs text-gray-500 px-4 py-2 hover:text-white transition-colors";
+                btnInvoice.innerText = "View Details"; btnInvoice.setAttribute('onclick', "toggleOrderView('details')");
                 viewInvoice.classList.remove('hidden'); viewDetails.classList.add('hidden');
             }
         }
@@ -458,7 +496,7 @@
             const newStatus = document.getElementById('web-order-status').value;
             try {
                 await supabaseClient.from('orders').update({ order_status: newStatus }).eq('id', currentEditingOrder.id);
-                showToast(`Order updated to ${newStatus}`);
+                showToast(`Status updated to ${newStatus}`);
                 fetch('/api/update-status', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customerEmail: currentEditingOrder.customer_email, customerName: currentEditingOrder.customer_name, orderId: currentEditingOrder.id.substring(0,8), newStatus }) });
                 loadOrders();
             } catch(e) { showToast("Status update failed", "error"); }
@@ -481,12 +519,11 @@
             grid.innerHTML = allProducts.map(p => {
                 const vars = p.variations || [];
                 const basePrice = vars.length > 0 ? vars[0].price : 0;
-                const varCount = vars.length;
                 return `
                 <div class="bg-[#0a0a0a] border border-white/5 rounded-xl p-5 flex flex-col justify-between hover:border-white/20 transition-all">
                     <div class="flex items-center space-x-5 mb-5">
                         <div class="w-16 h-16 bg-[#050505] rounded flex items-center justify-center p-2"><img src="${p.image_url}" class="max-h-full object-contain"></div>
-                        <div><h4 class="text-sm text-white font-bold">${p.name}</h4><p class="text-[10px] text-gray-500 mt-1">${varCount} Variation(s) • From ${formatINR(basePrice)}</p></div>
+                        <div><h4 class="text-sm text-white font-bold">${p.name}</h4><p class="text-[10px] text-gray-500 mt-1">${vars.length} Variation(s) • From ${formatINR(basePrice)}</p></div>
                     </div>
                     <div class="flex space-x-2">
                         <button onclick="openProductModal('${p.id}')" class="flex-1 bg-white/5 hover:bg-white text-gray-300 hover:text-black py-2 rounded text-[10px] uppercase font-bold transition-colors">Edit</button>
@@ -511,7 +548,7 @@
             const container = document.getElementById('pm-variations-container');
             container.innerHTML = '';
             if(p && p.variations && p.variations.length > 0) { p.variations.forEach(v => addVariationRow(v)); } 
-            else { addVariationRow(); } // Add one blank by default
+            else { addVariationRow(); }
         }
 
         function addVariationRow(v = null) {
@@ -530,20 +567,17 @@
 
         async function saveProduct() {
             const id = document.getElementById('pm-id').value;
-            const parseNotes = (str) => str ? str.split(',').map(s => s.trim()).filter(s => s) : [];
-            
             const varRows = document.querySelectorAll('.variation-row');
             let variations = [];
             varRows.forEach(row => {
                 variations.push({
-                    id: uuidv4(),
-                    size: row.querySelector('.var-size').value,
+                    id: uuidv4(), size: row.querySelector('.var-size').value,
                     price: parseFloat(row.querySelector('.var-price').value),
                     original_price: row.querySelector('.var-orig').value ? parseFloat(row.querySelector('.var-orig').value) : null
                 });
             });
 
-            if(variations.length === 0) return showToast("You must add at least one variation.", "error");
+            if(variations.length === 0) return showToast("Add at least one variation.", "error");
 
             const payload = {
                 name: document.getElementById('pm-name').value, slug: document.getElementById('pm-slug').value, image_url: document.getElementById('pm-image').value, tagline: document.getElementById('pm-tagline').value, description: document.getElementById('pm-description').value,
