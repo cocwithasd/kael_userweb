@@ -1,0 +1,6 @@
+{
+  "name": "kael-store",
+  "dependencies": {
+    "nodemailer": "^6.9.13"
+  }
+}
